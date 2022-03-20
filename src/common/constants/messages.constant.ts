@@ -15,7 +15,7 @@ export const MESSAGES = {
 			CREATE: 'Error al guardar el registro',
 			UPDATE: 'Error al actualizar el registro, no existe',
 			ROLES: 'No estas autorizado para ejecutar esta acción',
-			DELETE: 'Error al eliminar el registro',
+			DELETE: 'El registro no existe',
 		},
 	},
 	AUTH: {
@@ -36,7 +36,7 @@ export const MESSAGES = {
 	USER: {
 		PASSWORD_UPDATE: 'La contraseña ha sido actualizada',
 		WARNING: {
-			EMAIL_CREATE: 'El email ya esta regitrado',
+			EMAIL_CREATE: 'El correo ya esta regitrado',
 			MOBILE_CREATE: 'El número de célular ya esta regitrado',
 			PHONE_CREATE: 'El número de telefóno ya esta regitrado',
 			USER_CREATE: 'El usuario ya esta regitrado',

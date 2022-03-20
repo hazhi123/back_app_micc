@@ -52,14 +52,23 @@ export class AuthService {
     }, HttpStatus.ACCEPTED)
     let isExist = await this.userService.findUser(user.user);
     if (isExist) throw new HttpException({
-      statusCode: HttpStatus.ACCEPTED,
+      statusCode: HttpStatus.BAD_REQUEST,
       message: CONST.MESSAGES.USER.WARNING.EMAIL_CREATE,
     }, HttpStatus.ACCEPTED)
     const data = {
       ...user,
-      perfil: 3
+      isVisitante: true,
+      perfil: 3,
     }
     const res = await this.userService.create(true, data, null)
+    delete res.id
+    delete res.status
+    delete res.isVisitante
+    delete res.createdBy
+    delete res.createdAt
+    delete res.updatedBy
+    delete res.updatedAt
+
     return {
       message: CONST.MESSAGES.COMMON.CREATE_DATA,
       data: res,

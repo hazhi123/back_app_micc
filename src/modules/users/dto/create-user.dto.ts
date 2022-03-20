@@ -32,12 +32,13 @@ export class createUsersDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   celular: string;
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
+  @Length(8, 30)
+  @IsNotEmpty()
   password: string;
 
   @ApiProperty()
@@ -51,10 +52,15 @@ export class createUsersDto {
   @IsOptional()
   image: string;
 
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  perfil: any
+
   // Informacion adicional
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   dni: string;
 
   @ApiProperty()
@@ -68,13 +74,14 @@ export class createUsersDto {
   direccion: string;
 
   @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  pais: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
 
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  perfil: any
 
 }

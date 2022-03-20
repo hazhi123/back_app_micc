@@ -24,39 +24,22 @@ import { AppGateway } from './websocket/app.gateway';
       envFilePath: '.env',
     }),
     AccessControlModule.forRoles(roles),
-    // Auth
     MOD.AuthModule,
-
-    // Administracion
     MOD.UsersModule,
-    MOD.ProfilesModule,
+    MOD.PerfilesModule,
     MOD.ModulosModule,
-    MOD.ProfilesModulosModule,
+    MOD.PerfilesModulosModule,
+    MOD.LicenciasModule,
+    MOD.PlanesModule,
 
-    // Licencias
-    MOD.LicensesModule,
-    MOD.PlansModule,
+    MOD.PaisesModule,
+    MOD.CComercialesModule,
+    MOD.UsersCComercialesModule,
 
-    // Empresa
-    MOD.BusinessModule,
-    MOD.SucursalesModule,
-    MOD.SalonesModule,
-    MOD.MesasModule,
-    MOD.AreasModule,
-
-    // Stock
-    MOD.UnitsMeasurementModule,
-    MOD.ProveedoresModule,
-    MOD.ProductsCategoriesModule,
-    MOD.ProductsModule,
-    MOD.IngredientsModule,
-    MOD.ProductsAreasModule,
-
-    // Clientes
-    MOD.ClientsModule,
-
-    // Pedidos
-    MOD.PedidosModule,
+    MOD.PublicacionesModule,
+    MOD.PublicacionesModule,
+    MOD.ComentariosModule,
+    MOD.LikesModule,
 
     CloudinaryModule,
 

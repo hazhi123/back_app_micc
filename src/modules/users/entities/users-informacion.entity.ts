@@ -11,7 +11,7 @@ import { UsersEntity } from './users.entity';
 @Entity(CONST.MODULES.USERS.USERS_INFORMACION)
 export class UsersInformacionEntity {
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', default: '' })
   dni: string;
 
   @Column({ type: 'varchar', default: '' })
@@ -23,8 +23,11 @@ export class UsersInformacionEntity {
   @Column({ type: 'varchar', default: '' })
   correo: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar', default: '' })
   telefono: string;
+
+  @Column({ type: 'integer', default: 0 })
+  pais: number;
 
   //relaciones
   @OneToOne(() => UsersEntity, users => users.informacion, { primary: true, onDelete: "CASCADE" })

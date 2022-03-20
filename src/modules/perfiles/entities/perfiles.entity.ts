@@ -2,8 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -12,6 +10,7 @@ import * as CONST from '../../../common/constants';
 import {
   PerfilesModulosEntity,
 } from '../../perfiles-modulos/entities/perfiles-modulos.entity';
+import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.USERS.PERFILES)
 export class PerfilesEntity {
@@ -43,6 +42,9 @@ export class PerfilesEntity {
   // Relaciones
   @OneToMany(() => PerfilesModulosEntity, perfilesModulos => perfilesModulos.perfil, { eager: true })
   modulos: PerfilesModulosEntity[];
+
+  @OneToMany(() => UsersEntity, users => users.perfil)
+  users: UsersEntity[];
 
 
 }

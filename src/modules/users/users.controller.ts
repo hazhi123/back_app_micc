@@ -21,7 +21,7 @@ import {
 import { isEmptyUndefined } from '../../common/helpers';
 import {
   createUsersDto,
-  profileUpdateDto,
+  perfilesUpdateDto,
   updatedUsersDto,
 } from './dto';
 import { UsersEntity } from './entities/users.entity';
@@ -105,12 +105,12 @@ export class UsersController {
   }
 
   @Auth()
-  @Patch('profile')
-  async profileUpdate(
-    @Body() userDto: profileUpdateDto,
+  @Patch('perfil')
+  async perfilesUpdate(
+    @Body() dto: perfilesUpdateDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.usersService.profileUpdate(userDto, userLogin);;
+    const data = await this.usersService.perfilesUpdate(dto, userLogin);;
     return {
       statusCode: HttpStatus.OK,
       data,

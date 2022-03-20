@@ -13,11 +13,24 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import {
+  CComercialesEntity,
+} from '../../ccomerciales/entities/ccomerciales.entity';
+import {
+  ComentariosEntity,
+} from '../../comentarios/entities/comentarios.entity';
 import { LicenciasEntity } from '../../licencias/entities/licencias.entity';
+import { LikesEntity } from '../../likes/entities/likes.entity';
+import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { PerfilesEntity } from '../../perfiles/entities/perfiles.entity';
 import {
-  UsersInformacionEntity,
-} from './users-informacion.entity';
+  PublicacionesEntity,
+} from '../../publicaciones/entities/publicaciones.entity';
+import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  UsersCComercialesEntity,
+} from '../../users-ccomerciales/entities/users-ccomerciales.entity';
+import { UsersInformacionEntity } from './users-informacion.entity';
 
 @Entity(CONST.MODULES.USERS.USERS)
 export class UsersEntity {
@@ -52,6 +65,9 @@ export class UsersEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
+  @Column({ name: 'is_visitante', type: 'bool', default: true })
+  isVisitante: boolean;
+
   @Column({ type: 'varchar', default: '' })
   image: string;
 
@@ -67,11 +83,35 @@ export class UsersEntity {
   @JoinColumn({ name: 'perfiles_id' })
   perfil: number;
 
+  @ManyToOne(() => TiendasEntity)
+  @JoinColumn({ name: 'tiendas_id' })
+  tienda: number;
+
+  @ManyToOne(() => CComercialesEntity)
+  @JoinColumn({ name: 'ccomerciales_id' })
+  ccomercial: number;
+
+  @ManyToOne(() => PaisesEntity)
+  @JoinColumn({ name: 'paises_id' })
+  pais: number;
+
   @OneToOne(() => UsersInformacionEntity, informacion => informacion.user, { eager: true })
   informacion: UsersInformacionEntity;
 
   @OneToOne(() => LicenciasEntity, licencias => licencias.user, { eager: true })
   licencia: LicenciasEntity;
+
+  @OneToMany(() => PublicacionesEntity, pub => pub.userEditor)
+  publicaciones: PublicacionesEntity[];
+
+  @OneToMany(() => ComentariosEntity, comentarios => comentarios.user)
+  comentarios: ComentariosEntity[];
+
+  @OneToMany(() => LikesEntity, likes => likes.user)
+  likes: LikesEntity[];
+
+  @OneToMany(() => UsersCComercialesEntity, likes => likes.user)
+  ccomerciales: UsersCComercialesEntity[];
 
 }
 

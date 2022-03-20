@@ -14,11 +14,10 @@ import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import {
   createUsersDto,
+  perfilesUpdateDto,
   updatedUsersDto,
 } from './dto';
-import {
-  UsersInformacionEntity,
-} from './entities/users-informacion.entity';
+import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
 
 @Injectable()
@@ -28,6 +27,10 @@ export class UsersService {
     'perfil',
     'informacion',
     'licencia',
+    'pais',
+    'ccomerciales',
+    'ccomerciales.ccomercial',
+    'ccomerciales.ccomercial.pais',
   ]
 
   constructor(
@@ -48,11 +51,6 @@ export class UsersService {
       message: 'Este usuario ya se encuentra registrado',
     }, HttpStatus.ACCEPTED)
 
-    // Valida el numero de celular
-    await this.findCelular(dto.celular);
-    // Valida el dni si existe
-    await this.findDni(dto.dni);
-
     // Es cuando el usuario se registra.
     if (isRegister && !userLogin) {
       if (dto.password !== dto.passwordConfirm) throw new HttpException({
@@ -63,20 +61,29 @@ export class UsersService {
         nombre: dto.nombre,
         apellido: dto.apellido,
         user: dto.user,
-        image: dto.image,
+        pais: dto.pais,
         password: dto.password,
-        perfil: 3,
-        createdBy: userLogin.id,
+        createdBy: 0,
         createdAt: new Date(),
-        updatedBy: userLogin.id,
+        updatedBy: 0,
         updatedAt: new Date(),
-        status: dto.status,
       };
       const create = await this.usersRP.create(data);
       const save = await this.usersRP.save(create);
+      await this.informacionRP.save({
+        pais: dto.pais,
+        correo: dto.user,
+        user: save.id
+      });
       delete save.password;
       return save;
     }
+
+    // Valida el numero de celular
+    await this.findCelular(dto.celular);
+
+    // Valida el dni si existe
+    await this.findDni(dto.dni);
 
     const create = await this.usersRP.create({
       nombre: dto.nombre,
@@ -84,6 +91,7 @@ export class UsersService {
       user: dto.user,
       image: dto.image,
       password: dto.password,
+      pais: dto.pais,
       perfil: dto.perfil,
       createdBy: userLogin.id,
       createdAt: new Date(),
@@ -173,6 +181,7 @@ export class UsersService {
       nombre: dto.nombre,
       apellido: dto.apellido,
       user: dto.user,
+      pais: dto.pais,
       image: dto.image,
       password: dto.password,
       perfil: dto.perfil,
@@ -190,7 +199,7 @@ export class UsersService {
     return res;
   }
 
-  async perfilUpdate(dto: updatedUsersDto, userLogin: UsersEntity) {
+  async perfilesUpdate(dto: perfilesUpdateDto, userLogin: UsersEntity) {
     const findOne = await this.usersRP.findOne({
       where: { id: dto.id },
       relations: ['informacion'],

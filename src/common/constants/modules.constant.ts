@@ -10,6 +10,7 @@ export const MODULES = {
     },
     USERS: {
         USERS: 'users',
+        USERS_CCOMERCIALES: 'users_ccomerciales',
         PERFILES: 'perfiles',
         PERFILES_MODULOS: 'perfiles_modulos',
         USERS_INFORMACION: 'users_informacion'
@@ -17,4 +18,11 @@ export const MODULES = {
     MODULOS: 'modulos',
     LICENCIAS: 'licencias',
     PLANES: 'planes',
+    CCOMERCIALES: 'ccomerciales',
+    CATEGORIAS: 'categorias',
+    TIENDAS: 'tiendas',
+    PUBLICACIONES: 'publicaciones',
+    COMENTARIOS: 'comentarios',
+    LIKES: 'likes',
+    PAISES: 'paises',
 }
