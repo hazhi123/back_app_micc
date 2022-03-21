@@ -1,7 +1,6 @@
 import { Repository } from 'typeorm';
 
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -16,6 +15,7 @@ import { LicenciasEntity } from '../licencias/entities/licencias.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateTiendasDto,
+  GetAllxAtributoDto,
   UpdateTiendasDto,
 } from './dto';
 import { TiendasEntity } from './entities/tiendas.entity';
@@ -23,7 +23,10 @@ import { TiendasEntity } from './entities/tiendas.entity';
 @Injectable()
 export class TiendasService {
 
-  relations = []
+  relations = [
+    'categoria',
+    'ccomercial',
+  ]
 
   constructor(
     @InjectRepository(TiendasEntity)
@@ -53,6 +56,20 @@ export class TiendasService {
     const find = await this.tiendasRP.find({
       relations: this.relations,
       order: { 'id': 'DESC' },
+    });
+    if (isEmptyUndefined(find)) return null
+    return find;
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<TiendasEntity[]> {
+    let search = {}
+    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
+    if (!isEmptyUndefined(dto.categoria)) search['categoria'] = dto.categoria
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    const find = await this.tiendasRP.find({
+      where: search,
+      relations: this.relations,
+      order: { 'nombre': 'ASC' },
     });
     if (isEmptyUndefined(find)) return null
     return find;
@@ -102,25 +119,25 @@ export class TiendasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async uploadImageToCloudinary(file: Express.Multer.File) {
-    return await this.cloudinary.uploadImage(file).catch(() => {
-      throw new BadRequestException('Invalid file type.');
-    });
-  }
+  // async uploadImageToCloudinary(file: Express.Multer.File) {
+  //   return await this.cloudinary.uploadImage(file).catch(() => {
+  //     throw new BadRequestException('Invalid file type.');
+  //   });
+  // }
 
-  async createImage(file: any, id: number) {
-    let image
-    try {
-      image = await this.uploadImageToCloudinary(file)
-    } catch (error) {
-      image = { url: '' }
-    }
-    await this.tiendasRP.createQueryBuilder()
-      .update(TiendasEntity)
-      .set({ image: image.url })
-      .where("id = :id", { id })
-      .execute();
-    return await this.getOne(id);
-  }
+  // async createImage(file: any, id: number) {
+  //   let image
+  //   try {
+  //     image = await this.uploadImageToCloudinary(file)
+  //   } catch (error) {
+  //     image = { url: '' }
+  //   }
+  //   await this.tiendasRP.createQueryBuilder()
+  //     .update(TiendasEntity)
+  //     .set({ image: image.url })
+  //     .where("id = :id", { id })
+  //     .execute();
+  //   return await this.getOne(id);
+  // }
 
 }

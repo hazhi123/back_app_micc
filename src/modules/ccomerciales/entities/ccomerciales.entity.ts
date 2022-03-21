@@ -10,6 +10,7 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
+import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES)
@@ -24,7 +25,7 @@ export class CComercialesEntity {
   @Column({ type: 'varchar', default: '' })
   correo: string;
 
-  @Column({ name: 'tel_primero', type: 'varchar' })
+  @Column({ name: 'tel_primero', type: 'varchar', default: '' })
   telPrimero: string;
 
   @Column({ name: 'tel_segundo', type: 'varchar', default: '' })
@@ -72,6 +73,9 @@ export class CComercialesEntity {
   // Relaciones
   @OneToMany(() => UsersEntity, users => users.ccomercial)
   users: UsersEntity[];
+
+  @OneToMany(() => TiendasEntity, tiendas => tiendas.ccomercial)
+  tiendas: TiendasEntity[];
 
   @ManyToOne(() => PaisesEntity, paises => paises.ccomerciales)
   @JoinColumn({ name: 'paises_id' })

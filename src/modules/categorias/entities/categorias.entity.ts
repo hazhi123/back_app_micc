@@ -24,6 +24,9 @@ export class CategoriasEntity {
   @Column({ default: '' })
   desc: string;
 
+  @Column({ default: '' })
+  imageUrl: string;
+
   @Column({ name: 'created_by' })
   createdBy: number;
 

@@ -1,6 +1,6 @@
 import {
+  IsArray,
   IsBoolean,
-  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -18,8 +18,7 @@ export class CreateTiendasDto {
 
   @ApiProperty()
   @IsString()
-  @IsEmail()
-  @IsNotEmpty()
+  @IsOptional()
   correo: string;
 
   @ApiProperty()
@@ -45,16 +44,26 @@ export class CreateTiendasDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  image: string;
+  imageUrl: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  categoria: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  ccomercial: number;
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  galeria: any; // Array de textos
 
   @ApiProperty()
   @IsOptional()
   @IsBoolean()
   status: boolean;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  user: any;
 
 }

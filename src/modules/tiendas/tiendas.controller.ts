@@ -6,10 +6,7 @@ import {
   Param,
   Patch,
   Post,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
 import * as CONST from '../../common/constants';
@@ -21,6 +18,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateTiendasDto,
+  GetAllxAtributoDto,
   UpdateTiendasDto,
 } from './dto';
 import { TiendasService } from './tiendas.service';
@@ -50,6 +48,20 @@ export class TiendasController {
   @Get()
   async getAll() {
     const data = await this.tiendasService.getAll();
+    let res = {
+      statusCode: 200,
+      data: data,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.tiendasService.getAllxAtributo(dto);
     let res = {
       statusCode: 200,
       data: data,
@@ -94,21 +106,21 @@ export class TiendasController {
     }
   }
 
-  @Auth()
-  @Post('/image/:id')
-  @UseInterceptors(
-    FileInterceptor('file'),
-  )
-  async createImage(
-    @UploadedFile() file,
-    @Param('id') id: number,
-  ) {
-    const data = await this.tiendasService.createImage(file, id);
-    return {
-      statusCode: 200,
-      data,
-      message: CONST.MESSAGES.COMMON.CREATE_DATA
-    };
-  }
+  // @Auth()
+  // @Post('/image/:id')
+  // @UseInterceptors(
+  //   FileInterceptor('file'),
+  // )
+  // async createImage(
+  //   @UploadedFile() file,
+  //   @Param('id') id: number,
+  // ) {
+  //   const data = await this.tiendasService.createImage(file, id);
+  //   return {
+  //     statusCode: 200,
+  //     data,
+  //     message: CONST.MESSAGES.COMMON.CREATE_DATA
+  //   };
+  // }
 
 }

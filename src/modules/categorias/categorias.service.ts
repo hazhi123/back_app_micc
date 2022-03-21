@@ -12,6 +12,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCategoriasDto,
+  GetAllxAtributoDto,
   UpdateCategoriasDto,
 } from './dto';
 import { CategoriasEntity } from './entities/categorias.entity';
@@ -40,6 +41,18 @@ export class CategoriasService {
 
   async getAll(id: number): Promise<CategoriasEntity[]> {
     const find = await this.categoriasRP.find({
+      relations: this.relations,
+      order: { 'nombre': 'ASC' },
+    });
+    if (isEmptyUndefined(find)) return null
+    return find;
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CategoriasEntity[]> {
+    let search = {}
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    const find = await this.categoriasRP.find({
+      where: search,
       relations: this.relations,
       order: { 'nombre': 'ASC' },
     });

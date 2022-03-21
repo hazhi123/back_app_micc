@@ -4,13 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import {
+  CComercialesEntity,
+} from '../../ccomerciales/entities/ccomerciales.entity';
 
 @Entity(CONST.MODULES.TIENDAS)
 export class TiendasEntity {
@@ -21,10 +22,10 @@ export class TiendasEntity {
   @Column({ type: 'varchar' })
   nombre: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: '' })
   correo: string;
 
-  @Column({ name: 'tel_primero', type: 'varchar' })
+  @Column({ name: 'tel_primero', type: 'varchar', default: '' })
   telPrimero: string;
 
   @Column({ name: 'tel_segundo', type: 'varchar', default: '' })
@@ -33,7 +34,7 @@ export class TiendasEntity {
   @Column({ name: 'ubic_latlng', type: 'varchar' })
   ubicacion: string;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', default: 0 })
   likes: number;
 
   @Column({ type: 'varchar', default: '' })
@@ -54,15 +55,19 @@ export class TiendasEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column("text", { array: true })
-  images: string[];
+  @Column({ default: '' })
+  imageUrl: string;
+
+  @Column("text", { array: true, default: [] })
+  galeria: string[];
 
   // Relaciones
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'categorias_id' })
   categoria: number;
 
-  @OneToMany(() => UsersEntity, users => users.tienda)
-  users: UsersEntity[];
+  @ManyToOne(() => CComercialesEntity)
+  @JoinColumn({ name: 'ccomerciales_id' })
+  ccomercial: number;
 
 }

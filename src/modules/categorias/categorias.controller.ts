@@ -19,6 +19,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import { CategoriasService } from './categorias.service';
 import {
   CreateCategoriasDto,
+  GetAllxAtributoDto,
   UpdateCategoriasDto,
 } from './dto';
 
@@ -56,14 +57,14 @@ export class CategoriasController {
   }
 
   @Auth()
-  @Get('business/:id')
-  async getAllBusiness(
-    @Param('id') id: number,
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
   ) {
-    const data = await this.perfilesService.getAll(id);
+    const data = await this.perfilesService.getAllxAtributo(dto);
     let res = {
       statusCode: 200,
-      data,
+      data: data,
       message: ''
     }
     return res
