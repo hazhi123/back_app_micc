@@ -1,11 +1,14 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -15,6 +18,7 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import { CComercialesService } from './ccomerciales.service';
 import {
@@ -46,11 +50,21 @@ export class CComercialesController {
 
   @Auth()
   @Get()
-  async getAll() {
-    const data = await this.ccomercialesService.getAll();
+  async getAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.ccomercialesService.getAll({
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES}`,
+    });
     let res = {
       statusCode: 200,
-      data: data,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
       message: ''
     }
     return res

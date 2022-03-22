@@ -27,7 +27,7 @@ import {
 @Controller(CONST.MODULES.CATEGORIAS)
 export class CategoriasController {
   constructor(
-    private readonly perfilesService: CategoriasService
+    private readonly categoriaService: CategoriasService
   ) { }
 
   @Auth()
@@ -36,7 +36,7 @@ export class CategoriasController {
     @Body() dto: CreateCategoriasDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    let data = await this.perfilesService.create(dto, userLogin);
+    let data = await this.categoriaService.create(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -47,7 +47,7 @@ export class CategoriasController {
   @Auth()
   @Get()
   async getAll() {
-    const data = await this.perfilesService.getAll(null);
+    const data = await this.categoriaService.getAll();
     let res = {
       statusCode: 200,
       data,
@@ -61,7 +61,7 @@ export class CategoriasController {
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {
-    const data = await this.perfilesService.getAllxAtributo(dto);
+    const data = await this.categoriaService.getAllxAtributo(dto);
     let res = {
       statusCode: 200,
       data: data,
@@ -73,7 +73,7 @@ export class CategoriasController {
   @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
-    const data = await this.perfilesService.getOne(id);
+    const data = await this.categoriaService.getOne(id);
     return {
       statusCode: 200,
       data,
@@ -87,7 +87,7 @@ export class CategoriasController {
     @Body() dto: UpdateCategoriasDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.perfilesService.update(dto, userLogin);
+    const data = await this.categoriaService.update(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -100,7 +100,7 @@ export class CategoriasController {
   async delete(
     @Param('id') id: number,
   ) {
-    const data = await this.perfilesService.delete(id);
+    const data = await this.categoriaService.delete(id);
     return {
       statusCode: 200,
       data,

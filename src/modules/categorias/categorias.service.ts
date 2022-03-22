@@ -39,7 +39,7 @@ export class CategoriasService {
     return await this.getOne(save.id);
   }
 
-  async getAll(id: number): Promise<CategoriasEntity[]> {
+  async getAll(): Promise<CategoriasEntity[]> {
     const find = await this.categoriasRP.find({
       relations: this.relations,
       order: { 'nombre': 'ASC' },

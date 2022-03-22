@@ -18,12 +18,13 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
+import { ComentariosService } from './comentarios.service';
 import {
   CreateComentariosDto,
   UpdateComentariosDto,
 } from './dto';
-import { ComentariosService } from './comentarios.service';
 
 @ApiTags(CONST.MODULES.COMENTARIOS.toUpperCase())
 @Controller(CONST.MODULES.COMENTARIOS)
@@ -56,7 +57,7 @@ export class ComentariosController {
     const data = await this.comentariosService.getAll({
       page,
       limit,
-      route: 'http://micc.com/comentarios',
+      route: `${URLPAGE}`,
     });
     let res = {
       statusCode: 200,

@@ -1,3 +1,8 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import {
@@ -46,13 +51,13 @@ export class CComercialesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<CComercialesEntity[]> {
-    const find = await this.ccomercialesRP.find({
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
+  async getAll(options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
+    const find = await this.ccomercialesRP.createQueryBuilder('cc')
+      .leftJoinAndSelect("cc.pais", "pais")
+      .orderBy('cc.nombre', 'ASC')
+
     if (isEmptyUndefined(find)) return null
-    return find;
+    return paginate<CComercialesEntity>(find, options);
   }
 
   async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CComercialesEntity[]> {

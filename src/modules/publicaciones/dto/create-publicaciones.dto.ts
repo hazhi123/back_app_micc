@@ -12,11 +12,6 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreatePublicacionesDto {
 
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  tipo: number;
-
-  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   nombre: string;
@@ -24,7 +19,7 @@ export class CreatePublicacionesDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  portada: string;
+  imageUrl: string;
 
   @ApiProperty()
   @IsString()
@@ -42,9 +37,14 @@ export class CreatePublicacionesDto {
   desc: string;
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  linkRef: string;
+
+  @ApiProperty()
   @IsArray()
   @IsOptional()
-  images: Array<string>;
+  galeria: Array<string>;
 
   @ApiProperty()
   @IsOptional()
@@ -52,13 +52,33 @@ export class CreatePublicacionesDto {
   status: boolean;
 
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  categoria: any;
+  @IsOptional()
+  @IsBoolean()
+  isPermanente: boolean;
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  userEditor: any;
+  categoria: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  ccomercial: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  tienda: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  tipoPub: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  userEditor: number;
 
 }

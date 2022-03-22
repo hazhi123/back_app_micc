@@ -18,6 +18,7 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePublicacionesDto,
@@ -56,7 +57,7 @@ export class PublicacionesController {
     const data = await this.publicacionesService.getAll({
       page,
       limit,
-      route: 'http://micc.com/publicaciones',
+      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
     });
     let res = {
       statusCode: 200,

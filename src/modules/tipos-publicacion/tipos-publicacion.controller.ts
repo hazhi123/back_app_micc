@@ -1,14 +1,11 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -20,25 +17,26 @@ import {
 import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
-  CreatePromocionesDto,
-  UpdatePromocionesDto,
+  CreateTiposPublicacionDto,
+  GetAllxAtributoDto,
+  UpdateTiposPublicacionDto,
 } from './dto';
-import { PromocionesService } from './publicaciones.service';
+import { TiposPublicacionService } from './tipos-publicacion.service';
 
-@ApiTags(CONST.MODULES.PROMOCIONES.toUpperCase())
-@Controller(CONST.MODULES.PROMOCIONES)
-export class PromocionesController {
+@ApiTags(CONST.MODULES.TIPOS_PUBLICACION.toUpperCase())
+@Controller(CONST.MODULES.TIPOS_PUBLICACION)
+export class TiposPublicacionController {
   constructor(
-    private readonly promocionesService: PromocionesService
+    private readonly tiposPubService: TiposPublicacionService
   ) { }
 
   @Auth()
   @Post()
   async create(
-    @Body() dto: CreatePromocionesDto,
+    @Body() dto: CreateTiposPublicacionDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    let data = await this.promocionesService.create(dto, userLogin);
+    let data = await this.tiposPubService.create(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -46,23 +44,27 @@ export class PromocionesController {
     };
   }
 
-  // @Auth()
+  @Auth()
   @Get()
-  async getAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
-  ) {
-    limit = limit > 50 ? 50 : limit;
-    const data = await this.promocionesService.getAll({
-      page,
-      limit,
-      route: 'http://micc.com/promociones',
-    });
+  async getAll() {
+    const data = await this.tiposPubService.getAll();
     let res = {
       statusCode: 200,
-      data: data.items,
-      meta: data.meta,
-      links: data.links,
+      data,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.tiposPubService.getAllxAtributo(dto);
+    let res = {
+      statusCode: 200,
+      data: data,
       message: ''
     }
     return res
@@ -71,7 +73,7 @@ export class PromocionesController {
   @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
-    const data = await this.promocionesService.getOne(id);
+    const data = await this.tiposPubService.getOne(id);
     return {
       statusCode: 200,
       data,
@@ -82,10 +84,10 @@ export class PromocionesController {
   @Auth()
   @Patch()
   async update(
-    @Body() dto: UpdatePromocionesDto,
+    @Body() dto: UpdateTiposPublicacionDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.promocionesService.update(dto, userLogin);
+    const data = await this.tiposPubService.update(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -95,8 +97,10 @@ export class PromocionesController {
 
   @Auth()
   @Delete(':id')
-  async delete(@Param('id') id: number) {
-    const data = await this.promocionesService.delete(id);
+  async delete(
+    @Param('id') id: number,
+  ) {
+    const data = await this.tiposPubService.delete(id);
     return {
       statusCode: 200,
       data,

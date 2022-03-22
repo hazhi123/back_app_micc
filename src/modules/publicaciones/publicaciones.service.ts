@@ -26,7 +26,11 @@ import { PublicacionesEntity } from './entities/publicaciones.entity';
 @Injectable()
 export class PublicacionesService {
 
-  relations = []
+  relations = [
+    'categoria',
+    'tipoPub',
+    'userEditor',
+  ]
 
   constructor(
     @InjectRepository(PublicacionesEntity)
@@ -49,7 +53,14 @@ export class PublicacionesService {
   }
 
   async getAll(options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
-    const find = await this.publicacionesRP.createQueryBuilder()
+    const find = await this.publicacionesRP.createQueryBuilder('pub')
+      .leftJoinAndSelect("pub.categoria", "categorias")
+      .leftJoinAndSelect("pub.tipoPub", "tipos_publicaciones")
+      .leftJoinAndSelect("pub.ccomercial", "ccomerciales")
+      .leftJoinAndSelect("pub.tienda", "tiendas")
+      .leftJoinAndSelect("pub.userEditor", "users")
+      .orderBy('pub.createdAt', 'DESC')
+
     if (isEmptyUndefined(find)) return null
     return paginate<PublicacionesEntity>(find, options);
   }

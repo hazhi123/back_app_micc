@@ -14,6 +14,7 @@ export * from './categorias/categorias.module';
 export * from './users-ccomerciales/users-ccomerciales.module';
 export * from './tiendas/tiendas.module';
 
+export * from './tipos-publicacion/tipos-publicacion.module';
 export * from './publicaciones/publicaciones.module';
 export * from './comentarios/comentarios.module';
 export * from './likes/likes.module';

@@ -38,6 +38,7 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.UsersCComercialesModule,
     MOD.TiendasModule,
 
+    MOD.TiposPublicacionModule,
     MOD.PublicacionesModule,
     MOD.PublicacionesModule,
     MOD.ComentariosModule,

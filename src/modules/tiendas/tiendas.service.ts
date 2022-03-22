@@ -1,3 +1,8 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import {
@@ -52,13 +57,14 @@ export class TiendasService {
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<TiendasEntity[]> {
-    const find = await this.tiendasRP.find({
-      relations: this.relations,
-      order: { 'id': 'DESC' },
-    });
+  async getAll(options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
+    const find = await this.tiendasRP.createQueryBuilder('tiendas')
+      .leftJoinAndSelect("tiendas.categoria", "categorias")
+      .leftJoinAndSelect("tiendas.ccomercial", "ccomerciales")
+      .orderBy('tiendas.nombre', 'ASC')
+
     if (isEmptyUndefined(find)) return null
-    return find;
+    return paginate<TiendasEntity>(find, options);
   }
 
   async getAllxAtributo(dto: GetAllxAtributoDto): Promise<TiendasEntity[]> {

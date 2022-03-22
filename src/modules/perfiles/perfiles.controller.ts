@@ -46,21 +46,7 @@ export class PerfilesController {
   @Auth()
   @Get()
   async getAll() {
-    const data = await this.perfilesService.getAll(null);
-    let res = {
-      statusCode: 200,
-      data,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
-  @Get('business/:id')
-  async getAllBusiness(
-    @Param('id') id: number,
-  ) {
-    const data = await this.perfilesService.getAll(id);
+    const data = await this.perfilesService.getAll();
     let res = {
       statusCode: 200,
       data,
