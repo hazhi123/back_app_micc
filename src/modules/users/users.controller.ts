@@ -21,7 +21,7 @@ import {
 import { isEmptyUndefined } from '../../common/helpers';
 import {
   createUsersDto,
-  perfilesUpdateDto,
+  GetAllxAtributoDto,
   updatedUsersDto,
 } from './dto';
 import { UsersEntity } from './entities/users.entity';
@@ -63,14 +63,14 @@ export class UsersController {
   }
 
   @Auth()
-  @Get('business/:id')
-  async getAllBusiness(
-    @Param('id') id: number,
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
   ) {
-    const data = await this.usersService.getAllBusiness(id);
+    const data = await this.usersService.getAllxAtributo(dto);
     let res = {
       statusCode: 200,
-      data,
+      data: data,
       message: ''
     }
     return res
@@ -97,20 +97,6 @@ export class UsersController {
     @UserLogin() userLogin: UsersEntity
   ) {
     const data = await this.usersService.update(userDto, userLogin);;
-    return {
-      statusCode: HttpStatus.OK,
-      data,
-      message: CONST.MESSAGES.COMMON.UPDATE_DATA
-    }
-  }
-
-  @Auth()
-  @Patch('perfil')
-  async perfilesUpdate(
-    @Body() dto: perfilesUpdateDto,
-    @UserLogin() userLogin: UsersEntity
-  ) {
-    const data = await this.usersService.perfilesUpdate(dto, userLogin);;
     return {
       statusCode: HttpStatus.OK,
       data,

@@ -18,6 +18,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePerfilesDto,
+  GetAllxAtributoDto,
   UpdatePerfilesDto,
 } from './dto';
 import { PerfilesService } from './perfiles.service';
@@ -50,6 +51,20 @@ export class PerfilesController {
     let res = {
       statusCode: 200,
       data,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.perfilesService.getAllxAtributo(dto);
+    let res = {
+      statusCode: 200,
+      data: data,
       message: ''
     }
     return res

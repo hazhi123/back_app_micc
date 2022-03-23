@@ -22,6 +22,7 @@ import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePublicacionesDto,
+  GetAllxAtributoDto,
   UpdatePublicacionesDto,
 } from './dto';
 import { PublicacionesService } from './publicaciones.service';
@@ -64,6 +65,20 @@ export class PublicacionesController {
       data: data.items,
       meta: data.meta,
       links: data.links,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.publicacionesService.getAllxAtributo(dto);
+    let res = {
+      statusCode: 200,
+      data: data,
       message: ''
     }
     return res

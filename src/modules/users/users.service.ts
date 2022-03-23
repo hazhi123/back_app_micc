@@ -14,7 +14,7 @@ import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import {
   createUsersDto,
-  perfilesUpdateDto,
+  GetAllxAtributoDto,
   updatedUsersDto,
 } from './dto';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
@@ -28,6 +28,9 @@ export class UsersService {
     'informacion',
     'licencia',
     'pais',
+    'ccomercial',
+    'tienda',
+    'tienda.categoria',
     'ccomerciales',
     'ccomerciales.ccomercial',
     'ccomerciales.ccomercial.pais',
@@ -51,6 +54,23 @@ export class UsersService {
       message: 'Este usuario ya se encuentra registrado',
     }, HttpStatus.ACCEPTED)
 
+    const {
+      nombre,
+      apellido,
+      user,
+      isVisitante,
+      pais,
+      imageUrl,
+      imageBack,
+      password,
+      perfil,
+      status,
+      dni,
+      direccion,
+      celular,
+      telefono,
+    } = dto
+
     // Es cuando el usuario se registra.
     if (isRegister && !userLogin) {
       if (dto.password !== dto.passwordConfirm) throw new HttpException({
@@ -58,11 +78,12 @@ export class UsersService {
         message: CONST.MESSAGES.AUTH.RECOVERY_PASSWORD.ERROR.MATCH,
       }, HttpStatus.ACCEPTED)
       let data = {
-        nombre: dto.nombre,
-        apellido: dto.apellido,
-        user: dto.user,
-        pais: dto.pais,
-        password: dto.password,
+        nombre,
+        apellido,
+        user,
+        pais,
+        isVisitante: true,
+        password,
         createdBy: 0,
         createdAt: new Date(),
         updatedBy: 0,
@@ -71,7 +92,6 @@ export class UsersService {
       const create = await this.usersRP.create(data);
       const save = await this.usersRP.save(create);
       await this.informacionRP.save({
-        pais: dto.pais,
         correo: dto.user,
         user: save.id
       });
@@ -86,27 +106,29 @@ export class UsersService {
     await this.findDni(dto.dni);
 
     const create = await this.usersRP.create({
-      nombre: dto.nombre,
-      apellido: dto.apellido,
-      user: dto.user,
-      image: dto.image,
-      password: dto.password,
-      pais: dto.pais,
-      perfil: dto.perfil,
+      nombre,
+      apellido,
+      user,
+      imageUrl,
+      imageBack,
+      password,
+      isVisitante,
+      pais,
+      perfil,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
       updatedAt: new Date(),
-      status: dto.status,
+      status,
     });
     const save = await this.usersRP.save(create);
 
     await this.informacionRP.save({
-      dni: dto.dni,
-      celular: dto.celular,
-      direccion: dto.direccion,
+      dni,
+      celular,
+      direccion,
       correo: dto.user,
-      telefono: dto.telefono,
+      telefono,
       user: save.id
     });
     const getOne = await this.getOne(save.id)
@@ -116,9 +138,8 @@ export class UsersService {
 
   async getAll(isShowPassword: boolean = false) {
     const find = await this.usersRP.find({
-      where: { isAdmin: true },
       relations: this.relations,
-      order: { 'id': 'DESC' },
+      order: { 'nombre': 'ASC' },
     });
     if (isEmptyUndefined(find)) return null
     const arr = find.map(el => {
@@ -128,18 +149,18 @@ export class UsersService {
     return arr;
   }
 
-  async getAllBusiness(empresa: number) {
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<UsersEntity[]> {
+    let search = {}
+    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
+    if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     const find = await this.usersRP.find({
-      where: { empresa },
+      where: search,
       relations: this.relations,
-      order: { 'id': 'DESC' },
+      order: { 'nombre': 'ASC' },
     });
     if (isEmptyUndefined(find)) return null
-    const arr = find.map(el => {
-      delete el.password;
-      return el;
-    });
-    return arr;
+    return find;
   }
 
   async getOne(id: number, userLogin?: UsersEntity) {
@@ -159,35 +180,69 @@ export class UsersService {
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
 
-    const dataAdditional = {
-      dni: dto.dni,
-      celular: dto.celular,
-      direccion: dto.direccion,
-      correo: dto.user,
-      telefono: dto.telefono,
-      user: dto.id
+    let { id,
+      nombre,
+      apellido,
+      user,
+      pais,
+      imageUrl,
+      imageBack,
+      password,
+      perfil,
+      status,
+      celular,
+      ccomercial,
+      isVisitante,
+      tienda,
+      dni,
+      direccion,
+      telefono,
+    } = dto
+
+    const dataInformacion = {
+      dni,
+      celular,
+      direccion,
+      correo: user,
+      telefono,
+      user: id,
     }
     if (isEmptyUndefined(getOne.informacion)) {
-      await this.informacionRP.save(dataAdditional);
+      await this.informacionRP.save(dataInformacion);
     } else {
-      const assinginformacion = Object.assign(getOne.informacion, dataAdditional)
+      const assinginformacion = Object.assign(getOne.informacion, dataInformacion)
       await this.informacionRP.update(getOne.informacion.user, assinginformacion);
     }
 
     delete getOne.informacion
     delete getOne.licencia
+    delete getOne.publicaciones
+    delete getOne.comentarios
+    delete getOne.likes
+    delete getOne.ccomerciales
+
+    if (isVisitante) {
+      getOne['ccomercial'] = null;
+      getOne['tienda'] = null;
+      ccomercial = null;
+      tienda = null;
+    }
 
     const objectUsers = Object.assign(getOne, {
-      nombre: dto.nombre,
-      apellido: dto.apellido,
-      user: dto.user,
-      pais: dto.pais,
-      image: dto.image,
-      password: dto.password,
-      perfil: dto.perfil,
+      nombre,
+      apellido,
+      user,
+      pais,
+      imageUrl,
+      imageBack,
+      password,
+      isVisitante,
+      perfil,
+      ccomercial,
+      tienda,
       updatedBy: userLogin.id,
       updatedAt: new Date(),
-      status: dto.status,
+      status,
     })
     if (isEmptyUndefined(dto.password)) {
       delete objectUsers.password
@@ -199,39 +254,6 @@ export class UsersService {
     return res;
   }
 
-  async perfilesUpdate(dto: perfilesUpdateDto, userLogin: UsersEntity) {
-    const findOne = await this.usersRP.findOne({
-      where: { id: dto.id },
-      relations: ['informacion'],
-    });
-    const dataInformacion = {
-      dni: dto.dni,
-      celular: dto.celular,
-      direccion: dto.direccion,
-      correo: dto.user,
-      telefono: dto.telefono,
-    }
-    if (isEmptyUndefined(findOne.informacion)) {
-      await this.informacionRP.save(dataInformacion);
-    } else {
-      const assinginformacion = Object.assign(findOne.informacion, dataInformacion)
-      await this.informacionRP.update(findOne.id, assinginformacion);
-    }
-
-    delete findOne.informacion
-    delete findOne.licencia
-
-    const assingUsers = Object.assign(findOne, {
-      nombre: dto.nombre,
-      apellido: dto.apellido,
-      password: dto.password,
-      updatedBy: userLogin.id,
-      updatedAt: new Date(),
-    })
-    await this.usersRP.update(dto.id, assingUsers);
-    return await this.getOne(dto.id);
-  }
-
   async delete(id: number) {
     const getOne = await this.getOne(id, null)
     if (isEmptyUndefined(getOne)) throw new HttpException({
@@ -239,7 +261,12 @@ export class UsersService {
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
 
-    await this.usersRP.delete(id);
+    await this.usersRP.createQueryBuilder()
+      .update(UsersEntity)
+      .set({ status: false })
+      .where("id = :id", { id })
+      .execute();
+    // await this.usersRP.delete(id);
     return getOne;
   }
 
@@ -286,7 +313,7 @@ export class UsersService {
     }
     await this.usersRP.createQueryBuilder()
       .update(UsersEntity)
-      .set({ image: image.url })
+      .set({ imageUrl: image.url })
       .where("id = :id", { id })
       .execute();
     return await this.getOne(id);

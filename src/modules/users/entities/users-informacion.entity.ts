@@ -26,9 +26,6 @@ export class UsersInformacionEntity {
   @Column({ type: 'varchar', default: '' })
   telefono: string;
 
-  @Column({ type: 'integer', default: 0 })
-  pais: number;
-
   //relaciones
   @OneToOne(() => UsersEntity, users => users.informacion, { primary: true, onDelete: "CASCADE" })
   @JoinColumn({ name: 'users_id' })

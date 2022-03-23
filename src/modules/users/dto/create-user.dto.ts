@@ -50,7 +50,12 @@ export class createUsersDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  image: string;
+  imageUrl: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  imageBack: string;
 
   @ApiProperty()
   @IsNumber()
@@ -79,9 +84,24 @@ export class createUsersDto {
   pais: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  ccomercial: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  tienda: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isVisitante: boolean;
 
 
 }

@@ -68,8 +68,11 @@ export class UsersEntity {
   @Column({ name: 'is_visitante', type: 'bool', default: true })
   isVisitante: boolean;
 
-  @Column({ type: 'varchar', default: '' })
-  image: string;
+  @Column({ name: 'image_url', type: 'varchar', default: '' })
+  imageUrl: string;
+
+  @Column({ name: 'image_back', type: 'varchar', default: '' })
+  imageBack: string;
 
   @BeforeInsert()
   @BeforeUpdate()

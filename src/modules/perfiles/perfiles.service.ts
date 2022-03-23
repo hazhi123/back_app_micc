@@ -12,6 +12,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePerfilesDto,
+  GetAllxAtributoDto,
   UpdatePerfilesDto,
 } from './dto';
 import { PerfilesEntity } from './entities/perfiles.entity';
@@ -40,6 +41,18 @@ export class PerfilesService {
 
   async getAll(): Promise<PerfilesEntity[]> {
     const find = await this.perfilesRP.find({
+      relations: this.relations,
+      order: { 'nombre': 'ASC' },
+    });
+    if (isEmptyUndefined(find)) return null
+    return find;
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<PerfilesEntity[]> {
+    let search = {}
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    const find = await this.perfilesRP.find({
+      where: search,
       relations: this.relations,
       order: { 'nombre': 'ASC' },
     });

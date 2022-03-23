@@ -19,6 +19,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePublicacionesDto,
+  GetAllxAtributoDto,
   UpdatePublicacionesDto,
 } from './dto';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
@@ -30,6 +31,8 @@ export class PublicacionesService {
     'categoria',
     'tipoPub',
     'userEditor',
+    'tienda',
+    'ccomercial',
   ]
 
   constructor(
@@ -63,6 +66,21 @@ export class PublicacionesService {
 
     if (isEmptyUndefined(find)) return null
     return paginate<PublicacionesEntity>(find, options);
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<PublicacionesEntity[]> {
+    let search = {}
+    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
+    if (!isEmptyUndefined(dto.categoria)) search['categoria'] = dto.categoria
+    if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    const find = await this.publicacionesRP.find({
+      where: search,
+      relations: this.relations,
+      order: { 'nombre': 'ASC' },
+    });
+    if (isEmptyUndefined(find)) return null
+    return find;
   }
 
   async getOne(id: number): Promise<PublicacionesEntity> {
