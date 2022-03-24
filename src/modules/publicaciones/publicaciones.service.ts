@@ -33,6 +33,7 @@ export class PublicacionesService {
     'userEditor',
     'tienda',
     'ccomercial',
+    'ccomercial.pais',
   ]
 
   constructor(
@@ -60,6 +61,7 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.categoria", "categorias")
       .leftJoinAndSelect("pub.tipoPub", "tipos_publicaciones")
       .leftJoinAndSelect("pub.ccomercial", "ccomerciales")
+      .leftJoinAndSelect("ccomerciales.pais", "paises")
       .leftJoinAndSelect("pub.tienda", "tiendas")
       .leftJoinAndSelect("pub.userEditor", "users")
       .orderBy('pub.createdAt', 'DESC')

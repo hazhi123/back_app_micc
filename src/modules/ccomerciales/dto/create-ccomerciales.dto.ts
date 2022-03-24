@@ -20,12 +20,12 @@ export class CreateCComercialesDto {
   @ApiProperty()
   @IsString()
   @IsEmail()
-  @IsOptional()
+  @IsNotEmpty()
   correo: string;
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   telPrimero: string;
 
   @ApiProperty()
