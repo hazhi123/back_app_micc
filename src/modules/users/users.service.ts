@@ -83,6 +83,7 @@ export class UsersService {
         user,
         pais,
         isVisitante: true,
+        perfil: 3,
         password,
         createdBy: 0,
         createdAt: new Date(),
