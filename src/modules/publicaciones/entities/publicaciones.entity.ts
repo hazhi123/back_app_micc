@@ -1,3 +1,4 @@
+import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import {
   Column,
   CreateDateColumn,
@@ -62,6 +63,15 @@ export class PublicacionesEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
+  @Column({ type: 'integer', default: 0 })
+  totalLikes: number;
+
+  @Column({ type: 'integer', default: 0 })
+  totalComentarios: number;
+
+  @Column({ type: 'integer', default: 0 })
+  totalCompartidos: number;
+
   @Column("text", { array: true, default: [] })
   galeria: string[];
 
@@ -89,10 +99,13 @@ export class PublicacionesEntity {
   @JoinColumn({ name: 'users_id' })
   userEditor: number;
 
-  @OneToMany(() => ComentariosEntity, comentarios => comentarios.publicacion)
+  @OneToMany(() => ComentariosEntity, comentarios => comentarios.publicacion, { eager: true })
   comentarios: ComentariosEntity[];
 
-  @OneToMany(() => LikesEntity, likes => likes.publicacion)
+  @OneToMany(() => LikesEntity, likes => likes.publicacion, { eager: true })
   likes: LikesEntity[];
+
+  @OneToMany(() => GuardadosEntity, guardados => guardados.publicacion)
+  guardados: GuardadosEntity[];
 
 }

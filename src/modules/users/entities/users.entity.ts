@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -109,6 +110,9 @@ export class UsersEntity {
 
   @OneToMany(() => ComentariosEntity, comentarios => comentarios.user)
   comentarios: ComentariosEntity[];
+
+  @OneToMany(() => GuardadosEntity, guardado => guardado.user)
+  guardados: GuardadosEntity[];
 
   @OneToMany(() => LikesEntity, likes => likes.user)
   likes: LikesEntity[];

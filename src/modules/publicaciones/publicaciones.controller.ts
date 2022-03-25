@@ -4,6 +4,8 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -42,13 +44,13 @@ export class PublicacionesController {
   ) {
     let data = await this.publicacionesService.create(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
   }
 
-  // @Auth()
+  @Auth()
   @Get()
   async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -61,7 +63,7 @@ export class PublicacionesController {
       route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
     });
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data.items,
       meta: data.meta,
       links: data.links,
@@ -77,8 +79,31 @@ export class PublicacionesController {
   ) {
     const data = await this.publicacionesService.getAllxAtributo(dto);
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/publico')
+  async getAllPublico(
+    @Body() dto: GetAllxAtributoDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.publicacionesService.getAllPublico(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
       message: ''
     }
     return res
@@ -89,7 +114,7 @@ export class PublicacionesController {
   async getOne(@Param('id') id: number) {
     const data = await this.publicacionesService.getOne(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
     }
@@ -103,7 +128,7 @@ export class PublicacionesController {
   ) {
     const data = await this.publicacionesService.update(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.UPDATE_DATA
     }
@@ -114,7 +139,7 @@ export class PublicacionesController {
   async delete(@Param('id') id: number) {
     const data = await this.publicacionesService.delete(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.DELETE_DATA
     }

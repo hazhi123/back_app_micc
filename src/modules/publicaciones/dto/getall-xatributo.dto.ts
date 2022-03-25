@@ -24,6 +24,11 @@ export class GetAllxAtributoDto {
   categoria: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  tipoPub: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;

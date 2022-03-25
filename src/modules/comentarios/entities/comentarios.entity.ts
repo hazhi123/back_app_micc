@@ -37,7 +37,7 @@ export class ComentariosEntity {
   @JoinColumn({ name: 'users_id' })
   user: number;
 
-  @ManyToOne(() => PublicacionesEntity)
+  @ManyToOne(() => PublicacionesEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'publicaciones_id' })
   publicacion: number;
 

@@ -11,8 +11,8 @@ import {
 import * as CONST from '../../../common/constants';
 import { UsersEntity } from '../../users/entities/users.entity';
 
-@Entity(CONST.MODULES.LIKES)
-export class LikesEntity {
+@Entity(CONST.MODULES.GUARDADOS)
+export class GuardadosEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,11 +30,11 @@ export class LikesEntity {
   updatedAt: Date;
 
   // Relaciones
-  @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: 'users_id' })
+  @ManyToOne(() => UsersEntity, users => users.guardados)
+  @JoinColumn({ name: 'perfiles_id' })
   user: number;
 
-  @ManyToOne(() => PublicacionesEntity, { onDelete: "CASCADE" })
+  @ManyToOne(() => PublicacionesEntity, publicacion => publicacion.guardados)
   @JoinColumn({ name: 'publicaciones_id' })
   publicacion: number;
 

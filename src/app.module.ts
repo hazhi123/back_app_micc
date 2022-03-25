@@ -43,6 +43,7 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.PublicacionesModule,
     MOD.ComentariosModule,
     MOD.LikesModule,
+    MOD.GuardadosModule,
 
     CloudinaryModule,
 

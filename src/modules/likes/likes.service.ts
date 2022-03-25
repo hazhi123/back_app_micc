@@ -22,20 +22,31 @@ import {
   UpdateLikesDto,
 } from './dto';
 import { LikesEntity } from './entities/likes.entity';
+import { PublicacionesEntity } from '../publicaciones/entities/publicaciones.entity';
 
 @Injectable()
 export class LikesService {
 
-  relations = []
+  relations = [
+    'publicacion'
+  ]
 
   constructor(
     @InjectRepository(LikesEntity)
     private readonly likesRP: Repository<LikesEntity>,
 
+    @InjectRepository(PublicacionesEntity)
+    private readonly publicacionesRP: Repository<PublicacionesEntity>,
+
     private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreateLikesDto, userLogin: UsersEntity) {
+    const existe = await this.existe(dto.user, dto.publicacion);
+    if (!isEmptyUndefined(existe)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: 'Ya diste un like',
+    }, HttpStatus.ACCEPTED)
     const save = await this.likesRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -43,6 +54,17 @@ export class LikesService {
       updatedBy: userLogin.id,
       updatedAt: new Date(),
     });
+
+    const pub = await this.publicacionesRP.findOne({
+      where: { id: dto.publicacion },
+    });
+
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ totalLikes: pub.totalLikes + 1 })
+      .where("id = :id", { id: dto.publicacion })
+      .execute();
+
     return await this.getOne(save.id);
   }
 
@@ -84,6 +106,13 @@ export class LikesService {
     }, HttpStatus.ACCEPTED)
     await this.likesRP.delete(id);
     return getOne;
+  }
+
+  async existe(user, publicacion): Promise<LikesEntity> {
+    return await this.likesRP.findOne({
+      where: { user, publicacion },
+      relations: this.relations
+    });
   }
 
 }

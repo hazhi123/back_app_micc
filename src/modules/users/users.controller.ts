@@ -69,7 +69,7 @@ export class UsersController {
   ) {
     const data = await this.usersService.getAllxAtributo(dto);
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data,
       message: ''
     }

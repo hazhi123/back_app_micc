@@ -18,3 +18,4 @@ export * from './tipos-publicacion/tipos-publicacion.module';
 export * from './publicaciones/publicaciones.module';
 export * from './comentarios/comentarios.module';
 export * from './likes/likes.module';
+export * from './guardados/guardados.module';

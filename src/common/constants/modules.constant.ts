@@ -22,6 +22,7 @@ export const MODULES = {
     CATEGORIAS: 'categorias',
     TIENDAS: 'tiendas',
     PUBLICACIONES: 'publicaciones',
+    GUARDADOS: 'guardados',
     COMENTARIOS: 'comentarios',
     LIKES: 'likes',
     PAISES: 'paises',

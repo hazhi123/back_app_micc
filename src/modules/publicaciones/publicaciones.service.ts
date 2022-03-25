@@ -64,7 +64,7 @@ export class PublicacionesService {
       .leftJoinAndSelect("ccomerciales.pais", "paises")
       .leftJoinAndSelect("pub.tienda", "tiendas")
       .leftJoinAndSelect("pub.userEditor", "users")
-      .orderBy('pub.createdAt', 'DESC')
+      .orderBy('pub.id', 'DESC')
 
     if (isEmptyUndefined(find)) return null
     return paginate<PublicacionesEntity>(find, options);
@@ -83,6 +83,24 @@ export class PublicacionesService {
     });
     if (isEmptyUndefined(find)) return null
     return find;
+  }
+
+  async getAllPublico(dto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
+    let query = await this.publicacionesRP.createQueryBuilder('pub')
+    query.leftJoinAndSelect("pub.categoria", "categorias")
+      .leftJoinAndSelect("pub.tipoPub", "tipos_publicaciones")
+      .leftJoinAndSelect("pub.ccomercial", "ccomerciales")
+      .leftJoinAndSelect("ccomerciales.pais", "paises")
+      .leftJoinAndSelect("pub.tienda", "tiendas")
+      .leftJoinAndSelect("pub.userEditor", "users")
+      .where("pub.status = :status", { status: true })
+      .andWhere("pub.ccomercial = :ccomercial", { ccomercial: dto.ccomercial })
+      .andWhere("pub.tipoPub = :tipo", { tipo: dto.tipoPub })
+      .orderBy('pub.createdAt', 'DESC')
+    if (!isEmptyUndefined(dto.categoria)) query.andWhere("pub.categoria = :categoria", { categoria: dto.categoria })
+    const find = query
+    if (isEmptyUndefined(find)) return null
+    return paginate<PublicacionesEntity>(find, options);
   }
 
   async getOne(id: number): Promise<PublicacionesEntity> {
