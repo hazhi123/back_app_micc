@@ -32,6 +32,7 @@ export class PublicacionesService {
     'tipoPub',
     'userEditor',
     'tienda',
+    'tienda.categoria',
     'ccomercial',
     'ccomercial.pais',
   ]

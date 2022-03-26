@@ -19,6 +19,8 @@ export default class UsersSeeder implements Seeder {
           user: 'yordano@gmail.com',
           password: '$2b$10$BV0NRhnxZXkjKwiNu8IbJOFRXh4Q8BsoY/qLaEv9lw0/4ct.AemAi',
           perfil: 1,
+          pais: 1,
+          isVisitante: false,
           createdBy: 1,
           updatedBy: 1,
           status: true
@@ -29,6 +31,20 @@ export default class UsersSeeder implements Seeder {
           user: 'editor@gmail.com',
           password: '$2b$10$BV0NRhnxZXkjKwiNu8IbJOFRXh4Q8BsoY/qLaEv9lw0/4ct.AemAi',
           perfil: 2,
+          pais: 1,
+          isVisitante: false,
+          createdBy: 1,
+          updatedBy: 1,
+          status: true
+        },
+        {
+          nombre: 'Visitante',
+          apellido: 'Visita',
+          user: 'visitante@gmail.com',
+          password: '$2b$10$BV0NRhnxZXkjKwiNu8IbJOFRXh4Q8BsoY/qLaEv9lw0/4ct.AemAi',
+          perfil: 3,
+          pais: 1,
+          isVisitante: true,
           createdBy: 1,
           updatedBy: 1,
           status: true

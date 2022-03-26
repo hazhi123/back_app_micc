@@ -19,6 +19,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLikesDto,
+  GetAllxAtributoDto,
   UpdateLikesDto,
 } from './dto';
 import { LikesEntity } from './entities/likes.entity';
@@ -28,7 +29,8 @@ import { PublicacionesEntity } from '../publicaciones/entities/publicaciones.ent
 export class LikesService {
 
   relations = [
-    'publicacion'
+    'publicacion',
+    'user',
   ]
 
   constructor(
@@ -72,6 +74,19 @@ export class LikesService {
     const find = await this.likesRP.createQueryBuilder()
     if (isEmptyUndefined(find)) return null
     return paginate<LikesEntity>(find, options);
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<LikesEntity[]> {
+    let search = {}
+    if (!isEmptyUndefined(dto.publicacion)) search['publicacion'] = dto.publicacion
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    const find = await this.likesRP.find({
+      where: search,
+      relations: this.relations,
+      order: { 'id': 'DESC' },
+    });
+    if (isEmptyUndefined(find)) return null
+    return find;
   }
 
   async getOne(id: number): Promise<LikesEntity> {

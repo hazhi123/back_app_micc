@@ -28,7 +28,8 @@ import { CComercialesEntity } from './entities/ccomerciales.entity';
 export class CComercialesService {
 
   relations = [
-    'pais'
+    'pais',
+    'tiendas'
   ]
 
   constructor(
@@ -54,6 +55,7 @@ export class CComercialesService {
   async getAll(options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
     const find = await this.ccomercialesRP.createQueryBuilder('cc')
       .leftJoinAndSelect("cc.pais", "pais")
+      .leftJoinAndSelect("cc.tiendas", "tiendas")
       .orderBy('cc.nombre', 'ASC')
 
     if (isEmptyUndefined(find)) return null

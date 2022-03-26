@@ -29,6 +29,7 @@ export class UsersService {
     'licencia',
     'pais',
     'ccomercial',
+    'ccomercial.pais',
     'tienda',
     'tienda.categoria',
     'ccomerciales',
@@ -63,6 +64,8 @@ export class UsersService {
       imageUrl,
       imageBack,
       password,
+      ccomercial,
+      tienda,
       perfil,
       status,
       dni,
@@ -100,11 +103,11 @@ export class UsersService {
       return save;
     }
 
-    // Valida el numero de celular
-    await this.findCelular(dto.celular);
+    // // Valida el numero de celular
+    // await this.findCelular(dto.celular);
 
-    // Valida el dni si existe
-    await this.findDni(dto.dni);
+    // // Valida el dni si existe
+    // await this.findDni(dto.dni);
 
     const create = await this.usersRP.create({
       nombre,
@@ -113,6 +116,8 @@ export class UsersService {
       imageUrl,
       imageBack,
       password,
+      ccomercial,
+      tienda,
       isVisitante,
       pais,
       perfil,

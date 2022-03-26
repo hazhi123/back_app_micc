@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -11,6 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { URLPAGE } from '../../config';
 
 import * as CONST from '../../common/constants';
 import {
@@ -21,6 +23,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLikesDto,
+  GetAllxAtributoDto,
   UpdateLikesDto,
 } from './dto';
 import { LikesService } from './likes.service';
@@ -40,7 +43,7 @@ export class LikesController {
   ) {
     let data = await this.likesService.create(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -56,13 +59,27 @@ export class LikesController {
     const data = await this.likesService.getAll({
       page,
       limit,
-      route: 'http://micc.com/promociones',
+      route: `${URLPAGE}/${CONST.MODULES.LIKES}`,
     });
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data.items,
       meta: data.meta,
       links: data.links,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/atributo')
+  async getAllxAtributo(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.likesService.getAllxAtributo(dto);
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data,
       message: ''
     }
     return res
@@ -73,7 +90,7 @@ export class LikesController {
   async getOne(@Param('id') id: number) {
     const data = await this.likesService.getOne(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
     }
@@ -87,7 +104,7 @@ export class LikesController {
   ) {
     const data = await this.likesService.update(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.UPDATE_DATA
     }
@@ -98,7 +115,7 @@ export class LikesController {
   async delete(@Param('id') id: number) {
     const data = await this.likesService.delete(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.DELETE_DATA
     }
