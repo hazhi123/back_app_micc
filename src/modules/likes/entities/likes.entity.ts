@@ -36,6 +36,6 @@ export class LikesEntity {
 
   @ManyToOne(() => PublicacionesEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'publicaciones_id' })
-  publicacion: number;
+  publicacion: any;
 
 }

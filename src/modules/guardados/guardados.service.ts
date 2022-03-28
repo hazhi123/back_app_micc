@@ -67,6 +67,8 @@ export class GuardadosService {
     const find = await this.guardadosRP.createQueryBuilder('guar')
       .leftJoinAndSelect("guar.user", "users")
       .leftJoinAndSelect("guar.publicacion", "publicaciones")
+      .leftJoinAndSelect("publicaciones.ccomercial", "ccomerciales")
+      .leftJoinAndSelect("publicaciones.tienda", "tiendas")
       .where("guar.user = :user", { user })
       .orderBy('guar.id', 'DESC')
 

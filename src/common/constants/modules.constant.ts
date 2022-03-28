@@ -19,6 +19,7 @@ export const MODULES = {
     LICENCIAS: 'licencias',
     PLANES: 'planes',
     CCOMERCIALES: 'ccomerciales',
+    GALERIA: 'galeria',
     CATEGORIAS: 'categorias',
     TIENDAS: 'tiendas',
     PUBLICACIONES: 'publicaciones',

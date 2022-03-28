@@ -22,15 +22,21 @@ import {
   UpdateComentariosDto,
 } from './dto';
 import { ComentariosEntity } from './entities/comentarios.entity';
+import { PublicacionesEntity } from '../publicaciones/entities/publicaciones.entity';
 
 @Injectable()
 export class ComentariosService {
 
-  relations = []
+  relations = [
+    'publicacion'
+  ]
 
   constructor(
     @InjectRepository(ComentariosEntity)
     private readonly comentariosRP: Repository<ComentariosEntity>,
+
+    @InjectRepository(PublicacionesEntity)
+    private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
     private cloudinary: CloudinaryService
   ) { }
@@ -44,11 +50,25 @@ export class ComentariosService {
       updatedAt: new Date(),
       status: true
     });
+
+    const pub = await this.publicacionesRP.findOne({
+      where: { id: dto.publicacion },
+    });
+
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ totalComentarios: pub.totalComentarios + 1 })
+      .where("id = :id", { id: dto.publicacion })
+      .execute();
+
     return await this.getOne(save.id);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<ComentariosEntity>> {
-    const find = await this.comentariosRP.createQueryBuilder()
+  async getAll(id, options: IPaginationOptions): Promise<Pagination<ComentariosEntity>> {
+    const find = await this.comentariosRP.createQueryBuilder('com')
+      .leftJoinAndSelect("com.user", "users")
+      .where("com.publicacion = :id", { id })
+      .orderBy('com.id', 'DESC')
     if (isEmptyUndefined(find)) return null
     return paginate<ComentariosEntity>(find, options);
   }
@@ -79,12 +99,25 @@ export class ComentariosService {
 
   async delete(id: number) {
     const getOne = await this.getOne(id);
+
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
+
+    const pub = await this.publicacionesRP.findOne({
+      where: { id: getOne.publicacion.id },
+    });
+
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ totalComentarios: pub.totalComentarios - 1 })
+      .where("id = :id", { id: getOne.publicacion.id })
+      .execute();
+
     await this.comentariosRP.delete(id);
-    return getOne;
+
+    return await this.getOne(getOne.id);
   }
 
 }

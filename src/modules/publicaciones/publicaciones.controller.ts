@@ -11,7 +11,10 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
 import * as CONST from '../../common/constants';
@@ -143,6 +146,55 @@ export class PublicacionesController {
       data,
       message: CONST.MESSAGES.COMMON.DELETE_DATA
     }
+  }
+
+  @Auth()
+  @Post('/image/:id')
+  @UseInterceptors(
+    FileInterceptor('file'),
+  )
+  async createImage(
+    @UploadedFile() file,
+    @Param('id') id: number,
+  ) {
+    const data = await this.publicacionesService.createImage(file, id, null);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/galeria/:index/:id')
+  @UseInterceptors(
+    FileInterceptor('file'),
+  )
+  async createGaleria(
+    @UploadedFile() file,
+    @Param('index') index: number,
+    @Param('id') id: number,
+  ) {
+    const data = await this.publicacionesService.createImage(file, id, index);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Get('/galeria_del/:index/:id')
+  async createGaleriaDel(
+    @Param('index') index: number,
+    @Param('id') id: number,
+  ) {
+    const data = await this.publicacionesService.createImageDel(id, index);
+    return {
+      statusCode: 200,
+      data,
+      message: 'Se ha eliminado la imagen correctamente'
+    };
   }
 
 }

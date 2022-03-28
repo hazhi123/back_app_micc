@@ -126,9 +126,26 @@ export class UsersController {
     @UploadedFile() file,
     @Param('id') id: number,
   ) {
-    const data = await this.usersService.createImage(file, id);
+    const data = await this.usersService.createImage(file, id, false);
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/imageBack/:id')
+  @UseInterceptors(
+    FileInterceptor('file'),
+  )
+  async createImageBack(
+    @UploadedFile() file,
+    @Param('id') id: number,
+  ) {
+    const data = await this.usersService.createImage(file, id, true);
+    return {
+      statusCode: 200,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };

@@ -19,6 +19,7 @@ import {
 } from './dto';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
+import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
 
 @Injectable()
 export class UsersService {
@@ -43,6 +44,9 @@ export class UsersService {
 
     @InjectRepository(UsersInformacionEntity)
     private readonly informacionRP: Repository<UsersInformacionEntity>,
+
+    @InjectRepository(GaleriaEntity)
+    private readonly galeriaRP: Repository<GaleriaEntity>,
 
     private cloudinary: CloudinaryService
   ) { }
@@ -310,19 +314,38 @@ export class UsersService {
     });
   }
 
-  async createImage(file: any, id: number) {
+  async createImage(file: any, id: number, isBack: boolean,) {
     let image
     try {
       image = await this.uploadImageToCloudinary(file)
+      this.galeriaRP.createQueryBuilder()
+        .insert()
+        .into(GaleriaEntity)
+        .values({
+          titular: 'user',
+          refId: id,
+          file: image.url
+        })
+        .execute();
     } catch (error) {
       image = { url: '' }
     }
-    await this.usersRP.createQueryBuilder()
-      .update(UsersEntity)
-      .set({ imageUrl: image.url })
-      .where("id = :id", { id })
-      .execute();
+
+    if (isBack) {
+      await this.usersRP.createQueryBuilder()
+        .update(UsersEntity)
+        .set({ imageBack: image.url })
+        .where("id = :id", { id })
+        .execute();
+    } else {
+      await this.usersRP.createQueryBuilder()
+        .update(UsersEntity)
+        .set({ imageUrl: image.url })
+        .where("id = :id", { id })
+        .execute();
+    }
     return await this.getOne(id);
+
   }
 
 }

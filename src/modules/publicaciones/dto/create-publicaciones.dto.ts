@@ -52,8 +52,8 @@ export class CreatePublicacionesDto {
   status: boolean;
 
   @ApiProperty()
-  @IsOptional()
   @IsBoolean()
+  @IsOptional()
   isPermanente: boolean;
 
   @ApiProperty()
@@ -68,7 +68,7 @@ export class CreatePublicacionesDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   tienda: number;
 
   @ApiProperty()

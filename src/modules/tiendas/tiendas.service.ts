@@ -6,6 +6,7 @@ import {
 import { Repository } from 'typeorm';
 
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -24,6 +25,7 @@ import {
   UpdateTiendasDto,
 } from './dto';
 import { TiendasEntity } from './entities/tiendas.entity';
+import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
 
 @Injectable()
 export class TiendasService {
@@ -40,13 +42,21 @@ export class TiendasService {
     @InjectRepository(LicenciasEntity)
     private readonly licenciasRP: Repository<LicenciasEntity>,
 
+    @InjectRepository(GaleriaEntity)
+    private readonly galeriaRP: Repository<GaleriaEntity>,
+
     private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreateTiendasDto, userLogin: UsersEntity) {
-    await this.findNombre(dto.nombre, false)
+    let galeria = []
+    for (let x = 0; x < 9; x++) {
+      galeria.push("")
+    }
+
     const save = await this.tiendasRP.save({
       ...dto,
+      galeria,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -125,25 +135,68 @@ export class TiendasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  // async uploadImageToCloudinary(file: Express.Multer.File) {
-  //   return await this.cloudinary.uploadImage(file).catch(() => {
-  //     throw new BadRequestException('Invalid file type.');
-  //   });
-  // }
+  async uploadImageToCloudinary(file: Express.Multer.File) {
+    return await this.cloudinary.uploadImage(file).catch(() => {
+      throw new BadRequestException('Invalid file type.');
+    });
+  }
 
-  // async createImage(file: any, id: number) {
-  //   let image
-  //   try {
-  //     image = await this.uploadImageToCloudinary(file)
-  //   } catch (error) {
-  //     image = { url: '' }
-  //   }
-  //   await this.tiendasRP.createQueryBuilder()
-  //     .update(TiendasEntity)
-  //     .set({ image: image.url })
-  //     .where("id = :id", { id })
-  //     .execute();
-  //   return await this.getOne(id);
-  // }
+  async createImage(file: any, id: number, index: number,) {
+    const dato = await this.getOne(id);
+    let galeria = dato.galeria
+    let image
+    try {
+      image = await this.uploadImageToCloudinary(file)
+      this.galeriaRP.createQueryBuilder()
+        .insert()
+        .into(GaleriaEntity)
+        .values({
+          titular: 'tienda',
+          refId: id,
+          file: image.url
+        })
+        .execute();
+    } catch (error) {
+      image = { url: '' }
+    }
+
+    if (index === null) {
+      await this.tiendasRP.createQueryBuilder()
+        .update(TiendasEntity)
+        .set({ imageUrl: image.url })
+        .where("id = :id", { id })
+        .execute();
+      return await this.getOne(id);
+    }
+
+    for (let x = 0; x < 9; x++) {
+      if (x == index) {
+        galeria[x] = image.url
+      }
+      if (isEmptyUndefined(galeria[x])) {
+        galeria[x] = ""
+      }
+    }
+
+    await this.tiendasRP.createQueryBuilder()
+      .update(TiendasEntity)
+      .set({ galeria: galeria })
+      .where("id = :id", { id })
+      .execute();
+
+    return await this.getOne(id);
+
+  }
+
+  async createImageDel(id: number, index: number,) {
+    const data = await this.getOne(id);
+    data.galeria[index] = ""
+    await this.tiendasRP.createQueryBuilder()
+      .update(TiendasEntity)
+      .set({ galeria: data.galeria })
+      .where("id = :id", { id })
+      .execute();
+    return await this.getOne(id);
+  }
 
 }

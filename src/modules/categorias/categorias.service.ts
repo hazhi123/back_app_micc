@@ -1,6 +1,7 @@
 import { Repository } from 'typeorm';
 
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -16,6 +17,8 @@ import {
   UpdateCategoriasDto,
 } from './dto';
 import { CategoriasEntity } from './entities/categorias.entity';
+import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
+import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 
 @Injectable()
 export class CategoriasService {
@@ -24,7 +27,13 @@ export class CategoriasService {
 
   constructor(
     @InjectRepository(CategoriasEntity)
-    private readonly categoriasRP: Repository<CategoriasEntity>
+    private readonly categoriasRP: Repository<CategoriasEntity>,
+
+    @InjectRepository(GaleriaEntity)
+    private readonly galeriaRP: Repository<GaleriaEntity>,
+
+    private cloudinary: CloudinaryService
+
   ) { }
 
   async create(dto: CreateCategoriasDto, userLogin: UsersEntity) {
@@ -103,6 +112,39 @@ export class CategoriasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.WARNING.NAME_DATA,
     }, HttpStatus.ACCEPTED)
+  }
+
+  async uploadImageToCloudinary(file: Express.Multer.File) {
+    return await this.cloudinary.uploadImage(file).catch(() => {
+      throw new BadRequestException('Invalid file type.');
+    });
+  }
+
+  async createImage(file: any, id: number) {
+    let image
+    try {
+      image = await this.uploadImageToCloudinary(file)
+      this.galeriaRP.createQueryBuilder()
+        .insert()
+        .into(GaleriaEntity)
+        .values({
+          titular: 'categoria',
+          refId: id,
+          file: image.url
+        })
+        .execute();
+    } catch (error) {
+      image = { url: '' }
+    }
+
+    await this.categoriasRP.createQueryBuilder()
+      .update(CategoriasEntity)
+      .set({ imageUrl: image.url })
+      .where("id = :id", { id })
+      .execute();
+
+    return await this.getOne(id);
+
   }
 
 }

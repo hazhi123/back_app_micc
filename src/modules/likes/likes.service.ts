@@ -119,8 +119,19 @@ export class LikesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
+
+    const pub = await this.publicacionesRP.findOne({
+      where: { id: getOne.publicacion.id },
+    });
+
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ totalLikes: pub.totalLikes - 1 })
+      .where("id = :id", { id: getOne.publicacion.id })
+      .execute();
+
     await this.likesRP.delete(id);
-    return getOne;
+    return await this.getOne(getOne.id);
   }
 
   async existe(user, publicacion): Promise<LikesEntity> {

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
+import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
 import { ModulosEntity } from '../modulos/entities/modulos.entity';
 import { PerfilesEntity } from '../perfiles/entities/perfiles.entity';
 import { PerfilesModule } from '../perfiles/perfiles.module';
@@ -21,6 +22,7 @@ import { UsersService } from './users.service';
       UsersInformacionEntity,
       ModulosEntity,
       PerfilesEntity,
+      GaleriaEntity,
     ])
   ],
   controllers: [UsersController],

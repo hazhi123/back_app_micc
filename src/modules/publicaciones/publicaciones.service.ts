@@ -6,6 +6,7 @@ import {
 import { Repository } from 'typeorm';
 
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -23,6 +24,7 @@ import {
   UpdatePublicacionesDto,
 } from './dto';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
+import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
 
 @Injectable()
 export class PublicacionesService {
@@ -41,13 +43,23 @@ export class PublicacionesService {
     @InjectRepository(PublicacionesEntity)
     private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
+    @InjectRepository(GaleriaEntity)
+    private readonly galeriaRP: Repository<GaleriaEntity>,
+
     private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreatePublicacionesDto, userLogin: UsersEntity) {
     await this.findNombre(dto.nombre, false)
+
+    let galeria = []
+    for (let x = 0; x < 9; x++) {
+      galeria.push("")
+    }
+
     const save = await this.publicacionesRP.save({
       ...dto,
+      galeria,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -80,7 +92,7 @@ export class PublicacionesService {
     const find = await this.publicacionesRP.find({
       where: search,
       relations: this.relations,
-      order: { 'nombre': 'ASC' },
+      order: { 'id': 'DESC' },
     });
     if (isEmptyUndefined(find)) return null
     return find;
@@ -146,6 +158,70 @@ export class PublicacionesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.WARNING.NAME_DATA,
     }, HttpStatus.ACCEPTED)
+  }
+
+  async uploadImageToCloudinary(file: Express.Multer.File) {
+    return await this.cloudinary.uploadImage(file).catch(() => {
+      throw new BadRequestException('Invalid file type.');
+    });
+  }
+
+  async createImage(file: any, id: number, index: number,) {
+    const dato = await this.getOne(id);
+    let galeria = dato.galeria
+    let image
+    try {
+      image = await this.uploadImageToCloudinary(file)
+      this.galeriaRP.createQueryBuilder()
+        .insert()
+        .into(GaleriaEntity)
+        .values({
+          titular: 'publicacion',
+          refId: id,
+          file: image.url
+        })
+        .execute();
+    } catch (error) {
+      image = { url: '' }
+    }
+
+    if (index === null) {
+      await this.publicacionesRP.createQueryBuilder()
+        .update(PublicacionesEntity)
+        .set({ imageUrl: image.url })
+        .where("id = :id", { id })
+        .execute();
+      return await this.getOne(id);
+    }
+
+    for (let x = 0; x < 9; x++) {
+      if (x == index) {
+        galeria[x] = image.url
+      }
+      if (isEmptyUndefined(galeria[x])) {
+        galeria[x] = ""
+      }
+    }
+
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ galeria: galeria })
+      .where("id = :id", { id })
+      .execute();
+
+    return await this.getOne(id);
+
+  }
+
+  async createImageDel(id: number, index: number,) {
+    const data = await this.getOne(id);
+    data.galeria[index] = ""
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ galeria: data.galeria })
+      .where("id = :id", { id })
+      .execute();
+    return await this.getOne(id);
   }
 
 }

@@ -48,16 +48,17 @@ export class ComentariosController {
   }
 
   // @Auth()
-  @Get()
+  @Get('publicacion/:id')
   async getAll(
+    @Param('id') id: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number = 100,
   ) {
-    limit = limit > 50 ? 50 : limit;
-    const data = await this.comentariosService.getAll({
+    limit = limit > 100 ? 100 : limit;
+    const data = await this.comentariosService.getAll(id, {
       page,
       limit,
-      route: `${URLPAGE}`,
+      route: `${URLPAGE}/publicacion/${id}`,
     });
     let res = {
       statusCode: 200,
