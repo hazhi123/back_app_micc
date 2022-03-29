@@ -28,8 +28,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 	async validate(user: string, password: string) {
 		let validateUser
 		validateUser = await this.authService.validateUser(user, password);
-		if (validateUser.status === false) throw new UnauthorizedException('El usuario se encuentra bloqueado, por favor contacte a un administrador')
 		if (!validateUser) throw new UnauthorizedException(CONST.MESSAGES.USER.WARNING.NO_MATH_PASSWORD)
+		if (validateUser !== null && validateUser.status === false) throw new UnauthorizedException('El usuario se encuentra bloqueado, por favor contacte a un administrador')
 		return validateUser;
 	}
 }

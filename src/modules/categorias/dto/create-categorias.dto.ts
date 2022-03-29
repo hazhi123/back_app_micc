@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -13,6 +14,11 @@ export class CreateCategoriasDto {
   @IsString()
   @IsNotEmpty()
   nombre: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  ccomercial: number;
 
   @ApiProperty()
   @IsString()

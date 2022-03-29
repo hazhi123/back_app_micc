@@ -68,6 +68,6 @@ export class TiendasEntity {
 
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'ccomerciales_id' })
-  ccomercial: number;
+  ccomercial: any;
 
 }

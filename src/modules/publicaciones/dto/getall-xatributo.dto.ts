@@ -29,6 +29,11 @@ export class GetAllxAtributoDto {
   tipoPub: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  userEditor: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;

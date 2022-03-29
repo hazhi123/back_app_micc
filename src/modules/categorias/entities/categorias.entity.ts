@@ -1,7 +1,10 @@
+import { CComercialesEntity } from '../../ccomerciales/entities/ccomerciales.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -43,6 +46,10 @@ export class CategoriasEntity {
   status: boolean;
 
   // Relaciones
+  @ManyToOne(() => CComercialesEntity, cc => cc.categorias)
+  @JoinColumn({ name: 'ccomerciales_id' })
+  ccomercial: number;
+
   @OneToMany(() => TiendasEntity, tiendas => tiendas.categoria)
   tiendas: TiendasEntity[];
 

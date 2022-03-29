@@ -30,8 +30,7 @@ import { GaleriaEntity } from './entities/galeria.entity';
 export class CComercialesService {
 
   relations = [
-    'pais',
-    'tiendas'
+    'pais'
   ]
 
   constructor(

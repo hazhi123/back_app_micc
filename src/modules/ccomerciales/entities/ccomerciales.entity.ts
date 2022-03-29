@@ -1,3 +1,4 @@
+import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   Column,
   CreateDateColumn,
@@ -43,8 +44,8 @@ export class CComercialesEntity {
   @Column({ type: 'varchar', default: '' })
   horarios: string;
 
-  @Column({ type: 'integer', default: 0 })
-  likes: number;
+  @Column({ name: 'total_tiendas', type: 'integer', default: 0 })
+  totalTiendas: number;
 
   @Column({ type: 'varchar', default: '' })
   desc: string;
@@ -76,6 +77,9 @@ export class CComercialesEntity {
 
   @OneToMany(() => TiendasEntity, tiendas => tiendas.ccomercial)
   tiendas: TiendasEntity[];
+
+  @OneToMany(() => CategoriasEntity, categoria => categoria.ccomercial)
+  categorias: CategoriasEntity[];
 
   @ManyToOne(() => PaisesEntity, paises => paises.ccomerciales)
   @JoinColumn({ name: 'paises_id' })

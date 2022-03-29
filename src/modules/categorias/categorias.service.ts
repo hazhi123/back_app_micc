@@ -23,7 +23,10 @@ import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 @Injectable()
 export class CategoriasService {
 
-  relations = []
+  relations = [
+    'ccomercial',
+    'ccomercial.pais'
+  ]
 
   constructor(
     @InjectRepository(CategoriasEntity)
@@ -60,6 +63,7 @@ export class CategoriasService {
   async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CategoriasEntity[]> {
     let search = {}
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
     const find = await this.categoriasRP.find({
       where: search,
       relations: this.relations,

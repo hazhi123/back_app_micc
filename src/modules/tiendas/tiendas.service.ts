@@ -26,6 +26,7 @@ import {
 } from './dto';
 import { TiendasEntity } from './entities/tiendas.entity';
 import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
+import { CComercialesEntity } from '../ccomerciales/entities/ccomerciales.entity';
 
 @Injectable()
 export class TiendasService {
@@ -33,11 +34,15 @@ export class TiendasService {
   relations = [
     'categoria',
     'ccomercial',
+    'ccomercial.pais',
   ]
 
   constructor(
     @InjectRepository(TiendasEntity)
     private readonly tiendasRP: Repository<TiendasEntity>,
+
+    @InjectRepository(CComercialesEntity)
+    private readonly ccomercialesRP: Repository<CComercialesEntity>,
 
     @InjectRepository(LicenciasEntity)
     private readonly licenciasRP: Repository<LicenciasEntity>,
@@ -63,6 +68,17 @@ export class TiendasService {
       updatedAt: new Date(),
       status: true
     });
+
+    const ccomercial = await this.ccomercialesRP.findOne({
+      where: { id: dto.ccomercial }
+    })
+
+    await this.ccomercialesRP.createQueryBuilder()
+      .update(CComercialesEntity)
+      .set({ totalTiendas: ccomercial.totalTiendas + 1 })
+      .where("id = :id", { id: dto.ccomercial })
+      .execute();
+
     // await createLicenciasFree(this.licenciasRP, this.usersRP, { userId: dto.user, userLoginId: userLogin.id })
     return await this.getOne(save.id);
   }
@@ -71,6 +87,7 @@ export class TiendasService {
     const find = await this.tiendasRP.createQueryBuilder('tiendas')
       .leftJoinAndSelect("tiendas.categoria", "categorias")
       .leftJoinAndSelect("tiendas.ccomercial", "ccomerciales")
+      .leftJoinAndSelect("ccomerciales.pais", "paises")
       .orderBy('tiendas.nombre', 'ASC')
 
     if (isEmptyUndefined(find)) return null
@@ -121,7 +138,19 @@ export class TiendasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
+
+    const ccomercial = await this.ccomercialesRP.findOne({
+      where: { id: getOne.ccomercial.id }
+    })
+
+    await this.ccomercialesRP.createQueryBuilder()
+      .update(CComercialesEntity)
+      .set({ totalTiendas: ccomercial.totalTiendas - 1 })
+      .where("id = :id", { id: getOne.ccomercial.id })
+      .execute();
+
     await this.tiendasRP.delete(id);
+
     return getOne;
   }
 
