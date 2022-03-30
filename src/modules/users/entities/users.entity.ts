@@ -32,6 +32,8 @@ import {
   UsersCComercialesEntity,
 } from '../../users-ccomerciales/entities/users-ccomerciales.entity';
 import { UsersInformacionEntity } from './users-informacion.entity';
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
 
 @Entity(CONST.MODULES.USERS.USERS)
 export class UsersEntity {
@@ -120,5 +122,10 @@ export class UsersEntity {
   @OneToMany(() => UsersCComercialesEntity, likes => likes.user)
   ccomerciales: UsersCComercialesEntity[];
 
+  @OneToMany(() => ContactosEntity, contactos => contactos.user)
+  contactos: ContactosEntity[];
+
+  @OneToMany(() => MensajesEntity, mensajes => mensajes.user)
+  mensajes: MensajesEntity[];
 }
 

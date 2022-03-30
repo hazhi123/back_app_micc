@@ -74,7 +74,7 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {

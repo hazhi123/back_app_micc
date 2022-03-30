@@ -19,3 +19,5 @@ export * from './publicaciones/publicaciones.module';
 export * from './comentarios/comentarios.module';
 export * from './likes/likes.module';
 export * from './guardados/guardados.module';
+export * from './contactos/contactos.module';
+export * from './mensajes/mensajes.module';

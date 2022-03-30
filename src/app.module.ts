@@ -44,6 +44,8 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.ComentariosModule,
     MOD.LikesModule,
     MOD.GuardadosModule,
+    MOD.ContactosModule,
+    MOD.MensajesModule,
 
     CloudinaryModule,
 

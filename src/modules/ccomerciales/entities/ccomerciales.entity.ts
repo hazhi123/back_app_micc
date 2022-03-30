@@ -13,6 +13,7 @@ import * as CONST from '../../../common/constants';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES)
 export class CComercialesEntity {
@@ -80,6 +81,9 @@ export class CComercialesEntity {
 
   @OneToMany(() => CategoriasEntity, categoria => categoria.ccomercial)
   categorias: CategoriasEntity[];
+
+  @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
+  contactos: ContactosEntity[];
 
   @ManyToOne(() => PaisesEntity, paises => paises.ccomerciales)
   @JoinColumn({ name: 'paises_id' })

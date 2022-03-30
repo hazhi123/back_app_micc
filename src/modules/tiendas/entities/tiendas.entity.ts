@@ -1,9 +1,11 @@
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -69,5 +71,8 @@ export class TiendasEntity {
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'ccomerciales_id' })
   ccomercial: any;
+
+  @OneToMany(() => ContactosEntity, categoria => categoria.tienda)
+  contactos: ContactosEntity[];
 
 }

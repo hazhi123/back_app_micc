@@ -28,4 +28,6 @@ export const MODULES = {
     LIKES: 'likes',
     PAISES: 'paises',
     TIPOS_PUBLICACION: 'tipos_publicacion',
+    MENSAJES: 'mensajes',
+    CONTACTOS: 'contactos',
 }

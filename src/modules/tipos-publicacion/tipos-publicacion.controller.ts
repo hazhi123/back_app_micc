@@ -57,7 +57,7 @@ export class TiposPublicacionController {
   }
 
   @Auth()
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {

@@ -63,7 +63,7 @@ export class UsersController {
   }
 
   @Auth()
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {

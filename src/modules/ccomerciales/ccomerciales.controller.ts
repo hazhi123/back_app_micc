@@ -74,7 +74,7 @@ export class CComercialesController {
   }
 
   @Auth()
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {

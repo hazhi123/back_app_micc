@@ -22,7 +22,6 @@ export class GuardadosService {
   ]
 
   constructor(
-    private readonly guardadosService: PerfilesService,
 
     @InjectRepository(GuardadosEntity)
     private readonly guardadosRP: Repository<GuardadosEntity>,

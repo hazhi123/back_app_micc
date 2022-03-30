@@ -76,14 +76,22 @@ export class PublicacionesController {
   }
 
   @Auth()
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
     @Body() dto: GetAllxAtributoDto,
   ) {
-    const data = await this.publicacionesService.getAllxAtributo(dto);
+    const data = await this.publicacionesService.getAllxAtributo(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
+    });
     let res = {
       statusCode: HttpStatus.OK,
-      data: data,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
       message: ''
     }
     return res

@@ -57,7 +57,7 @@ export class PerfilesController {
   }
 
   @Auth()
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {

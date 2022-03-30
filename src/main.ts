@@ -41,6 +41,7 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix('v1/api');
   // await app.listen(port);
   await app.listen(port, URL);
   logger.log(`Server is running at ${await app.getUrl()}`);

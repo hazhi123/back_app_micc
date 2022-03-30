@@ -56,7 +56,7 @@ export class PaisesController {
     return res
   }
 
-  @Post('/all/atributo')
+  @Post('/all')
   async getAllxAtributo(
     @Body() dto: GetAllxAtributoDto,
   ) {
