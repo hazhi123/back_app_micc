@@ -17,14 +17,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePublicacionesDto,
-  GetAllxAtributoDto,
   UpdatePublicacionesDto,
 } from './dto';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
-import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
 
 @Injectable()
 export class PublicacionesService {
@@ -70,17 +69,10 @@ export class PublicacionesService {
   }
 
   async getAll(options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
-    const find = await this.publicacionesRP.createQueryBuilder('pub')
-      .leftJoinAndSelect("pub.categoria", "categorias")
-      .leftJoinAndSelect("pub.tipoPub", "tipos_publicaciones")
-      .leftJoinAndSelect("pub.ccomercial", "ccomerciales")
-      .leftJoinAndSelect("ccomerciales.pais", "paises")
-      .leftJoinAndSelect("pub.tienda", "tiendas")
-      .leftJoinAndSelect("pub.userEditor", "users")
-      .orderBy('pub.id', 'DESC')
-
-    if (isEmptyUndefined(find)) return null
-    return paginate<PublicacionesEntity>(find, options);
+    return paginate<PublicacionesEntity>(this.publicacionesRP, options, {
+      relations: this.relations,
+      order: { 'id': 'DESC' },
+    });
   }
 
   async buscador(dto) {
@@ -91,7 +83,6 @@ export class PublicacionesService {
     if (!isEmptyUndefined(dto.userEditor)) search['userEditor'] = dto.userEditor
     if (!isEmptyUndefined(dto.tipoPub)) search['tipoPub'] = dto.tipoPub
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-
     return search
   }
 
@@ -104,11 +95,10 @@ export class PublicacionesService {
   }
 
   async getAllPublico(dto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
-    let search = await this.buscador(dto)
-    search['status'] = true
-
+    let where = await this.buscador(dto)
+    where['status'] = true
     return paginate<PublicacionesEntity>(this.publicacionesRP, options, {
-      where: search,
+      where,
       relations: this.relations,
       order: { 'createdAt': 'DESC' },
     });
@@ -129,7 +119,6 @@ export class PublicacionesService {
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
     const assing = Object.assign(getOne, {
-      ...getOne,
       ...dto,
       updatedBy: userLogin.id,
       updatedAt: new Date(),

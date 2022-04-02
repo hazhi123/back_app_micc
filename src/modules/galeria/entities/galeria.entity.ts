@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -13,6 +14,12 @@ export class GaleriaEntity {
   id: number;
 
   @Column({ type: 'varchar' })
+  entidad: string;
+
+  @Column({ name: 'ent_id', type: 'integer' })
+  entId: number;
+
+  @Column({ type: 'varchar' })
   titular: string;
 
   @Column({ name: 'ref_id', type: 'integer' })
@@ -20,5 +27,8 @@ export class GaleriaEntity {
 
   @Column({ type: 'varchar' })
   file: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
 }

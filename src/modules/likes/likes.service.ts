@@ -16,6 +16,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import {
+  PublicacionesEntity,
+} from '../publicaciones/entities/publicaciones.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLikesDto,
@@ -23,7 +26,6 @@ import {
   UpdateLikesDto,
 } from './dto';
 import { LikesEntity } from './entities/likes.entity';
-import { PublicacionesEntity } from '../publicaciones/entities/publicaciones.entity';
 
 @Injectable()
 export class LikesService {
@@ -104,7 +106,6 @@ export class LikesService {
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
     const assing = Object.assign(getOne, {
-      ...getOne,
       ...dto,
       updatedBy: userLogin.id,
       updatedAt: new Date(),

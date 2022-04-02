@@ -1,17 +1,21 @@
-import { Repository } from 'typeorm';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as CONST from '../../common/constants';
-import { PerfilesService } from '../perfiles/perfiles.service';
+
+import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import { CreateGuardadosDto } from './dto';
 import { GuardadosEntity } from './entities/guardados.entity';
-import { isEmptyUndefined } from '../../common/helpers';
 
 @Injectable()
 export class GuardadosService {
@@ -63,16 +67,16 @@ export class GuardadosService {
   }
 
   async getAll(user, options: IPaginationOptions): Promise<Pagination<GuardadosEntity>> {
-    const find = await this.guardadosRP.createQueryBuilder('guar')
-      .leftJoinAndSelect("guar.user", "users")
-      .leftJoinAndSelect("guar.publicacion", "publicaciones")
-      .leftJoinAndSelect("publicaciones.ccomercial", "ccomerciales")
-      .leftJoinAndSelect("publicaciones.tienda", "tiendas")
-      .where("guar.user = :user", { user })
-      .orderBy('guar.id', 'DESC')
-
-    if (isEmptyUndefined(find)) return null
-    return paginate<GuardadosEntity>(find, options);
+    return paginate<GuardadosEntity>(this.guardadosRP, options, {
+      where: { user },
+      relations: [
+        'user',
+        'publicacion',
+        'publicacion.ccomercial',
+        'publicacion.tienda',
+      ],
+      order: { 'id': 'DESC' },
+    });
   }
 
 }

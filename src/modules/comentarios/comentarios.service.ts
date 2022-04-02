@@ -16,13 +16,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import {
+  PublicacionesEntity,
+} from '../publicaciones/entities/publicaciones.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateComentariosDto,
   UpdateComentariosDto,
 } from './dto';
 import { ComentariosEntity } from './entities/comentarios.entity';
-import { PublicacionesEntity } from '../publicaciones/entities/publicaciones.entity';
 
 @Injectable()
 export class ComentariosService {
@@ -88,7 +90,6 @@ export class ComentariosService {
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
     const assing = Object.assign(getOne, {
-      ...getOne,
       ...dto,
       updatedBy: userLogin.id,
       updatedAt: new Date(),

@@ -22,6 +22,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import { CategoriasService } from './categorias.service';
 import {
   CreateCategoriasDto,
+  CreateImageDto,
   GetAllxAtributoDto,
   UpdateCategoriasDto,
 } from './dto';
@@ -112,15 +113,15 @@ export class CategoriasController {
   }
 
   @Auth()
-  @Post('/image/:id')
+  @Post('/image')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createImage(
     @UploadedFile() file,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.categoriaService.createImage(file, id);
+    const data = await this.categoriaService.createImage(file, dto);
     return {
       statusCode: 200,
       data,

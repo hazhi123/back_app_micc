@@ -8,17 +8,18 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCategoriasDto,
+  CreateImageDto,
   GetAllxAtributoDto,
   UpdateCategoriasDto,
 } from './dto';
 import { CategoriasEntity } from './entities/categorias.entity';
-import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 
 @Injectable()
 export class CategoriasService {
@@ -124,7 +125,7 @@ export class CategoriasService {
     });
   }
 
-  async createImage(file: any, id: number) {
+  async createImage(file: any, dto: CreateImageDto) {
     let image
     try {
       image = await this.uploadImageToCloudinary(file)
@@ -132,23 +133,22 @@ export class CategoriasService {
         .insert()
         .into(GaleriaEntity)
         .values({
+          entidad: dto.entidad,
+          entId: parseInt(dto.entId),
           titular: 'categoria',
-          refId: id,
+          refId: parseInt(dto.categoria),
           file: image.url
         })
         .execute();
     } catch (error) {
       image = { url: '' }
     }
-
     await this.categoriasRP.createQueryBuilder()
       .update(CategoriasEntity)
       .set({ imageUrl: image.url })
-      .where("id = :id", { id })
+      .where("id = :id", { id: parseInt(dto.categoria) })
       .execute();
-
-    return await this.getOne(id);
-
+    return await this.getOne(parseInt(dto.categoria));
   }
 
 }

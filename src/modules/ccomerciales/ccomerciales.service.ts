@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCComercialesDto,
@@ -24,7 +25,6 @@ import {
   UpdateCComercialesDto,
 } from './dto';
 import { CComercialesEntity } from './entities/ccomerciales.entity';
-import { GaleriaEntity } from './entities/galeria.entity';
 
 @Injectable()
 export class CComercialesService {
@@ -62,21 +62,22 @@ export class CComercialesService {
   }
 
   async getAll(options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
-    const find = await this.ccomercialesRP.createQueryBuilder('cc')
-      .leftJoinAndSelect("cc.pais", "pais")
-      .leftJoinAndSelect("cc.tiendas", "tiendas")
-      .orderBy('cc.nombre', 'ASC')
-
-    if (isEmptyUndefined(find)) return null
-    return paginate<CComercialesEntity>(find, options);
+    return paginate<CComercialesEntity>(this.ccomercialesRP, options, {
+      relations: ['pais', 'tiendas'],
+      order: { 'nombre': 'ASC' },
+    });
   }
 
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CComercialesEntity[]> {
+  async buscador(dto) {
     let search = {}
     if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    return search
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CComercialesEntity[]> {
     const find = await this.ccomercialesRP.find({
-      where: search,
+      where: await this.buscador(dto),
       relations: this.relations,
       order: { 'nombre': 'ASC' },
     });
@@ -99,7 +100,6 @@ export class CComercialesService {
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
     const assing = Object.assign(getOne, {
-      ...getOne,
       ...dto,
       updatedBy: userLogin.id,
       updatedAt: new Date(),

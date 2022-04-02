@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
-import { CComercialesEntity } from '../ccomerciales/entities/ccomerciales.entity';
-import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
+import {
+  CComercialesEntity,
+} from '../ccomerciales/entities/ccomerciales.entity';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { LicenciasEntity } from '../licencias/entities/licencias.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import { TiendasEntity } from './entities/tiendas.entity';

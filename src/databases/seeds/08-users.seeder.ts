@@ -47,7 +47,6 @@ export default class UsersSeeder implements Seeder {
           pais: 1,
           isVisitante: false,
           ccomercial: 1,
-          tienda: 1,
           createdBy: 1,
           updatedBy: 1,
           status: true

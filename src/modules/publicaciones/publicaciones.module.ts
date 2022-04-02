@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
-import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
 import { PublicacionesController } from './publicaciones.controller';

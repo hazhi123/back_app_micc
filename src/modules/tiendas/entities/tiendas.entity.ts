@@ -57,6 +57,9 @@ export class TiendasEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
+  @Column({ name: 'is_gastro', type: 'bool', default: false })
+  isGastro: boolean;
+
   @Column({ default: '' })
   imageUrl: string;
 

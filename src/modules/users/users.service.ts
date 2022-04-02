@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import {
   createUsersDto,
   GetAllxAtributoDto,
@@ -19,7 +20,6 @@ import {
 } from './dto';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
-import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
 
 @Injectable()
 export class UsersService {

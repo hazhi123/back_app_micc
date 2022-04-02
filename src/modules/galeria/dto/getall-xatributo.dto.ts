@@ -1,7 +1,7 @@
 import {
-  IsBoolean,
   IsNumber,
   IsOptional,
+  IsString,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -11,21 +11,27 @@ export class GetAllxAtributoDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  ccomercial: number;
+  id: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  entidad: string;
 
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  categoria: number;
+  entId: number;
 
   @ApiProperty()
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  status: boolean;
+  titular: string;
 
   @ApiProperty()
-  @IsBoolean()
+  @IsNumber()
   @IsOptional()
-  isGastro: boolean;
+  refId: number;
+
 
 }

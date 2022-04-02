@@ -17,6 +17,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import {
+  CComercialesEntity,
+} from '../ccomerciales/entities/ccomerciales.entity';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { LicenciasEntity } from '../licencias/entities/licencias.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -25,8 +29,6 @@ import {
   UpdateTiendasDto,
 } from './dto';
 import { TiendasEntity } from './entities/tiendas.entity';
-import { GaleriaEntity } from '../ccomerciales/entities/galeria.entity';
-import { CComercialesEntity } from '../ccomerciales/entities/ccomerciales.entity';
 
 @Injectable()
 export class TiendasService {
@@ -83,24 +85,25 @@ export class TiendasService {
     return await this.getOne(save.id);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
-    const find = await this.tiendasRP.createQueryBuilder('tiendas')
-      .leftJoinAndSelect("tiendas.categoria", "categorias")
-      .leftJoinAndSelect("tiendas.ccomercial", "ccomerciales")
-      .leftJoinAndSelect("ccomerciales.pais", "paises")
-      .orderBy('tiendas.nombre', 'ASC')
-
-    if (isEmptyUndefined(find)) return null
-    return paginate<TiendasEntity>(find, options);
-  }
-
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<TiendasEntity[]> {
+  async buscador(dto) {
     let search = {}
     if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
     if (!isEmptyUndefined(dto.categoria)) search['categoria'] = dto.categoria
+    if (!isEmptyUndefined(dto.isGastro)) search['isGastro'] = dto.isGastro
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    return search
+  }
+
+  async getAll(options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
+    return paginate<TiendasEntity>(this.tiendasRP, options, {
+      relations: this.relations,
+      order: { 'id': 'DESC' },
+    });
+  }
+
+  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<TiendasEntity[]> {
     const find = await this.tiendasRP.find({
-      where: search,
+      where: await this.buscador(dto),
       relations: this.relations,
       order: { 'nombre': 'ASC' },
     });
@@ -122,8 +125,8 @@ export class TiendasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
+
     const assing = Object.assign(getOne, {
-      ...getOne,
       ...dto,
       updatedBy: userLogin.id,
       updatedAt: new Date(),
