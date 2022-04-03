@@ -25,6 +25,7 @@ import {
   CreateImageDto,
   GetAllxAtributoDto,
   UpdateCategoriasDto,
+  UpdateImageDto,
 } from './dto';
 
 @ApiTags(CONST.MODULES.CATEGORIAS.toUpperCase())
@@ -122,6 +123,19 @@ export class CategoriasController {
     @Body() dto: CreateImageDto,
   ) {
     const data = await this.categoriaService.createImage(file, dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/image/update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.categoriaService.updateImage(dto);
     return {
       statusCode: 200,
       data,

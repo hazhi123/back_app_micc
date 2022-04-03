@@ -18,6 +18,7 @@ import {
   CreateImageDto,
   GetAllxAtributoDto,
   UpdateCategoriasDto,
+  UpdateImageDto,
 } from './dto';
 import { CategoriasEntity } from './entities/categorias.entity';
 
@@ -149,6 +150,15 @@ export class CategoriasService {
       .where("id = :id", { id: parseInt(dto.categoria) })
       .execute();
     return await this.getOne(parseInt(dto.categoria));
+  }
+
+  async updateImage(dto: UpdateImageDto) {
+    await this.categoriasRP.createQueryBuilder()
+      .update(CategoriasEntity)
+      .set({ imageUrl: dto.url })
+      .where("id = :id", { id: dto.categoria })
+      .execute();
+    return await this.getOne(dto.categoria);
   }
 
 }

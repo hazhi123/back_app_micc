@@ -26,8 +26,10 @@ import { UsersEntity } from '../users/entities/users.entity';
 import { CComercialesService } from './ccomerciales.service';
 import {
   CreateCComercialesDto,
+  CreateImageDto,
   GetAllxAtributoDto,
   UpdateCComercialesDto,
+  UpdateImageDto,
 } from './dto';
 
 @ApiTags(CONST.MODULES.CCOMERCIALES.toUpperCase())
@@ -124,15 +126,15 @@ export class CComercialesController {
   }
 
   @Auth()
-  @Post('/image/:id')
+  @Post('/image')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createImage(
     @UploadedFile() file,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.ccomercialesService.createImage(file, id, null);
+    const data = await this.ccomercialesService.createImage(file, dto);
     return {
       statusCode: 200,
       data,
@@ -141,16 +143,28 @@ export class CComercialesController {
   }
 
   @Auth()
-  @Post('/galeria/:index/:id')
+  @Post('/image/update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.ccomercialesService.updateImage(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/galeria')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createGaleria(
     @UploadedFile() file,
-    @Param('index') index: number,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.ccomercialesService.createImage(file, id, index);
+    const data = await this.ccomercialesService.createImage(file, dto);
     return {
       statusCode: 200,
       data,
@@ -159,12 +173,24 @@ export class CComercialesController {
   }
 
   @Auth()
-  @Get('/galeria_del/:index/:id')
+  @Post('/galeria/delete')
   async createGaleriaDel(
-    @Param('index') index: number,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.ccomercialesService.createImageDel(id, index);
+    const data = await this.ccomercialesService.deleteGaleria(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: 'Se ha eliminado la imagen correctamente'
+    };
+  }
+
+  @Auth()
+  @Post('/galeria/update')
+  async createGaleriaUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.ccomercialesService.updateGaleria(dto);
     return {
       statusCode: 200,
       data,

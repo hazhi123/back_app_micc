@@ -72,7 +72,7 @@ export class GaleriaService {
     let search = {}
     if (!isEmptyUndefined(dto.id)) search['id'] = dto.id
     if (!isEmptyUndefined(dto.entidad)) search['entidad'] = dto.entidad
-    if (!isEmptyUndefined(dto.entlar)) search['entlar'] = dto.entlar
+    if (!isEmptyUndefined(dto.entId)) search['entId'] = dto.entId
     if (!isEmptyUndefined(dto.titular)) search['titular'] = dto.titular
     if (!isEmptyUndefined(dto.refId)) search['refId'] = dto.refId
     return search

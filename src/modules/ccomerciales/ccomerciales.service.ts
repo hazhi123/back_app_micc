@@ -21,8 +21,10 @@ import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCComercialesDto,
+  CreateImageDto,
   GetAllxAtributoDto,
   UpdateCComercialesDto,
+  UpdateImageDto,
 } from './dto';
 import { CComercialesEntity } from './entities/ccomerciales.entity';
 
@@ -134,8 +136,8 @@ export class CComercialesService {
     });
   }
 
-  async createImage(file: any, id: number, index: number,) {
-    const dato = await this.getOne(id);
+  async createImage(file: any, dto: CreateImageDto) {
+    const dato = await this.getOne(parseInt(dto.ccomercial));
     let galeria = dato.galeria
     let image
     try {
@@ -144,8 +146,10 @@ export class CComercialesService {
         .insert()
         .into(GaleriaEntity)
         .values({
+          entidad: dto.entidad,
+          entId: parseInt(dto.entId),
           titular: 'ccomercial',
-          refId: id,
+          refId: parseInt(dto.ccomercial),
           file: image.url
         })
         .execute();
@@ -153,17 +157,17 @@ export class CComercialesService {
       image = { url: '' }
     }
 
-    if (index === null) {
+    if (isEmptyUndefined(dto.index)) {
       await this.ccomercialesRP.createQueryBuilder()
         .update(CComercialesEntity)
         .set({ imageUrl: image.url })
-        .where("id = :id", { id })
+        .where("id = :id", { id: parseInt(dto.ccomercial) })
         .execute();
-      return await this.getOne(id);
+      return await this.getOne(parseInt(dto.ccomercial));
     }
 
     for (let x = 0; x < 9; x++) {
-      if (x == index) {
+      if (x == parseInt(dto.index)) {
         galeria[x] = image.url
       }
       if (isEmptyUndefined(galeria[x])) {
@@ -174,22 +178,44 @@ export class CComercialesService {
     await this.ccomercialesRP.createQueryBuilder()
       .update(CComercialesEntity)
       .set({ galeria: galeria })
-      .where("id = :id", { id })
+      .where("id = :id", { id: parseInt(dto.ccomercial) })
       .execute();
 
-    return await this.getOne(id);
+    return await this.getOne(parseInt(dto.ccomercial));
 
   }
 
-  async createImageDel(id: number, index: number,) {
-    const data = await this.getOne(id);
-    data.galeria[index] = ""
+  async updateImage(dto: UpdateImageDto) {
+    await this.ccomercialesRP.createQueryBuilder()
+      .update(CComercialesEntity)
+      .set({ imageUrl: dto.url })
+      .where("id = :id", { id: dto.ccomercial })
+      .execute();
+    return await this.getOne(dto.ccomercial);
+  }
+
+  async deleteGaleria(dto: CreateImageDto) {
+    const data = await this.getOne(parseInt(dto.ccomercial));
+    data.galeria[parseInt(dto.index)] = ""
     await this.ccomercialesRP.createQueryBuilder()
       .update(CComercialesEntity)
       .set({ galeria: data.galeria })
-      .where("id = :id", { id })
+      .where("id = :id", { id: parseInt(dto.ccomercial) })
       .execute();
-    return await this.getOne(id);
+    return await this.getOne(parseInt(dto.ccomercial));
   }
+
+  async updateGaleria(dto: UpdateImageDto) {
+    const data = await this.getOne(dto.ccomercial);
+    data.galeria[dto.index] = dto.url
+    await this.ccomercialesRP.createQueryBuilder()
+      .update(CComercialesEntity)
+      .set({ galeria: data.galeria })
+      .where("id = :id", { id: dto.ccomercial })
+      .execute();
+    return await this.getOne(dto.ccomercial);
+  }
+
+
 
 }

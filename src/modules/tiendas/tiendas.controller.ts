@@ -24,8 +24,10 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
+  CreateImageDto,
   CreateTiendasDto,
   GetAllxAtributoDto,
+  UpdateImageDto,
   UpdateTiendasDto,
 } from './dto';
 import { TiendasService } from './tiendas.service';
@@ -124,15 +126,15 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/image/:id')
+  @Post('/image')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createImage(
     @UploadedFile() file,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.tiendasService.createImage(file, id, null);
+    const data = await this.tiendasService.createImage(file, dto);
     return {
       statusCode: 200,
       data,
@@ -141,16 +143,28 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/galeria/:index/:id')
+  @Post('/image/update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.tiendasService.updateImage(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/galeria')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createGaleria(
     @UploadedFile() file,
-    @Param('index') index: number,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.tiendasService.createImage(file, id, index);
+    const data = await this.tiendasService.createImage(file, dto);
     return {
       statusCode: 200,
       data,
@@ -159,12 +173,24 @@ export class TiendasController {
   }
 
   @Auth()
-  @Get('/galeria_del/:index/:id')
+  @Post('/galeria/delete')
   async createGaleriaDel(
-    @Param('index') index: number,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.tiendasService.createImageDel(id, index);
+    const data = await this.tiendasService.deleteGaleria(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: 'Se ha eliminado la imagen correctamente'
+    };
+  }
+
+  @Auth()
+  @Post('/galeria/update')
+  async createGaleriaUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.tiendasService.updateGaleria(dto);
     return {
       statusCode: 200,
       data,

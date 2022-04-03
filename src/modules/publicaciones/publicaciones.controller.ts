@@ -4,7 +4,6 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
-  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -26,8 +25,10 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
+  CreateImageDto,
   CreatePublicacionesDto,
   GetAllxAtributoDto,
+  UpdateImageDto,
   UpdatePublicacionesDto,
 } from './dto';
 import { PublicacionesService } from './publicaciones.service';
@@ -157,15 +158,15 @@ export class PublicacionesController {
   }
 
   @Auth()
-  @Post('/image/:id')
+  @Post('/image')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createImage(
     @UploadedFile() file,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.publicacionesService.createImage(file, id, null);
+    const data = await this.publicacionesService.createImage(file, dto);
     return {
       statusCode: 200,
       data,
@@ -174,16 +175,28 @@ export class PublicacionesController {
   }
 
   @Auth()
-  @Post('/galeria/:index/:id')
+  @Post('/image/update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.publicacionesService.updateImage(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/galeria')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createGaleria(
     @UploadedFile() file,
-    @Param('index') index: number,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.publicacionesService.createImage(file, id, index);
+    const data = await this.publicacionesService.createImage(file, dto);
     return {
       statusCode: 200,
       data,
@@ -192,12 +205,24 @@ export class PublicacionesController {
   }
 
   @Auth()
-  @Get('/galeria_del/:index/:id')
+  @Post('/galeria/delete')
   async createGaleriaDel(
-    @Param('index') index: number,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.publicacionesService.createImageDel(id, index);
+    const data = await this.publicacionesService.deleteGaleria(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: 'Se ha eliminado la imagen correctamente'
+    };
+  }
+
+  @Auth()
+  @Post('/galeria/update')
+  async createGaleriaUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.publicacionesService.updateGaleria(dto);
     return {
       statusCode: 200,
       data,

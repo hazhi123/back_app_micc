@@ -20,7 +20,9 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
+  CreateImageDto,
   CreatePublicacionesDto,
+  UpdateImageDto,
   UpdatePublicacionesDto,
 } from './dto';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
@@ -153,8 +155,8 @@ export class PublicacionesService {
     });
   }
 
-  async createImage(file: any, id: number, index: number,) {
-    const dato = await this.getOne(id);
+  async createImage(file: any, dto: CreateImageDto) {
+    const dato = await this.getOne(parseInt(dto.publicacion));
     let galeria = dato.galeria
     let image
     try {
@@ -163,8 +165,10 @@ export class PublicacionesService {
         .insert()
         .into(GaleriaEntity)
         .values({
+          entidad: dto.entidad,
+          entId: parseInt(dto.entId),
           titular: 'publicacion',
-          refId: id,
+          refId: parseInt(dto.publicacion),
           file: image.url
         })
         .execute();
@@ -172,17 +176,17 @@ export class PublicacionesService {
       image = { url: '' }
     }
 
-    if (index === null) {
+    if (isEmptyUndefined(dto.index)) {
       await this.publicacionesRP.createQueryBuilder()
         .update(PublicacionesEntity)
         .set({ imageUrl: image.url })
-        .where("id = :id", { id })
+        .where("id = :id", { id: parseInt(dto.publicacion) })
         .execute();
-      return await this.getOne(id);
+      return await this.getOne(parseInt(dto.publicacion));
     }
 
     for (let x = 0; x < 9; x++) {
-      if (x == index) {
+      if (x == parseInt(dto.index)) {
         galeria[x] = image.url
       }
       if (isEmptyUndefined(galeria[x])) {
@@ -193,22 +197,40 @@ export class PublicacionesService {
     await this.publicacionesRP.createQueryBuilder()
       .update(PublicacionesEntity)
       .set({ galeria: galeria })
-      .where("id = :id", { id })
+      .where("id = :id", { id: parseInt(dto.publicacion) })
       .execute();
-
-    return await this.getOne(id);
-
+    return await this.getOne(parseInt(dto.publicacion));
   }
 
-  async createImageDel(id: number, index: number,) {
-    const data = await this.getOne(id);
-    data.galeria[index] = ""
+  async updateImage(dto: UpdateImageDto) {
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ imageUrl: dto.url })
+      .where("id = :id", { id: dto.publicacion })
+      .execute();
+    return await this.getOne(dto.publicacion);
+  }
+
+  async deleteGaleria(dto: CreateImageDto) {
+    const data = await this.getOne(parseInt(dto.publicacion));
+    data.galeria[parseInt(dto.index)] = ""
     await this.publicacionesRP.createQueryBuilder()
       .update(PublicacionesEntity)
       .set({ galeria: data.galeria })
-      .where("id = :id", { id })
+      .where("id = :id", { id: parseInt(dto.publicacion) })
       .execute();
-    return await this.getOne(id);
+    return await this.getOne(parseInt(dto.publicacion));
+  }
+
+  async updateGaleria(dto: UpdateImageDto) {
+    const data = await this.getOne(dto.publicacion);
+    data.galeria[dto.index] = dto.url
+    await this.publicacionesRP.createQueryBuilder()
+      .update(PublicacionesEntity)
+      .set({ galeria: data.galeria })
+      .where("id = :id", { id: dto.publicacion })
+      .execute();
+    return await this.getOne(dto.publicacion);
   }
 
 }
