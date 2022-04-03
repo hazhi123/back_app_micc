@@ -20,9 +20,11 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import {
+  CreateImageDto,
   createUsersDto,
   GetAllxAtributoDto,
   updatedUsersDto,
+  UpdateImageDto,
 } from './dto';
 import { UsersEntity } from './entities/users.entity';
 import { UsersService } from './users.service';
@@ -118,15 +120,15 @@ export class UsersController {
   }
 
   @Auth()
-  @Post('/image/:id')
+  @Post('/image')
   @UseInterceptors(
     FileInterceptor('file'),
   )
   async createImage(
     @UploadedFile() file,
-    @Param('id') id: number,
+    @Body() dto: CreateImageDto,
   ) {
-    const data = await this.usersService.createImage(file, id, false);
+    const data = await this.usersService.createImage(file, dto, false);
     return {
       statusCode: 200,
       data,
@@ -135,15 +137,11 @@ export class UsersController {
   }
 
   @Auth()
-  @Post('/imageBack/:id')
-  @UseInterceptors(
-    FileInterceptor('file'),
-  )
-  async createImageBack(
-    @UploadedFile() file,
-    @Param('id') id: number,
+  @Post('/image/update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
   ) {
-    const data = await this.usersService.createImage(file, id, true);
+    const data = await this.usersService.updateImage(dto);
     return {
       statusCode: 200,
       data,

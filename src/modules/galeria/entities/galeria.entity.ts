@@ -13,10 +13,10 @@ export class GaleriaEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: '' })
   entidad: string;
 
-  @Column({ name: 'ent_id', type: 'integer' })
+  @Column({ name: 'ent_id', type: 'integer', default: 0 })
   entId: number;
 
   @Column({ type: 'varchar' })

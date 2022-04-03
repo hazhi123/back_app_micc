@@ -14,9 +14,11 @@ import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import {
+  CreateImageDto,
   createUsersDto,
   GetAllxAtributoDto,
   updatedUsersDto,
+  UpdateImageDto,
 } from './dto';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
@@ -314,7 +316,7 @@ export class UsersService {
     });
   }
 
-  async createImage(file: any, id: number, isBack: boolean,) {
+  async createImage(file: any, dto: CreateImageDto, isBack: boolean,) {
     let image
     try {
       image = await this.uploadImageToCloudinary(file)
@@ -322,8 +324,10 @@ export class UsersService {
         .insert()
         .into(GaleriaEntity)
         .values({
+          entidad: dto.entidad,
+          entId: parseInt(dto.entId),
           titular: 'user',
-          refId: id,
+          refId: parseInt(dto.user),
           file: image.url
         })
         .execute();
@@ -331,21 +335,29 @@ export class UsersService {
       image = { url: '' }
     }
 
-    if (isBack) {
+    if (parseInt(dto.isBack) == 0) {
       await this.usersRP.createQueryBuilder()
         .update(UsersEntity)
-        .set({ imageBack: image.url })
-        .where("id = :id", { id })
+        .set({ imageUrl: image.url })
+        .where("id = :id", { id: parseInt(dto.user) })
         .execute();
     } else {
       await this.usersRP.createQueryBuilder()
         .update(UsersEntity)
-        .set({ imageUrl: image.url })
-        .where("id = :id", { id })
+        .set({ imageBack: image.url })
+        .where("id = :id", { id: parseInt(dto.user) })
         .execute();
     }
-    return await this.getOne(id);
+    return await this.getOne(parseInt(dto.user));
+  }
 
+  async updateImage(dto: UpdateImageDto) {
+    await this.usersRP.createQueryBuilder()
+      .update(UsersEntity)
+      .set(dto.isBack ? { imageBack: dto.url } : { imageUrl: dto.url })
+      .where("id = :id", { id: dto.user })
+      .execute();
+    return await this.getOne(dto.user);
   }
 
 }
