@@ -1,4 +1,3 @@
-import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,10 +9,11 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
-import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES)
 export class CComercialesEntity {
@@ -66,7 +66,7 @@ export class CComercialesEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column({ type: 'varchar', default: '' })
+  @Column({ name: 'image_url', type: 'varchar', default: '' })
   imageUrl: string;
 
   @Column("text", { array: true, default: [] })

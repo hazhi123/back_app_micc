@@ -60,7 +60,7 @@ export class TiendasEntity {
   @Column({ name: 'is_gastro', type: 'bool', default: false })
   isGastro: boolean;
 
-  @Column({ default: '' })
+  @Column({ name: 'image_url', default: '' })
   imageUrl: string;
 
   @Column("text", { array: true, default: [] })

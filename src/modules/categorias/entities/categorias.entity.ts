@@ -1,4 +1,3 @@
-import { CComercialesEntity } from '../../ccomerciales/entities/ccomerciales.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,9 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import {
+  CComercialesEntity,
+} from '../../ccomerciales/entities/ccomerciales.entity';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
@@ -27,7 +29,7 @@ export class CategoriasEntity {
   @Column({ default: '' })
   desc: string;
 
-  @Column({ default: '' })
+  @Column({ name: 'image_url', default: '' })
   imageUrl: string;
 
   @Column({ name: 'created_by' })
