@@ -81,10 +81,13 @@ export class PublicacionesService {
     let search = {}
     if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
     if (!isEmptyUndefined(dto.categoria)) search['categoria'] = dto.categoria
-    if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
+    if (!isEmptyUndefined(dto.tienda)) {
+      search['tienda'] = dto.tienda === 0 ? null : dto.tienda
+    }
     if (!isEmptyUndefined(dto.userEditor)) search['userEditor'] = dto.userEditor
     if (!isEmptyUndefined(dto.tipoPub)) search['tipoPub'] = dto.tipoPub
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+
     return search
   }
 
