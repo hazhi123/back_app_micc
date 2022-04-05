@@ -226,7 +226,7 @@ export class TiendasService {
 
   async updateImage(dto: UpdateImageDto) {
     await this.tiendasRP.createQueryBuilder()
-      .update(CComercialesEntity)
+      .update(TiendasEntity)
       .set({ imageUrl: dto.url })
       .where("id = :id", { id: dto.tienda })
       .execute();
@@ -248,7 +248,7 @@ export class TiendasService {
     const data = await this.getOne(dto.tienda);
     data.galeria[dto.index] = dto.url
     await this.tiendasRP.createQueryBuilder()
-      .update(CComercialesEntity)
+      .update(TiendasEntity)
       .set({ galeria: data.galeria })
       .where("id = :id", { id: dto.tienda })
       .execute();
