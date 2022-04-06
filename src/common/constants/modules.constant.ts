@@ -27,6 +27,7 @@ export const MODULES = {
     COMENTARIOS: 'comentarios',
     LIKES: 'likes',
     PAISES: 'paises',
+    CIUDADES: 'ciudades',
     TIPOS_PUBLICACION: 'tipos_publicacion',
     MENSAJES: 'mensajes',
     CONTACTOS: 'contactos',

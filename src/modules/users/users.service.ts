@@ -31,6 +31,7 @@ export class UsersService {
     'informacion',
     'licencia',
     'pais',
+    'ciudad',
     'ccomercial',
     'ccomercial.pais',
     'tienda',
@@ -78,6 +79,7 @@ export class UsersService {
       direccion,
       celular,
       telefono,
+      ciudad,
     } = dto
 
     // Es cuando el usuario se registra.
@@ -91,6 +93,7 @@ export class UsersService {
         apellido,
         user,
         pais,
+        ciudad,
         isVisitante: true,
         perfil: 3,
         password,
@@ -126,6 +129,7 @@ export class UsersService {
       tienda,
       isVisitante,
       pais,
+      ciudad,
       perfil,
       createdBy: userLogin.id,
       createdAt: new Date(),
@@ -197,6 +201,7 @@ export class UsersService {
       apellido,
       user,
       pais,
+      ciudad,
       imageUrl,
       imageBack,
       password,
@@ -245,6 +250,7 @@ export class UsersService {
       apellido,
       user,
       pais,
+      ciudad,
       imageUrl,
       imageBack,
       password,

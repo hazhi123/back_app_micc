@@ -32,7 +32,8 @@ import { CComercialesEntity } from './entities/ccomerciales.entity';
 export class CComercialesService {
 
   relations = [
-    'pais'
+    'pais',
+    'ciudad'
   ]
 
   constructor(
@@ -65,7 +66,7 @@ export class CComercialesService {
 
   async getAll(options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
     return paginate<CComercialesEntity>(this.ccomercialesRP, options, {
-      relations: ['pais', 'tiendas'],
+      relations: ['pais', 'ciudad', 'tiendas'],
       order: { 'nombre': 'ASC' },
     });
   }
@@ -73,6 +74,7 @@ export class CComercialesService {
   async buscador(dto) {
     let search = {}
     if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
+    if (!isEmptyUndefined(dto.ciudad)) search['ciudad'] = dto.ciudad
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     return search
   }

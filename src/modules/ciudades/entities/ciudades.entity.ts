@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -10,23 +12,16 @@ import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
-import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { PaisesEntity } from '../../paises/entities/paises.entity';
 
-@Entity(CONST.MODULES.PAISES)
-export class PaisesEntity {
+@Entity(CONST.MODULES.CIUDADES)
+export class CiudadesEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ default: '' })
   nombre: string;
-
-  @Column({ default: '' })
-  code: string;
-
-  @Column({ default: '' })
-  imageUrl: string;
 
   @Column({ name: 'created_by' })
   createdBy: number;
@@ -44,13 +39,11 @@ export class PaisesEntity {
   status: boolean;
 
   // Relaciones
-  @OneToMany(() => CComercialesEntity, ccomerciales => ccomerciales.pais)
+  @ManyToOne(() => PaisesEntity)
+  @JoinColumn({ name: 'paises_id' })
+  pais: number;
+
+  @OneToMany(() => CComercialesEntity, ccomerciales => ccomerciales.ciudad)
   ccomerciales: CComercialesEntity[];
-
-  @OneToMany(() => UsersEntity, users => users.pais)
-  users: UsersEntity[];
-
-  @OneToMany(() => CiudadesEntity, ciudades => ciudades.pais)
-  ciudades: CiudadesEntity[];
 
 }

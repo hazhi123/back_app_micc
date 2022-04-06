@@ -33,6 +33,7 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.PlanesModule,
 
     MOD.PaisesModule,
+    MOD.CiudadesModule,
     MOD.CategoriasModule,
     MOD.CComercialesModule,
     MOD.UsersCComercialesModule,

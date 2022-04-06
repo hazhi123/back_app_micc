@@ -27,7 +27,8 @@ export class CategoriasService {
 
   relations = [
     'ccomercial',
-    'ccomercial.pais'
+    'ccomercial.pais',
+    'ccomercial.ciudad'
   ]
 
   constructor(

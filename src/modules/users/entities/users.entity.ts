@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt';
-import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -17,11 +16,15 @@ import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
 import {
   ComentariosEntity,
 } from '../../comentarios/entities/comentarios.entity';
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import { LicenciasEntity } from '../../licencias/entities/licencias.entity';
 import { LikesEntity } from '../../likes/entities/likes.entity';
+import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { PerfilesEntity } from '../../perfiles/entities/perfiles.entity';
 import {
@@ -32,8 +35,6 @@ import {
   UsersCComercialesEntity,
 } from '../../users-ccomerciales/entities/users-ccomerciales.entity';
 import { UsersInformacionEntity } from './users-informacion.entity';
-import { ContactosEntity } from '../../contactos/entities/contactos.entity';
-import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
 
 @Entity(CONST.MODULES.USERS.USERS)
 export class UsersEntity {
@@ -100,6 +101,10 @@ export class UsersEntity {
   @ManyToOne(() => PaisesEntity)
   @JoinColumn({ name: 'paises_id' })
   pais: number;
+
+  @ManyToOne(() => CiudadesEntity)
+  @JoinColumn({ name: 'ciudades_id' })
+  ciudad: number;
 
   @OneToOne(() => UsersInformacionEntity, informacion => informacion.user, { eager: true })
   informacion: UsersInformacionEntity;

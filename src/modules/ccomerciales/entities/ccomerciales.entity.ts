@@ -10,6 +10,7 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
+import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
@@ -32,9 +33,6 @@ export class CComercialesEntity {
 
   @Column({ name: 'tel_segundo', type: 'varchar', default: '' })
   telSegundo: string;
-
-  @Column({ type: 'varchar', default: '' })
-  ciudad: string;
 
   @Column({ type: 'varchar', default: '' })
   direccion: string;
@@ -87,6 +85,10 @@ export class CComercialesEntity {
 
   @ManyToOne(() => PaisesEntity, paises => paises.ccomerciales)
   @JoinColumn({ name: 'paises_id' })
-  pais: number;
+  pais: any;
+
+  @ManyToOne(() => CiudadesEntity, ciudades => ciudades.ccomerciales)
+  @JoinColumn({ name: 'ciudades_id' })
+  ciudad: any;
 
 }

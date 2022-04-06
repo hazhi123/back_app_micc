@@ -85,6 +85,11 @@ export class createUsersDto {
 
   @ApiProperty()
   @IsNumber()
+  @IsNotEmpty()
+  ciudad: number;
+
+  @ApiProperty()
+  @IsNumber()
   @IsOptional()
   ccomercial: number;
 
