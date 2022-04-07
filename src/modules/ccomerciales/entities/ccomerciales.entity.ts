@@ -85,10 +85,10 @@ export class CComercialesEntity {
 
   @ManyToOne(() => PaisesEntity, paises => paises.ccomerciales)
   @JoinColumn({ name: 'paises_id' })
-  pais: any;
+  pais: number;
 
   @ManyToOne(() => CiudadesEntity, ciudades => ciudades.ccomerciales)
   @JoinColumn({ name: 'ciudades_id' })
-  ciudad: any;
+  ciudad: number;
 
 }

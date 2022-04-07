@@ -43,7 +43,7 @@ export class CategoriasService {
   ) { }
 
   async create(dto: CreateCategoriasDto, userLogin: UsersEntity) {
-    await this.findNombre(dto.nombre, false)
+    await this.findNombre(dto.ccomercial, dto.nombre, false)
     const save = await this.categoriasRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -84,7 +84,7 @@ export class CategoriasService {
   }
 
   async update(dto: UpdateCategoriasDto, userLogin: UsersEntity) {
-    const findNombre = await this.findNombre(dto.nombre, true)
+    const findNombre = await this.findNombre(dto.ccomercial, dto.nombre, true)
     if (!isEmptyUndefined(findNombre)) delete dto.nombre
 
     const getOne = await this.getOne(dto.id);
@@ -112,8 +112,8 @@ export class CategoriasService {
     return getOne;
   }
 
-  async findNombre(nombre: string, data: boolean) {
-    const findOne = await this.categoriasRP.findOne({ where: { nombre } })
+  async findNombre(ccomercial: number, nombre: string, data: boolean) {
+    const findOne = await this.categoriasRP.findOne({ where: { nombre, ccomercial } })
     if (data) return findOne
     if (!isEmptyUndefined(findOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
