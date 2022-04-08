@@ -34,11 +34,13 @@ export class UsersService {
     'ciudad',
     'ccomercial',
     'ccomercial.pais',
+    'ccomercial.ciudad',
     'tienda',
     'tienda.categoria',
     'ccomerciales',
     'ccomerciales.ccomercial',
     'ccomerciales.ccomercial.pais',
+    'ccomerciales.ccomercial.ciudad',
   ]
 
   constructor(
@@ -80,6 +82,7 @@ export class UsersService {
       celular,
       telefono,
       ciudad,
+      isTienda,
     } = dto
 
     // Es cuando el usuario se registra.
@@ -130,6 +133,7 @@ export class UsersService {
       isVisitante,
       pais,
       ciudad,
+      isTienda,
       perfil,
       createdBy: userLogin.id,
       createdAt: new Date(),
@@ -169,6 +173,8 @@ export class UsersService {
     let search = {}
     if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
     if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
+    if (!isEmptyUndefined(dto.isVisitante)) search['isVisitante'] = dto.isVisitante
+    if (!isEmptyUndefined(dto.isTienda)) search['isTienda'] = dto.isTienda
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     const find = await this.usersRP.find({
       where: search,
@@ -212,6 +218,7 @@ export class UsersService {
       isVisitante,
       tienda,
       dni,
+      isTienda,
       direccion,
       telefono,
     } = dto
@@ -255,6 +262,7 @@ export class UsersService {
       imageBack,
       password,
       isVisitante,
+      isTienda,
       perfil,
       ccomercial,
       tienda,

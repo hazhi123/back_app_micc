@@ -69,6 +69,9 @@ export class UsersEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
+  @Column({ name: 'is_tienda', type: 'bool', default: false })
+  isTienda: boolean;
+
   @Column({ name: 'is_visitante', type: 'bool', default: true })
   isVisitante: boolean;
 

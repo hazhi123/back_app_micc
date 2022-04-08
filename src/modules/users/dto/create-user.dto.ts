@@ -108,5 +108,10 @@ export class createUsersDto {
   @IsOptional()
   isVisitante: boolean;
 
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isTienda: boolean;
+
 
 }

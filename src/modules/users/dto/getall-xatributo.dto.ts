@@ -23,4 +23,14 @@ export class GetAllxAtributoDto {
   @IsOptional()
   status: boolean;
 
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isTienda: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isVisitante: boolean;
+
 }
