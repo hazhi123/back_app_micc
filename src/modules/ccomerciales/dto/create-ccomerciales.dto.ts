@@ -72,4 +72,9 @@ export class CreateCComercialesDto {
   @IsBoolean()
   status: boolean;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  abierto: boolean;
+
 }

@@ -67,6 +67,11 @@ export class CreateTiendasDto {
   status: boolean;
 
   @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  abierto: boolean;
+
+  @ApiProperty()
   @IsOptional()
   @IsBoolean()
   isGastro: boolean;

@@ -63,6 +63,9 @@ export class CComercialesEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
+  @Column({ type: 'bool', default: true })
+  abierto: boolean;
+
   @Column({ name: 'image_url', type: 'varchar', default: '' })
   imageUrl: string;
 
