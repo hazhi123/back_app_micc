@@ -31,4 +31,5 @@ export const MODULES = {
     TIPOS_PUBLICACION: 'tipos_publicacion',
     MENSAJES: 'mensajes',
     CONTACTOS: 'contactos',
+    HORARIOS: 'horarios',
 }

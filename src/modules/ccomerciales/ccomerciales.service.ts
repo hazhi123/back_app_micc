@@ -33,7 +33,8 @@ export class CComercialesService {
 
   relations = [
     'pais',
-    'ciudad'
+    'ciudad',
+    'horarios',
   ]
 
   constructor(

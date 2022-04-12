@@ -59,11 +59,6 @@ export class CreateCComercialesDto {
   ubicLatLng: string;
 
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  horarios: string;
-
-  @ApiProperty()
   @IsOptional()
   imageUrl: any;
 

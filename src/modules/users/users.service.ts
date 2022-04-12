@@ -35,6 +35,7 @@ export class UsersService {
     'ccomercial',
     'ccomercial.pais',
     'ccomercial.ciudad',
+    'ccomercial.horarios',
     'tienda',
     'tienda.categoria',
     'ccomerciales',

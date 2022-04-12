@@ -1,3 +1,4 @@
+import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import {
   Column,
   CreateDateColumn,
@@ -5,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -39,9 +41,6 @@ export class CComercialesEntity {
 
   @Column({ name: 'ubic_latlng', type: 'varchar', default: '' })
   ubicLatLng: string;
-
-  @Column({ type: 'varchar', default: '' })
-  horarios: string;
 
   @Column({ name: 'total_tiendas', type: 'integer', default: 0 })
   totalTiendas: number;
@@ -90,5 +89,8 @@ export class CComercialesEntity {
   @ManyToOne(() => CiudadesEntity, ciudades => ciudades.ccomerciales)
   @JoinColumn({ name: 'ciudades_id' })
   ciudad: number;
+
+  @OneToOne(() => HorariosEntity, horarios => horarios.ccomercial, { eager: true })
+  horarios: number;
 
 }
