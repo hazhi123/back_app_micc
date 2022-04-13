@@ -11,11 +11,21 @@ export class GetAllxAtributoDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
+  id: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
   pais: number;
 
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  abierto: boolean;
 
 }

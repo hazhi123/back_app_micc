@@ -97,6 +97,13 @@ export class CComercialesService {
     });
   }
 
+  async actualizarAbierto(dto: GetAllxAtributoDto): Promise<CComercialesEntity> {
+    await this.ccomercialesRP.update(dto.id, {
+      abierto: dto.abierto
+    });
+    return await this.getOne(dto.id);
+  }
+
   async update(dto: UpdateCComercialesDto, userLogin: UsersEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
     const getOne = await this.getOne(dto.id);

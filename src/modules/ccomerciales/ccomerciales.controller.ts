@@ -90,8 +90,24 @@ export class CComercialesController {
   }
 
   @Auth()
+  @Post('/abierto')
+  async actualizarAbierto(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.ccomercialesService.actualizarAbierto(dto);
+    let res = {
+      statusCode: 200,
+      data: data,
+      message: 'Se ha actualizado correctamente'
+    }
+    return res
+  }
+
+  @Auth()
   @Get(':id')
-  async getOne(@Param('id') id: number) {
+  async getOne(
+    @Param('id') id: number
+  ) {
     const data = await this.ccomercialesService.getOne(id);
     return {
       statusCode: 200,
