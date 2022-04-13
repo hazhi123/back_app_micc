@@ -180,11 +180,9 @@ export class PublicacionesService {
     }
 
     if (isEmptyUndefined(dto.index)) {
-      await this.publicacionesRP.createQueryBuilder()
-        .update(PublicacionesEntity)
-        .set({ imageUrl: image.url })
-        .where("id = :id", { id: parseInt(dto.publicacion) })
-        .execute();
+      await this.publicacionesRP.update(parseInt(dto.publicacion), {
+        imageUrl: image.url
+      });
       return await this.getOne(parseInt(dto.publicacion));
     }
 
@@ -196,43 +194,34 @@ export class PublicacionesService {
         galeria[x] = ""
       }
     }
-
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ galeria: galeria })
-      .where("id = :id", { id: parseInt(dto.publicacion) })
-      .execute();
+    await this.publicacionesRP.update(parseInt(dto.publicacion), {
+      galeria
+    });
     return await this.getOne(parseInt(dto.publicacion));
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ imageUrl: dto.url })
-      .where("id = :id", { id: dto.publicacion })
-      .execute();
+    await this.publicacionesRP.update(dto.publicacion, {
+      imageUrl: dto.url
+    });
     return await this.getOne(dto.publicacion);
   }
 
   async deleteGaleria(dto: CreateImageDto) {
     const data = await this.getOne(parseInt(dto.publicacion));
     data.galeria[parseInt(dto.index)] = ""
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ galeria: data.galeria })
-      .where("id = :id", { id: parseInt(dto.publicacion) })
-      .execute();
+    await this.publicacionesRP.update(parseInt(dto.publicacion), {
+      galeria: data.galeria
+    });
     return await this.getOne(parseInt(dto.publicacion));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
     const data = await this.getOne(dto.publicacion);
     data.galeria[dto.index] = dto.url
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ galeria: data.galeria })
-      .where("id = :id", { id: dto.publicacion })
-      .execute();
+    await this.publicacionesRP.update(dto.publicacion, {
+      galeria: data.galeria
+    });
     return await this.getOne(dto.publicacion);
   }
 

@@ -198,4 +198,18 @@ export class TiendasController {
     };
   }
 
+  @Auth()
+  @Post('/abierto')
+  async actualizarAbierto(
+    @Body() dto: GetAllxAtributoDto,
+  ) {
+    const data = await this.tiendasService.actualizarAbierto(dto);
+    let res = {
+      statusCode: 200,
+      data: data,
+      message: 'Se ha actualizado correctamente'
+    }
+    return res
+  }
+
 }

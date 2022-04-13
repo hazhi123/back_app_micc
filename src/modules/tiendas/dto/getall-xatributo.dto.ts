@@ -11,6 +11,11 @@ export class GetAllxAtributoDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
+  id: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
   ccomercial: number;
 
   @ApiProperty()
@@ -22,6 +27,11 @@ export class GetAllxAtributoDto {
   @IsBoolean()
   @IsOptional()
   status: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  abierto: boolean;
 
   @ApiProperty()
   @IsBoolean()

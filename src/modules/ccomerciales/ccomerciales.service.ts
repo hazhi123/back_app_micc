@@ -166,13 +166,10 @@ export class CComercialesService {
     } catch (error) {
       image = { url: '' }
     }
-
     if (isEmptyUndefined(dto.index)) {
-      await this.ccomercialesRP.createQueryBuilder()
-        .update(CComercialesEntity)
-        .set({ imageUrl: image.url })
-        .where("id = :id", { id: parseInt(dto.ccomercial) })
-        .execute();
+      await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+        imageUrl: image.url
+      });
       return await this.getOne(parseInt(dto.ccomercial));
     }
 
@@ -184,45 +181,34 @@ export class CComercialesService {
         galeria[x] = ""
       }
     }
-
-    await this.ccomercialesRP.createQueryBuilder()
-      .update(CComercialesEntity)
-      .set({ galeria: galeria })
-      .where("id = :id", { id: parseInt(dto.ccomercial) })
-      .execute();
-
+    await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+      galeria
+    });
     return await this.getOne(parseInt(dto.ccomercial));
-
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.ccomercialesRP.createQueryBuilder()
-      .update(CComercialesEntity)
-      .set({ imageUrl: dto.url })
-      .where("id = :id", { id: dto.ccomercial })
-      .execute();
+    await this.ccomercialesRP.update(dto.ccomercial, {
+      imageUrl: dto.url
+    });
     return await this.getOne(dto.ccomercial);
   }
 
   async deleteGaleria(dto: CreateImageDto) {
     const data = await this.getOne(parseInt(dto.ccomercial));
     data.galeria[parseInt(dto.index)] = ""
-    await this.ccomercialesRP.createQueryBuilder()
-      .update(CComercialesEntity)
-      .set({ galeria: data.galeria })
-      .where("id = :id", { id: parseInt(dto.ccomercial) })
-      .execute();
+    await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+      galeria: data.galeria
+    });
     return await this.getOne(parseInt(dto.ccomercial));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
     const data = await this.getOne(dto.ccomercial);
     data.galeria[dto.index] = dto.url
-    await this.ccomercialesRP.createQueryBuilder()
-      .update(CComercialesEntity)
-      .set({ galeria: data.galeria })
-      .where("id = :id", { id: dto.ccomercial })
-      .execute();
+    await this.ccomercialesRP.update(dto.ccomercial, {
+      galeria: data.galeria
+    });
     return await this.getOne(dto.ccomercial);
   }
 

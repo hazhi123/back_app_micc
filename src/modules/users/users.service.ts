@@ -351,27 +351,21 @@ export class UsersService {
     }
 
     if (parseInt(dto.isBack) == 0) {
-      await this.usersRP.createQueryBuilder()
-        .update(UsersEntity)
-        .set({ imageUrl: image.url })
-        .where("id = :id", { id: parseInt(dto.user) })
-        .execute();
+      await this.usersRP.update(parseInt(dto.user),
+        { imageUrl: image.url }
+      );
     } else {
-      await this.usersRP.createQueryBuilder()
-        .update(UsersEntity)
-        .set({ imageBack: image.url })
-        .where("id = :id", { id: parseInt(dto.user) })
-        .execute();
+      await this.usersRP.update(parseInt(dto.user),
+        { imageBack: image.url }
+      );
     }
     return await this.getOne(parseInt(dto.user));
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.usersRP.createQueryBuilder()
-      .update(UsersEntity)
-      .set(dto.isBack ? { imageBack: dto.url } : { imageUrl: dto.url })
-      .where("id = :id", { id: dto.user })
-      .execute();
+    await this.usersRP.update(dto.user,
+      dto.isBack ? { imageBack: dto.url } : { imageUrl: dto.url }
+    );
     return await this.getOne(dto.user);
   }
 

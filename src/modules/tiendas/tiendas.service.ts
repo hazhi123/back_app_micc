@@ -77,13 +77,10 @@ export class TiendasService {
       where: { id: dto.ccomercial }
     })
 
-    await this.ccomercialesRP.createQueryBuilder()
-      .update(CComercialesEntity)
-      .set({ totalTiendas: ccomercial.totalTiendas + 1 })
-      .where("id = :id", { id: dto.ccomercial })
-      .execute();
+    await this.ccomercialesRP.update(dto.ccomercial, {
+      totalTiendas: ccomercial.totalTiendas + 1
+    });
 
-    // await createLicenciasFree(this.licenciasRP, this.usersRP, { userId: dto.user, userLoginId: userLogin.id })
     return await this.getOne(save.id);
   }
 
@@ -147,13 +144,9 @@ export class TiendasService {
     const ccomercial = await this.ccomercialesRP.findOne({
       where: { id: getOne.ccomercial.id }
     })
-
-    await this.ccomercialesRP.createQueryBuilder()
-      .update(CComercialesEntity)
-      .set({ totalTiendas: ccomercial.totalTiendas - 1 })
-      .where("id = :id", { id: getOne.ccomercial.id })
-      .execute();
-
+    await this.ccomercialesRP.update(getOne.ccomercial.id, {
+      totalTiendas: ccomercial.totalTiendas - 1
+    });
     await this.tiendasRP.delete(id);
 
     return getOne;
@@ -197,11 +190,9 @@ export class TiendasService {
     }
 
     if (isEmptyUndefined(dto.index)) {
-      await this.tiendasRP.createQueryBuilder()
-        .update(TiendasEntity)
-        .set({ imageUrl: image.url })
-        .where("id = :id", { id: parseInt(dto.tienda) })
-        .execute();
+      await this.tiendasRP.update(parseInt(dto.tienda), {
+        imageUrl: image.url
+      });
       return await this.getOne(parseInt(dto.tienda));
     }
 
@@ -214,45 +205,43 @@ export class TiendasService {
       }
     }
 
-    await this.tiendasRP.createQueryBuilder()
-      .update(TiendasEntity)
-      .set({ galeria: galeria })
-      .where("id = :id", { id: parseInt(dto.tienda) })
-      .execute();
-
+    await this.tiendasRP.update(parseInt(dto.tienda), {
+      galeria
+    });
     return await this.getOne(parseInt(dto.tienda));
 
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.tiendasRP.createQueryBuilder()
-      .update(TiendasEntity)
-      .set({ imageUrl: dto.url })
-      .where("id = :id", { id: dto.tienda })
-      .execute();
+    await this.tiendasRP.update(dto.tienda, {
+      imageUrl: dto.url
+    });
     return await this.getOne(dto.tienda);
   }
 
   async deleteGaleria(dto: CreateImageDto) {
     const data = await this.getOne(parseInt(dto.tienda));
     data.galeria[parseInt(dto.index)] = ""
-    await this.tiendasRP.createQueryBuilder()
-      .update(TiendasEntity)
-      .set({ galeria: data.galeria })
-      .where("id = :id", { id: parseInt(dto.tienda) })
-      .execute();
+    await this.tiendasRP.update(dto.tienda, {
+      galeria: data.galeria
+    });
     return await this.getOne(parseInt(dto.tienda));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
     const data = await this.getOne(dto.tienda);
     data.galeria[dto.index] = dto.url
-    await this.tiendasRP.createQueryBuilder()
-      .update(TiendasEntity)
-      .set({ galeria: data.galeria })
-      .where("id = :id", { id: dto.tienda })
-      .execute();
+    await this.tiendasRP.update(dto.tienda, {
+      galeria: data.galeria
+    });
     return await this.getOne(dto.tienda);
+  }
+
+  async actualizarAbierto(dto: GetAllxAtributoDto): Promise<TiendasEntity> {
+    await this.tiendasRP.update(dto.id, {
+      abierto: dto.abierto
+    });
+    return await this.getOne(dto.id);
   }
 
 }
