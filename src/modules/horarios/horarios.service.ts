@@ -19,7 +19,8 @@ import { HorariosEntity } from './entities/horarios.entity';
 export class HorariosService {
 
   relations = [
-    'ccomercial'
+    'ccomercial',
+    'tienda',
   ]
 
   constructor(
@@ -28,7 +29,20 @@ export class HorariosService {
   ) { }
 
   async create(dto: CreateHorariosDto, userLogin: UsersEntity) {
-    const getOne = await this.getOne(dto.ccomercial)
+
+    let getOne
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      getOne = await this.horariosRP.findOne({
+        where: { entidad: 'ccomercial', ccomercial: dto.ccomercial },
+        relations: this.relations
+      })
+    }
+    if (!isEmptyUndefined(dto.tienda)) {
+      getOne = await this.horariosRP.findOne({
+        where: { entidad: 'tienda', tienda: dto.tienda },
+        relations: this.relations
+      })
+    }
 
     if (isEmptyUndefined(getOne)) {
       const save = await this.horariosRP.save({
@@ -38,13 +52,11 @@ export class HorariosService {
         updatedBy: userLogin.id,
         updatedAt: new Date(),
       });
-      return await this.getOne(save.ccomercial);
+      return await this.getOne(save.id);
     } else {
-      delete getOne.ccomercial
-      await this.horariosRP.update(dto.ccomercial, dto);
-      return await this.getOne(dto.ccomercial);
+      await this.horariosRP.update(getOne.id, dto);
+      return await this.getOne(getOne.id);
     }
-
   }
 
   async getAll(): Promise<HorariosEntity[]> {
@@ -55,9 +67,9 @@ export class HorariosService {
     return find;
   }
 
-  async getOne(ccomercial: number): Promise<HorariosEntity> {
+  async getOne(id: number): Promise<HorariosEntity> {
     return await this.horariosRP.findOne({
-      where: { ccomercial },
+      where: { id },
       relations: this.relations
     });
   }

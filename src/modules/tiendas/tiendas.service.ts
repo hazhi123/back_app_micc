@@ -39,6 +39,7 @@ export class TiendasService {
     'categoria',
     'ccomercial',
     'ccomercial.pais',
+    'horarios',
   ]
 
   constructor(

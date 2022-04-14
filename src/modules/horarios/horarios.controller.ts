@@ -21,8 +21,8 @@ import {
 } from './dto';
 import { HorariosService } from './horarios.service';
 
-@ApiTags(`${CONST.MODULES.CCOMERCIALES}/${CONST.MODULES.HORARIOS.toUpperCase()}`)
-@Controller(`${CONST.MODULES.CCOMERCIALES}/${CONST.MODULES.HORARIOS}`)
+@ApiTags(CONST.MODULES.HORARIOS.toUpperCase())
+@Controller(CONST.MODULES.HORARIOS)
 export class HorariosController {
   constructor(
     private readonly horariosService: HorariosService

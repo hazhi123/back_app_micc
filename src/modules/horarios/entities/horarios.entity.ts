@@ -5,12 +5,17 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 
 @Entity(CONST.MODULES.HORARIOS)
 export class HorariosEntity {
+
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', default: '' })
   lunes: string;
@@ -48,9 +53,16 @@ export class HorariosEntity {
   @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
+  @Column({ type: 'varchar' })
+  entidad: string;
+
   // Relaciones
-  @OneToOne(() => CComercialesEntity, { primary: true, onDelete: 'CASCADE' })
+  @OneToOne(() => CComercialesEntity, cc => cc.horarios, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ccomercial_id' })
   ccomercial: number;
+
+  @OneToOne(() => TiendasEntity, tienda => tienda.horarios, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tiendas_id' })
+  tienda: number;
 
 }

@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -14,6 +15,7 @@ import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 
 @Entity(CONST.MODULES.TIENDAS)
 export class TiendasEntity {
@@ -80,5 +82,8 @@ export class TiendasEntity {
 
   @OneToMany(() => ContactosEntity, categoria => categoria.tienda)
   contactos: ContactosEntity[];
+
+  @OneToOne(() => HorariosEntity, horarios => horarios.tienda, { eager: true })
+  horarios: number;
 
 }

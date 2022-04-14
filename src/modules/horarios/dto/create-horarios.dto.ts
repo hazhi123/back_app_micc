@@ -2,6 +2,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -11,8 +12,13 @@ export class CreateHorariosDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   ccomercial: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  tienda: number;
 
   @ApiProperty()
   @IsString()
