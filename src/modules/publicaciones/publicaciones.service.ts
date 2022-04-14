@@ -38,6 +38,7 @@ export class PublicacionesService {
     'tienda.categoria',
     'ccomercial',
     'ccomercial.pais',
+    'ccomercial.ciudad',
   ]
 
   constructor(

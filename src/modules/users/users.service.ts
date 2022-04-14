@@ -389,7 +389,7 @@ export class UsersService {
       await this.galeriaRP.delete(getOneGaleria.id);
     }
 
-    const val = file.replace('http://res.cloudinary.com/hazhi123/image/upload/', '');
+    const val = file.replace('http://res.cloudinary.com/dqjirfzaa/image/upload/', '');
     const lista = val.split('/')[1].split('.');
     let resCloud = await this.cloudinary.deleteImage(lista[0]).catch(() => {
       throw new BadRequestException('Invalid file type.');
