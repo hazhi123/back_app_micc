@@ -100,15 +100,8 @@ export class GaleriaService {
 
     let image = await this.deleteImageToCloudinary(lista[0])
 
-    if (image.result == 'ok') {
-      await this.galeriaRP.delete(id);
-      return image.result;
-    }
-
-    throw new HttpException({
-      statusCode: HttpStatus.BAD_GATEWAY,
-      message: 'Ocurrio un error al eliminar la imagén',
-    }, HttpStatus.BAD_GATEWAY)
+    await this.galeriaRP.delete(id);
+    return image.result;
   }
 
 }

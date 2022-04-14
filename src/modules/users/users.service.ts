@@ -288,13 +288,8 @@ export class UsersService {
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
 
-    await this.usersRP.createQueryBuilder()
-      .update(UsersEntity)
-      .set({ status: false })
-      .where("id = :id", { id })
-      .execute();
-    // await this.usersRP.delete(id);
-    return getOne;
+    await this.usersRP.update(id, { status: false });
+    return await this.getOne(id, null);
   }
 
   async findUser(user: string) {
@@ -331,9 +326,24 @@ export class UsersService {
     });
   }
 
-  async createImage(file: any, dto: CreateImageDto, isBack: boolean,) {
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+
+    const getOne = await this.getOne(parseInt(dto.user));
+
     let image
     try {
+      if (userLogin.isVisitante) {
+        if (parseInt(dto.isBack) == 0) {
+          if (!isEmptyUndefined(getOne.imageUrl)) {
+            await this.deleteImageCloudinary(getOne.imageUrl, parseInt(dto.user))
+          }
+        } else {
+          if (!isEmptyUndefined(getOne.imageBack)) {
+            await this.deleteImageCloudinary(getOne.imageBack, parseInt(dto.user))
+          }
+        }
+      }
+
       image = await this.uploadImageToCloudinary(file)
       this.galeriaRP.createQueryBuilder()
         .insert()
@@ -367,6 +377,25 @@ export class UsersService {
       dto.isBack ? { imageBack: dto.url } : { imageUrl: dto.url }
     );
     return await this.getOne(dto.user);
+  }
+
+  async deleteImageCloudinary(file: string, refId: number) {
+    // http://res.cloudinary.com/dqjirfzaa/image/upload/ - v1648706352/vwc7ptrctmetsx1uzmor.jpg
+    // http://res.cloudinary.com/hazhi123/image/upload/ - v1649893821/bsixu8p3dyekivgqyuxm.jpg
+    const getOneGaleria = await this.galeriaRP.findOne({
+      where: { refId, file },
+    });
+    if (!isEmptyUndefined(getOneGaleria)) {
+      await this.galeriaRP.delete(getOneGaleria.id);
+    }
+
+    const val = file.replace('http://res.cloudinary.com/hazhi123/image/upload/', '');
+    const lista = val.split('/')[1].split('.');
+    let resCloud = await this.cloudinary.deleteImage(lista[0]).catch(() => {
+      throw new BadRequestException('Invalid file type.');
+    });
+
+    return resCloud.result;
   }
 
 }

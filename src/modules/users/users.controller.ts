@@ -127,8 +127,9 @@ export class UsersController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.usersService.createImage(file, dto, false);
+    const data = await this.usersService.createImage(file, dto, userLogin);
     return {
       statusCode: 200,
       data,
