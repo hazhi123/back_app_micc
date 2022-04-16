@@ -20,10 +20,6 @@ import { CiudadesEntity } from './entities/ciudades.entity';
 @Injectable()
 export class CiudadesService {
 
-  relations = [
-    'pais'
-  ]
-
   constructor(
     @InjectRepository(CiudadesEntity)
     private readonly ciudadesRP: Repository<CiudadesEntity>
@@ -41,24 +37,15 @@ export class CiudadesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<CiudadesEntity[]> {
-    const find = await this.ciudadesRP.find({
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
-  }
-
-
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CiudadesEntity[]> {
+  async getAll(dto: GetAllxAtributoDto): Promise<CiudadesEntity[]> {
     let search = {}
     if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     const find = await this.ciudadesRP.find({
       where: search,
-      relations: this.relations,
+      relations: ['pais'],
       order: { 'nombre': 'ASC' },
+      select: ['id', 'nombre']
     });
     if (isEmptyUndefined(find)) return null
     return find;
@@ -67,7 +54,7 @@ export class CiudadesService {
   async getOne(id: number): Promise<CiudadesEntity> {
     return await this.ciudadesRP.findOne({
       where: { id },
-      relations: this.relations
+      relations: ['pais']
     });
   }
 

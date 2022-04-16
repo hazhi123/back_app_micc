@@ -20,8 +20,6 @@ import { PaisesEntity } from './entities/paises.entity';
 @Injectable()
 export class PaisesService {
 
-  relations = []
-
   constructor(
     @InjectRepository(PaisesEntity)
     private readonly paisesRP: Repository<PaisesEntity>
@@ -45,9 +43,8 @@ export class PaisesService {
 
     const find = await this.paisesRP.find({
       where: search,
-      relations: this.relations,
       order: { 'nombre': 'ASC' },
-      select: !isEmptyUndefined(dto.select) ? dto.select : ['id', 'nombre', 'imageUrl']
+      select: !isEmptyUndefined(dto.select) ? dto.select : ['id', 'nombre', 'imageUrl', 'code']
     });
     if (isEmptyUndefined(find)) return null
     return find;
@@ -56,7 +53,6 @@ export class PaisesService {
   async getOne(id: number): Promise<PaisesEntity> {
     return await this.paisesRP.findOne({
       where: { id },
-      relations: this.relations
     });
   }
 

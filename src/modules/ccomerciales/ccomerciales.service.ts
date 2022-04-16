@@ -31,12 +31,6 @@ import { CComercialesEntity } from './entities/ccomerciales.entity';
 @Injectable()
 export class CComercialesService {
 
-  relations = [
-    'pais',
-    'ciudad',
-    'horarios',
-  ]
-
   constructor(
     @InjectRepository(CComercialesEntity)
     private readonly ccomercialesRP: Repository<CComercialesEntity>,
@@ -65,13 +59,6 @@ export class CComercialesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
-    return paginate<CComercialesEntity>(this.ccomercialesRP, options, {
-      relations: ['pais', 'ciudad', 'tiendas'],
-      order: { 'nombre': 'ASC' },
-    });
-  }
-
   async buscador(dto) {
     let search = {}
     if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
@@ -80,24 +67,22 @@ export class CComercialesService {
     return search
   }
 
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CComercialesEntity[]> {
-    const find = await this.ccomercialesRP.find({
+  async getAll(dto: GetAllxAtributoDto, options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
+    return paginate<CComercialesEntity>(this.ccomercialesRP, options, {
       where: await this.buscador(dto),
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
+      relations: ['pais', 'ciudad', 'tiendas'],
+      order: { 'id': 'DESC' },
     });
-    if (isEmptyUndefined(find)) return null
-    return find;
   }
 
   async getOne(id: number): Promise<CComercialesEntity> {
     return await this.ccomercialesRP.findOne({
       where: { id },
-      relations: this.relations
+      relations: ['pais', 'ciudad', 'tiendas', 'horarios']
     });
   }
 
-  async actualizarAbierto(dto: GetAllxAtributoDto): Promise<CComercialesEntity> {
+  async actualizarApertura(dto: GetAllxAtributoDto): Promise<CComercialesEntity> {
     await this.ccomercialesRP.update(dto.id, {
       abierto: dto.abierto
     });

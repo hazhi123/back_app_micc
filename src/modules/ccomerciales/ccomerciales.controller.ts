@@ -54,13 +54,14 @@ export class CComercialesController {
   }
 
   @Auth()
-  @Get()
+  @Post('/all')
   async getAll(
+    @Body() dto: GetAllxAtributoDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
     limit = limit > 50 ? 50 : limit;
-    const data = await this.ccomercialesService.getAll({
+    const data = await this.ccomercialesService.getAll(dto, {
       page,
       limit,
       route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES}`,
@@ -76,29 +77,15 @@ export class CComercialesController {
   }
 
   @Auth()
-  @Post('/all')
-  async getAllxAtributo(
+  @Post('/apertura')
+  async actualizarApertura(
     @Body() dto: GetAllxAtributoDto,
   ) {
-    const data = await this.ccomercialesService.getAllxAtributo(dto);
+    const data = await this.ccomercialesService.actualizarApertura(dto);
     let res = {
       statusCode: 200,
       data: data,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
-  @Post('/abierto')
-  async actualizarAbierto(
-    @Body() dto: GetAllxAtributoDto,
-  ) {
-    const data = await this.ccomercialesService.actualizarAbierto(dto);
-    let res = {
-      statusCode: 200,
-      data: data,
-      message: 'Se ha actualizado correctamente'
+      message: 'Se ha actualizado la apertura del Centro Comercial'
     }
     return res
   }

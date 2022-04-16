@@ -41,7 +41,7 @@ export class CiudadesEntity {
   // Relaciones
   @ManyToOne(() => PaisesEntity)
   @JoinColumn({ name: 'paises_id' })
-  pais: number;
+  pais: PaisesEntity;
 
   @OneToMany(() => CComercialesEntity, ccomerciales => ccomerciales.ciudad)
   ccomerciales: CComercialesEntity[];

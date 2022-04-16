@@ -44,23 +44,11 @@ export class CiudadesController {
     };
   }
 
-  @Auth()
-  @Get()
-  async getAll() {
-    const data = await this.ciudadesService.getAll();
-    let res = {
-      statusCode: 200,
-      data,
-      message: ''
-    }
-    return res
-  }
-
   @Post('/all')
-  async getAllxAtributo(
+  async getAll(
     @Body() dto: GetAllxAtributoDto,
   ) {
-    const data = await this.ciudadesService.getAllxAtributo(dto);
+    const data = await this.ciudadesService.getAll(dto);
     let res = {
       statusCode: 200,
       data: data,
