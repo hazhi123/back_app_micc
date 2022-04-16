@@ -38,24 +38,44 @@ export class CiudadesService {
   }
 
   async getAll(dto: GetAllDto): Promise<CiudadesEntity[]> {
-    let search = {}
-    if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-    const find = await this.ciudadesRP.find({
-      where: search,
-      relations: ['pais'],
-      order: { 'nombre': 'ASC' },
-      select: ['id', 'nombre']
-    });
+    const find = await this.ciudadesRP
+      .createQueryBuilder("ciu")
+      .leftJoinAndSelect("ciu.pais", "pais")
+      .select([
+        'ciu.id',
+        'ciu.nombre',
+        'ciu.status',
+        'pais.nombre',
+      ])
+      .orderBy("ciu.nombre", "ASC")
+      .where(
+        !isEmptyUndefined(dto.status) ? `ciu.status = ${dto.status}` : '')
+      .getMany();
     if (isEmptyUndefined(find)) return null
     return find;
   }
 
   async getOne(id: number): Promise<CiudadesEntity> {
-    return await this.ciudadesRP.findOne({
-      where: { id },
-      relations: ['pais']
-    });
+    const find = await this.ciudadesRP
+      .createQueryBuilder("ciu")
+      .leftJoinAndSelect("ciu.pais", "pais")
+      .select([
+        'ciu.id',
+        'ciu.nombre',
+        'ciu.createdBy',
+        'ciu.createdAt',
+        'ciu.updatedBy',
+        'ciu.updatedAt',
+        'ciu.status',
+        'ciu.id',
+        'pais.id',
+        'pais.nombre',
+        'pais.code',
+      ])
+      .where('ciu.id = :id', { id })
+      .getOne();
+    if (isEmptyUndefined(find)) return null
+    return find;
   }
 
   async update(dto: UpdateCiudadesDto, userLogin: UsersEntity) {

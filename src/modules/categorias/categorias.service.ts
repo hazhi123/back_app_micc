@@ -49,13 +49,28 @@ export class CategoriasService {
   }
 
   async getAll(dto: GetAllDto): Promise<CategoriasEntity[]> {
-    let search = {}
-    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-    const find = await this.categoriasRP.find({
-      where: search,
-      order: { 'nombre': 'ASC' },
-    });
+    const query = await this.categoriasRP
+      .createQueryBuilder("cat")
+    query
+      .leftJoinAndSelect("cat.ccomercial", "cc")
+      .select([
+        'cat.id',
+        'cat.nombre',
+        'cat.desc',
+        'cat.imageUrl',
+        'cat.status',
+      ])
+
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('cat.status = :status', { status: dto.status })
+    }
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    }
+
+    query.orderBy("cat.nombre", "ASC")
+
+    const find = query.getMany();
     if (isEmptyUndefined(find)) return null
     return find;
   }
@@ -63,11 +78,6 @@ export class CategoriasService {
   async getOne(id: number): Promise<CategoriasEntity> {
     return await this.categoriasRP.findOne({
       where: { id },
-      relations: [
-        'ccomercial',
-        'ccomercial.pais',
-        'ccomercial.ciudad'
-      ]
     });
   }
 

@@ -59,27 +59,88 @@ export class CComercialesService {
     return await this.getOne(save.id);
   }
 
-  async buscador(dto) {
-    let search = {}
-    if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
-    if (!isEmptyUndefined(dto.ciudad)) search['ciudad'] = dto.ciudad
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-    return search
-  }
-
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
-    return paginate<CComercialesEntity>(this.ccomercialesRP, options, {
-      where: await this.buscador(dto),
-      relations: ['pais', 'ciudad', 'tiendas'],
-      order: { 'id': 'DESC' },
-    });
+    const query = await this.ccomercialesRP
+      .createQueryBuilder("cc")
+    query
+      .leftJoinAndSelect("cc.pais", "pais")
+      .leftJoinAndSelect("cc.ciudad", "ciudad")
+      .select([
+        'cc.id',
+        'cc.nombre',
+        'cc.telPrimero',
+        'cc.direccion',
+        'cc.totalTiendas',
+        'cc.abierto',
+        'cc.imageUrl',
+        'cc.status',
+        'pais.id',
+        'pais.nombre',
+        'ciudad.id',
+        'ciudad.nombre',
+      ])
+
+    if (!isEmptyUndefined(dto.pais)) {
+      query.andWhere('cc.pais = :pais', { pais: dto.pais })
+    }
+    if (!isEmptyUndefined(dto.ciudad)) {
+      query.andWhere('cc.ciudad = :ciudad', { ciudad: dto.ciudad })
+    }
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('cc.status = :status', { status: dto.status })
+    }
+    if (!isEmptyUndefined(dto.abierto)) {
+      query.andWhere('cc.abierto = :abierto', { abierto: dto.abierto })
+    }
+    query.orderBy("pais.nombre", "ASC")
+    query.addOrderBy("ciudad.nombre", "ASC")
+    query.addOrderBy("cc.nombre", "ASC")
+
+    query.getMany();
+    return paginate<CComercialesEntity>(query, options);
   }
 
   async getOne(id: number): Promise<CComercialesEntity> {
-    return await this.ccomercialesRP.findOne({
-      where: { id },
-      relations: ['pais', 'ciudad', 'tiendas', 'horarios']
-    });
+    const getOne = await this.ccomercialesRP
+      .createQueryBuilder("cc")
+      .leftJoinAndSelect("cc.pais", "pais")
+      .leftJoinAndSelect("cc.ciudad", "ciudad")
+      .leftJoinAndSelect("cc.horarios", "horarios")
+      .select([
+        'cc.id',
+        'cc.nombre',
+        'cc.correo',
+        'cc.telPrimero',
+        'cc.telSegundo',
+        'cc.galeria',
+        'cc.direccion',
+        'cc.ubicLatLng',
+        'cc.totalTiendas',
+        'cc.desc',
+        'cc.abierto',
+        'cc.imageUrl',
+        'cc.createdBy',
+        'cc.createdAt',
+        'cc.updatedBy',
+        'cc.updatedAt',
+        'cc.status',
+        'pais.id',
+        'pais.nombre',
+        'ciudad.id',
+        'ciudad.nombre',
+        'horarios.lunes',
+        'horarios.martes',
+        'horarios.miercoles',
+        'horarios.jueves',
+        'horarios.viernes',
+        'horarios.sabado',
+        'horarios.domingo',
+        'horarios.feriados',
+      ])
+      .where('cc.id = :id', { id })
+      .getOne()
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
   }
 
   async actualizarApertura(dto: GetAllDto): Promise<CComercialesEntity> {
