@@ -18,7 +18,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePaisesDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdatePaisesDto,
 } from './dto';
 import { PaisesService } from './paises.service';
@@ -46,7 +46,7 @@ export class PaisesController {
 
   @Post('/all')
   async getAll(
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
   ) {
     const data = await this.paisesService.getAll(dto);
     let res = {

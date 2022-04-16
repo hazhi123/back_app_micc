@@ -12,7 +12,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCiudadesDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateCiudadesDto,
 } from './dto';
 import { CiudadesEntity } from './entities/ciudades.entity';
@@ -37,7 +37,7 @@ export class CiudadesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(dto: GetAllxAtributoDto): Promise<CiudadesEntity[]> {
+  async getAll(dto: GetAllDto): Promise<CiudadesEntity[]> {
     let search = {}
     if (!isEmptyUndefined(dto.pais)) search['pais'] = dto.pais
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status

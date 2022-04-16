@@ -19,7 +19,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import { CiudadesService } from './ciudades.service';
 import {
   CreateCiudadesDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateCiudadesDto,
 } from './dto';
 
@@ -46,7 +46,7 @@ export class CiudadesController {
 
   @Post('/all')
   async getAll(
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
   ) {
     const data = await this.ciudadesService.getAll(dto);
     let res = {

@@ -6,26 +6,17 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllxAtributoDto {
+export class GetAllDto {
 
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  id: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  pais: number;
+  ccomercial: number;
 
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
 
-  @ApiProperty()
-  @IsBoolean()
-  @IsOptional()
-  abierto: boolean;
 
 }

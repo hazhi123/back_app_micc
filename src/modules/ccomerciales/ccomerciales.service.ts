@@ -22,7 +22,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCComercialesDto,
   CreateImageDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateCComercialesDto,
   UpdateImageDto,
 } from './dto';
@@ -67,7 +67,7 @@ export class CComercialesService {
     return search
   }
 
-  async getAll(dto: GetAllxAtributoDto, options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
     return paginate<CComercialesEntity>(this.ccomercialesRP, options, {
       where: await this.buscador(dto),
       relations: ['pais', 'ciudad', 'tiendas'],
@@ -82,7 +82,7 @@ export class CComercialesService {
     });
   }
 
-  async actualizarApertura(dto: GetAllxAtributoDto): Promise<CComercialesEntity> {
+  async actualizarApertura(dto: GetAllDto): Promise<CComercialesEntity> {
     await this.ccomercialesRP.update(dto.id, {
       abierto: dto.abierto
     });

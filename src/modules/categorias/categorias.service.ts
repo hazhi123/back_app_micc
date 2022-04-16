@@ -16,7 +16,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCategoriasDto,
   CreateImageDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateCategoriasDto,
   UpdateImageDto,
 } from './dto';
@@ -24,12 +24,6 @@ import { CategoriasEntity } from './entities/categorias.entity';
 
 @Injectable()
 export class CategoriasService {
-
-  relations = [
-    'ccomercial',
-    'ccomercial.pais',
-    'ccomercial.ciudad'
-  ]
 
   constructor(
     @InjectRepository(CategoriasEntity)
@@ -54,22 +48,12 @@ export class CategoriasService {
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<CategoriasEntity[]> {
-    const find = await this.categoriasRP.find({
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
-  }
-
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<CategoriasEntity[]> {
+  async getAll(dto: GetAllDto): Promise<CategoriasEntity[]> {
     let search = {}
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
+    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     const find = await this.categoriasRP.find({
       where: search,
-      relations: this.relations,
       order: { 'nombre': 'ASC' },
     });
     if (isEmptyUndefined(find)) return null
@@ -79,7 +63,11 @@ export class CategoriasService {
   async getOne(id: number): Promise<CategoriasEntity> {
     return await this.categoriasRP.findOne({
       where: { id },
-      relations: this.relations
+      relations: [
+        'ccomercial',
+        'ccomercial.pais',
+        'ccomercial.ciudad'
+      ]
     });
   }
 

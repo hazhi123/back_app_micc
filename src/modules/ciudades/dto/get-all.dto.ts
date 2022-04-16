@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsNumber,
   IsOptional,
@@ -6,17 +7,16 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllxAtributoDto {
+export class GetAllDto {
 
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  ccomercial: number;
+  pais: number;
 
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
-
 
 }

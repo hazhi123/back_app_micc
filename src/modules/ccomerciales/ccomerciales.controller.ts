@@ -27,7 +27,7 @@ import { CComercialesService } from './ccomerciales.service';
 import {
   CreateCComercialesDto,
   CreateImageDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateCComercialesDto,
   UpdateImageDto,
 } from './dto';
@@ -56,7 +56,7 @@ export class CComercialesController {
   @Auth()
   @Post('/all')
   async getAll(
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
@@ -79,7 +79,7 @@ export class CComercialesController {
   @Auth()
   @Post('/apertura')
   async actualizarApertura(
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
   ) {
     const data = await this.ccomercialesService.actualizarApertura(dto);
     let res = {

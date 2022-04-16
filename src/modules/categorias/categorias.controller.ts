@@ -23,7 +23,7 @@ import { CategoriasService } from './categorias.service';
 import {
   CreateCategoriasDto,
   CreateImageDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateCategoriasDto,
   UpdateImageDto,
 } from './dto';
@@ -50,23 +50,11 @@ export class CategoriasController {
   }
 
   @Auth()
-  @Get()
-  async getAll() {
-    const data = await this.categoriaService.getAll();
-    let res = {
-      statusCode: 200,
-      data,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
   @Post('/all')
-  async getAllxAtributo(
-    @Body() dto: GetAllxAtributoDto,
+  async getAll(
+    @Body() dto: GetAllDto,
   ) {
-    const data = await this.categoriaService.getAllxAtributo(dto);
+    const data = await this.categoriaService.getAll(dto);
     let res = {
       statusCode: 200,
       data: data,

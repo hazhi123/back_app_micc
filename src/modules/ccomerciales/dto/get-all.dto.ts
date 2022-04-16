@@ -1,12 +1,22 @@
 import {
-  IsArray,
   IsBoolean,
+  IsNumber,
   IsOptional,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllxAtributoDto {
+export class GetAllDto {
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  id: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  pais: number;
 
   @ApiProperty()
   @IsBoolean()
@@ -14,8 +24,8 @@ export class GetAllxAtributoDto {
   status: boolean;
 
   @ApiProperty()
-  @IsArray()
+  @IsBoolean()
   @IsOptional()
-  select: any = [];
+  abierto: boolean;
 
 }
