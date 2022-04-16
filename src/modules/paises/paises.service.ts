@@ -39,23 +39,15 @@ export class PaisesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(id: number): Promise<PaisesEntity[]> {
-    const find = await this.paisesRP.find({
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
-  }
-
-
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<PaisesEntity[]> {
+  async getAll(dto: GetAllxAtributoDto): Promise<PaisesEntity[]> {
     let search = {}
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+
     const find = await this.paisesRP.find({
       where: search,
       relations: this.relations,
       order: { 'nombre': 'ASC' },
+      select: !isEmptyUndefined(dto.select) ? dto.select : ['id', 'nombre', 'imageUrl']
     });
     if (isEmptyUndefined(find)) return null
     return find;

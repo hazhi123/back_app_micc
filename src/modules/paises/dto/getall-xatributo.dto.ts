@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsOptional,
 } from 'class-validator';
@@ -11,5 +12,10 @@ export class GetAllxAtributoDto {
   @IsBoolean()
   @IsOptional()
   status: boolean;
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  select: any = [];
 
 }
