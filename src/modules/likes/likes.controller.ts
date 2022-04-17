@@ -23,7 +23,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLikesDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateLikesDto,
 } from './dto';
 import { LikesService } from './likes.service';
@@ -50,36 +50,23 @@ export class LikesController {
   }
 
   // @Auth()
-  @Get()
+  @Post('/all')
   async getAll(
+    @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number = 100,
   ) {
-    limit = limit > 50 ? 50 : limit;
-    const data = await this.likesService.getAll({
+    limit = limit > 100 ? 100 : limit;
+    const data = await this.likesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.LIKES}`,
+      route: `${URLPAGE}/${CONST.MODULES.LIKES}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
       data: data.items,
       meta: data.meta,
       links: data.links,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
-  @Post('/all')
-  async getAllxAtributo(
-    @Body() dto: GetAllxAtributoDto,
-  ) {
-    const data = await this.likesService.getAllxAtributo(dto);
-    let res = {
-      statusCode: HttpStatus.OK,
-      data: data,
       message: ''
     }
     return res

@@ -27,7 +27,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
   CreatePublicacionesDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateImageDto,
   UpdatePublicacionesDto,
 } from './dto';
@@ -55,38 +55,16 @@ export class PublicacionesController {
   }
 
   @Auth()
-  @Get()
+  @Post('/all')
   async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+    @Body() dto: GetAllDto,
   ) {
-    limit = limit > 50 ? 50 : limit;
-    const data = await this.publicacionesService.getAll({
+    const data = await this.publicacionesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
-    });
-    let res = {
-      statusCode: HttpStatus.OK,
-      data: data.items,
-      meta: data.meta,
-      links: data.links,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
-  @Post('/all')
-  async getAllxAtributo(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
-    @Body() dto: GetAllxAtributoDto,
-  ) {
-    const data = await this.publicacionesService.getAllxAtributo(dto, {
-      page,
-      limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
+      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -101,7 +79,7 @@ export class PublicacionesController {
   @Auth()
   @Post('/all/publico')
   async getAllPublico(
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
@@ -109,7 +87,7 @@ export class PublicacionesController {
     const data = await this.publicacionesService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}`,
+      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,

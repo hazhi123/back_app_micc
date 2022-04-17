@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import {
@@ -22,18 +21,13 @@ import {
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLikesDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateLikesDto,
 } from './dto';
 import { LikesEntity } from './entities/likes.entity';
 
 @Injectable()
 export class LikesService {
-
-  relations = [
-    'publicacion',
-    'user',
-  ]
 
   constructor(
     @InjectRepository(LikesEntity)
@@ -42,7 +36,6 @@ export class LikesService {
     @InjectRepository(PublicacionesEntity)
     private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
-    private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreateLikesDto, userLogin: UsersEntity) {
@@ -72,30 +65,38 @@ export class LikesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<LikesEntity>> {
-    const find = await this.likesRP.createQueryBuilder()
-    if (isEmptyUndefined(find)) return null
-    return paginate<LikesEntity>(find, options);
-  }
-
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<LikesEntity[]> {
-    let search = {}
-    if (!isEmptyUndefined(dto.publicacion)) search['publicacion'] = dto.publicacion
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-    const find = await this.likesRP.find({
-      where: search,
-      relations: this.relations,
-      order: { 'id': 'DESC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<LikesEntity>> {
+    const query = await this.likesRP
+      .createQueryBuilder("like")
+    query
+      .leftJoinAndSelect("like.user", "user")
+      .leftJoinAndSelect("like.publicacion", "pub")
+      .select([
+        'like.id',
+        'user.nombre',
+        'user.apellido',
+        'user.imageUrl',
+      ])
+    query.where('pub.id = :pubId', { pubId: dto.publicacion })
+    query.orderBy("like.id", "DESC")
+    query.getMany();
+    return paginate<LikesEntity>(query, options);
   }
 
   async getOne(id: number): Promise<LikesEntity> {
-    return await this.likesRP.findOne({
-      where: { id },
-      relations: this.relations
-    });
+    const getOne = await this.likesRP
+      .createQueryBuilder("like")
+      .leftJoinAndSelect("like.user", "user")
+      .leftJoinAndSelect("like.publicacion", "pub")
+      .select([
+        'like.id',
+        'pub.id',
+        'pub.totalLikes',
+      ])
+      .where('like.id = :id', { id })
+      .getOne()
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
   }
 
   async update(dto: UpdateLikesDto, userLogin: UsersEntity) {
@@ -138,7 +139,6 @@ export class LikesService {
   async existe(user, publicacion): Promise<LikesEntity> {
     return await this.likesRP.findOne({
       where: { user, publicacion },
-      relations: this.relations
     });
   }
 

@@ -24,6 +24,7 @@ import {
   CreatePublicacionesDto,
   UpdateImageDto,
   UpdatePublicacionesDto,
+  GetAllDto,
 } from './dto';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
 
@@ -71,43 +72,92 @@ export class PublicacionesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
-    return paginate<PublicacionesEntity>(this.publicacionesRP, options, {
-      relations: this.relations,
-      order: { 'id': 'DESC' },
-    });
-  }
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
+    const query = await this.publicacionesRP
+      .createQueryBuilder("pub")
+    query
+      .leftJoinAndSelect("pub.categoria", "cat")
+      .leftJoinAndSelect("pub.tipoPub", "tPub")
+      .leftJoinAndSelect("pub.userEditor", "uEdit")
+      .leftJoinAndSelect("pub.ccomercial", "cc")
+      .leftJoinAndSelect("pub.tienda", "tie")
+      .select([
+        'pub.id',
+        'pub.nombre',
+        'pub.imageUrl',
+        'pub.desc',
+        'pub.isPermanente',
+        'pub.fechaInicio',
+        'pub.fechaFinal',
+        'pub.status',
+        'pub.totalLikes',
+        'pub.totalComentarios',
+        'pub.galeria',
+        'pub.linkRef',
+        'pub.createdAt',
+        'tPub.id',
+        'tPub.nombre',
+        'cc.id',
+        'cc.nombre',
+        'tie.id',
+        'tie.nombre',
+        'uEdit.id',
+        'uEdit.nombre',
+        'uEdit.apellido',
+      ])
 
-  async buscador(dto) {
-    let search = {}
-    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
-    if (!isEmptyUndefined(dto.categoria)) search['categoria'] = dto.categoria
-    if (!isEmptyUndefined(dto.tienda)) {
-      search['tienda'] = dto.tienda === 0 ? null : dto.tienda
+    if (!isEmptyUndefined(dto.categoria)) {
+      query.andWhere('cat.id = :catId', { catId: dto.categoria })
     }
-    if (!isEmptyUndefined(dto.userEditor)) search['userEditor'] = dto.userEditor
-    if (!isEmptyUndefined(dto.tipoPub)) search['tipoPub'] = dto.tipoPub
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
+    if (!isEmptyUndefined(dto.tipoPub)) {
+      query.andWhere('tPub.id = :tPubId', { tPubId: dto.tipoPub })
+    }
+    if (!isEmptyUndefined(dto.userEditor)) {
+      query.andWhere('uEdit.id = :uEditId', { uEditId: dto.userEditor })
+    }
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('pub.status = :status', { status: dto.status })
+    }
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
+      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+    }
+    query.orderBy("pub.id", "DESC")
+    query.getMany();
+    return paginate<PublicacionesEntity>(query, options);
 
-    return search
-  }
-
-  async getAllxAtributo(dto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
-    return paginate<PublicacionesEntity>(this.publicacionesRP, options, {
-      where: await this.buscador(dto),
-      relations: this.relations,
-      order: { 'id': 'DESC' },
-    });
   }
 
   async getAllPublico(dto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
-    let where = await this.buscador(dto)
-    where['status'] = true
-    return paginate<PublicacionesEntity>(this.publicacionesRP, options, {
-      where,
-      relations: this.relations,
-      order: { 'createdAt': 'DESC' },
-    });
+    const query = await this.publicacionesRP
+      .createQueryBuilder("pub")
+    query
+      .leftJoinAndSelect("pub.categoria", "cat")
+      .leftJoinAndSelect("pub.tipoPub", "tPub")
+      .leftJoinAndSelect("pub.ccomercial", "cc")
+      .leftJoinAndSelect("pub.tienda", "tie")
+      .select([
+        'pub.id',
+        'pub.nombre',
+        'pub.imageUrl',
+        'pub.desc',
+        'pub.totalLikes',
+        'pub.totalComentarios',
+        'pub.createdAt',
+        'cc.id',
+        'cc.nombre',
+        'cc.imageUrl',
+        'tie.id',
+        'tie.nombre',
+        'tie.imageUrl',
+      ])
+    query.where('tPub.id = :tPubId', { tPubId: dto.tipoPub })
+    query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    query.orderBy("pub.createdAt", "DESC")
+    query.getMany();
+    return paginate<PublicacionesEntity>(query, options);
   }
 
   async getOne(id: number): Promise<PublicacionesEntity> {

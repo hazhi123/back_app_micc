@@ -68,7 +68,15 @@ export class ComentariosService {
 
   async getAll(id, options: IPaginationOptions): Promise<Pagination<ComentariosEntity>> {
     const find = await this.comentariosRP.createQueryBuilder('com')
-      .leftJoinAndSelect("com.user", "users")
+      .leftJoinAndSelect("com.user", "user")
+      .select([
+        'com.id',
+        'com.comentario',
+        'com.createdAt',
+        'user.nombre',
+        'user.apellido',
+        'user.imageUrl',
+      ])
       .where("com.publicacion = :id", { id })
       .orderBy('com.id', 'DESC')
     if (isEmptyUndefined(find)) return null

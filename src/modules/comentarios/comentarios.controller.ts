@@ -58,7 +58,7 @@ export class ComentariosController {
     const data = await this.comentariosService.getAll(id, {
       page,
       limit,
-      route: `${URLPAGE}/publicacion/${id}`,
+      route: `${URLPAGE}/${CONST.MODULES.COMENTARIOS}/publicacion/${id}`,
     });
     let res = {
       statusCode: 200,
