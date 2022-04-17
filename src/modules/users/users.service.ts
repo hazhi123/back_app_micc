@@ -159,6 +159,7 @@ export class UsersService {
 
   async getAll(isShowPassword: boolean = false) {
     const find = await this.usersRP.find({
+      where: { isVisitante: false },
       relations: this.relations,
       order: { 'nombre': 'ASC' },
     });
