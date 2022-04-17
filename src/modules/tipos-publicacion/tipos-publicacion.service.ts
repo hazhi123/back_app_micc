@@ -12,15 +12,13 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateTiposPublicacionDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateTiposPublicacionDto,
 } from './dto';
 import { TiposPublicacionEntity } from './entities/tipos-publicacion.entity';
 
 @Injectable()
 export class TiposPublicacionService {
-
-  relations = []
 
   constructor(
     @InjectRepository(TiposPublicacionEntity)
@@ -39,21 +37,11 @@ export class TiposPublicacionService {
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<TiposPublicacionEntity[]> {
-    const find = await this.tiposPubRP.find({
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
-  }
-
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<TiposPublicacionEntity[]> {
+  async getAll(dto: GetAllDto): Promise<TiposPublicacionEntity[]> {
     let search = {}
     if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
     const find = await this.tiposPubRP.find({
       where: search,
-      relations: this.relations,
       order: { 'nombre': 'ASC' },
     });
     if (isEmptyUndefined(find)) return null
@@ -63,7 +51,6 @@ export class TiposPublicacionService {
   async getOne(id: number): Promise<TiposPublicacionEntity> {
     return await this.tiposPubRP.findOne({
       where: { id },
-      relations: this.relations
     });
   }
 

@@ -18,7 +18,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateTiposPublicacionDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateTiposPublicacionDto,
 } from './dto';
 import { TiposPublicacionService } from './tipos-publicacion.service';
@@ -45,23 +45,11 @@ export class TiposPublicacionController {
   }
 
   @Auth()
-  @Get()
-  async getAll() {
-    const data = await this.tiposPubService.getAll();
-    let res = {
-      statusCode: 200,
-      data,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
   @Post('/all')
   async getAllxAtributo(
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
   ) {
-    const data = await this.tiposPubService.getAllxAtributo(dto);
+    const data = await this.tiposPubService.getAll(dto);
     let res = {
       statusCode: 200,
       data: data,

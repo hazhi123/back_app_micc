@@ -5,7 +5,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllxAtributoDto {
+export class GetAllDto {
 
   @ApiProperty()
   @IsBoolean()
