@@ -26,7 +26,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
   CreateTiendasDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateImageDto,
   UpdateTiendasDto,
 } from './dto';
@@ -85,37 +85,118 @@ export class TiendasService {
     return await this.getOne(save.id);
   }
 
-  async buscador(dto) {
-    let search = {}
-    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
-    if (!isEmptyUndefined(dto.categoria)) search['categoria'] = dto.categoria
-    if (!isEmptyUndefined(dto.isGastro)) search['isGastro'] = dto.isGastro
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-    return search
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
+    const query = await this.tiendasRP
+      .createQueryBuilder("ti")
+    query
+      .leftJoinAndSelect("ti.ccomercial", "cc")
+      .leftJoinAndSelect("ti.categoria", "cat")
+      .select([
+        'ti.id',
+        'ti.nombre',
+        'ti.correo',
+        'ti.telPrimero',
+        'ti.ubicacion',
+        'ti.likes',
+        'ti.isGastro',
+        'ti.imageUrl',
+        'ti.status',
+        'ti.abierto',
+        'cc.id',
+        'cc.nombre',
+        'cat.id',
+        'cat.nombre',
+      ])
+
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.categoria)) {
+      query.andWhere('cat.id = :catId', { catId: dto.categoria })
+    }
+    if (!isEmptyUndefined(dto.isGastro)) {
+      query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
+    }
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('ti.status = :status', { status: dto.status })
+    }
+    query.addOrderBy("ti.nombre", "ASC")
+
+    query.getMany();
+    return paginate<TiendasEntity>(query, options);
   }
 
-  async getAll(options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
-    return paginate<TiendasEntity>(this.tiendasRP, options, {
-      relations: this.relations,
-      order: { 'id': 'DESC' },
-    });
-  }
+  async getAllPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
+    const query = await this.tiendasRP
+      .createQueryBuilder("ti")
+    query
+      .leftJoinAndSelect("ti.ccomercial", "cc")
+      .leftJoinAndSelect("ti.categoria", "cat")
+      .select([
+        'ti.id',
+        'ti.nombre',
+        'ti.ubicacion',
+        'ti.isGastro',
+        'ti.imageUrl',
+        'ti.abierto',
+        'cat.id',
+        'cat.nombre',
+      ])
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.categoria)) {
+      query.andWhere('cat.id = :catId', { catId: dto.categoria })
+    }
+    if (!isEmptyUndefined(dto.isGastro)) {
+      query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
+    }
+    query.andWhere('ti.status = :status', { status: true })
+    query.addOrderBy("ti.nombre", "ASC")
 
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<TiendasEntity[]> {
-    const find = await this.tiendasRP.find({
-      where: await this.buscador(dto),
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
+    query.getMany();
+    return paginate<TiendasEntity>(query, options);
   }
 
   async getOne(id: number): Promise<TiendasEntity> {
-    return await this.tiendasRP.findOne({
-      where: { id },
-      relations: this.relations
-    });
+    const getOne = await this.tiendasRP
+      .createQueryBuilder("ti")
+      .leftJoinAndSelect("ti.horarios", "hor")
+      .leftJoinAndSelect("ti.categoria", "cat")
+      .select([
+        'ti.id',
+        'ti.nombre',
+        'ti.correo',
+        'ti.telPrimero',
+        'ti.telSegundo',
+        'ti.ubicacion',
+        'ti.likes',
+        'ti.desc',
+        'ti.createdBy',
+        'ti.createdAt',
+        'ti.updatedBy',
+        'ti.updatedAt',
+        'ti.status',
+        'ti.abierto',
+        'ti.isGastro',
+        'ti.imageUrl',
+        'ti.galeria',
+        'hor.id',
+        'hor.lunes',
+        'hor.martes',
+        'hor.miercoles',
+        'hor.jueves',
+        'hor.viernes',
+        'hor.sabado',
+        'hor.domingo',
+        'hor.feriados',
+        'cat.id',
+        'cat.nombre',
+      ])
+      .where('ti.id = :id', { id })
+      .getOne()
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
   }
 
   async update(dto: UpdateTiendasDto, userLogin: UsersEntity) {
@@ -238,11 +319,11 @@ export class TiendasService {
     return await this.getOne(dto.tienda);
   }
 
-  async actualizarAbierto(dto: GetAllxAtributoDto): Promise<TiendasEntity> {
+  async actualizarApertura(dto: GetAllDto): Promise<TiendasEntity> {
     await this.tiendasRP.update(dto.id, {
       abierto: dto.abierto
     });
-    return await this.getOne(dto.id);
+    return;
   }
 
 }

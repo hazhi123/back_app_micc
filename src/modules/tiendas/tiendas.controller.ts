@@ -26,7 +26,7 @@ import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
   CreateTiendasDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   UpdateImageDto,
   UpdateTiendasDto,
 } from './dto';
@@ -54,16 +54,17 @@ export class TiendasController {
   }
 
   @Auth()
-  @Get()
+  @Post('/all')
   async getAll(
+    @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
     limit = limit > 50 ? 50 : limit;
-    const data = await this.tiendasService.getAll({
+    const data = await this.tiendasService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS}`,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS}/all`,
     });
     let res = {
       statusCode: 200,
@@ -76,14 +77,23 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/all')
-  async getAllxAtributo(
-    @Body() dto: GetAllxAtributoDto,
+  @Post('/all/publico')
+  async getAllPublico(
+    @Body() dto: GetAllDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
-    const data = await this.tiendasService.getAllxAtributo(dto);
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.tiendasService.getAllPublico(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS}/all/publico`,
+    });
     let res = {
       statusCode: 200,
-      data: data,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
       message: ''
     }
     return res
@@ -199,11 +209,11 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/abierto')
-  async actualizarAbierto(
-    @Body() dto: GetAllxAtributoDto,
+  @Post('/apertura')
+  async actualizarApertura(
+    @Body() dto: GetAllDto,
   ) {
-    const data = await this.tiendasService.actualizarAbierto(dto);
+    const data = await this.tiendasService.actualizarApertura(dto);
     let res = {
       statusCode: 200,
       data: data,

@@ -105,7 +105,7 @@ export class CComercialesService {
       .createQueryBuilder("cc")
       .leftJoinAndSelect("cc.pais", "pais")
       .leftJoinAndSelect("cc.ciudad", "ciudad")
-      .leftJoinAndSelect("cc.horarios", "horarios")
+      .leftJoinAndSelect("cc.horarios", "hor")
       .select([
         'cc.id',
         'cc.nombre',
@@ -128,14 +128,15 @@ export class CComercialesService {
         'pais.nombre',
         'ciudad.id',
         'ciudad.nombre',
-        'horarios.lunes',
-        'horarios.martes',
-        'horarios.miercoles',
-        'horarios.jueves',
-        'horarios.viernes',
-        'horarios.sabado',
-        'horarios.domingo',
-        'horarios.feriados',
+        'hor.id',
+        'hor.lunes',
+        'hor.martes',
+        'hor.miercoles',
+        'hor.jueves',
+        'hor.viernes',
+        'hor.sabado',
+        'hor.domingo',
+        'hor.feriados',
       ])
       .where('cc.id = :id', { id })
       .getOne()
