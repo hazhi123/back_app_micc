@@ -9,20 +9,21 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateGaleriaDto {
 
   // relaciones
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  titular: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  entidad: string;
+  entidad: string; // user-tienda-ccomercial
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
   entId: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  referencia: string;
 
   @ApiProperty()
   @IsNumber()

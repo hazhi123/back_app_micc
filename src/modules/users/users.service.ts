@@ -1,7 +1,6 @@
 import { Repository } from 'typeorm';
 
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -9,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
@@ -22,6 +20,7 @@ import {
 } from './dto';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
+import { GaleriaService } from '../galeria/galeria.service';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +31,8 @@ export class UsersService {
     'licencia',
     'pais',
     'ciudad',
+    'imageUrl',
+    'imageBack',
     'ccomercial',
     'ccomercial.pais',
     'ccomercial.ciudad',
@@ -54,7 +55,7 @@ export class UsersService {
     @InjectRepository(GaleriaEntity)
     private readonly galeriaRP: Repository<GaleriaEntity>,
 
-    private cloudinary: CloudinaryService
+    private galeriaService: GaleriaService
   ) { }
 
   async create(isRegister, dto: createUsersDto, userLogin: UsersEntity) {
@@ -71,8 +72,6 @@ export class UsersService {
       user,
       isVisitante,
       pais,
-      imageUrl,
-      imageBack,
       password,
       ccomercial,
       tienda,
@@ -126,8 +125,6 @@ export class UsersService {
       nombre,
       apellido,
       user,
-      imageUrl,
-      imageBack,
       password,
       ccomercial,
       tienda,
@@ -210,8 +207,6 @@ export class UsersService {
       user,
       pais,
       ciudad,
-      imageUrl,
-      imageBack,
       password,
       perfil,
       status,
@@ -260,8 +255,6 @@ export class UsersService {
       user,
       pais,
       ciudad,
-      imageUrl,
-      imageBack,
       password,
       isVisitante,
       isTienda,
@@ -321,82 +314,50 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async uploadImageToCloudinary(file: Express.Multer.File) {
-    return await this.cloudinary.uploadImage(file).catch(() => {
-      throw new BadRequestException('Invalid file type.');
-    });
-  }
-
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
 
     const getOne = await this.getOne(parseInt(dto.user));
-
-    let image
-    try {
-      if (userLogin.isVisitante) {
-        if (parseInt(dto.isBack) == 0) {
-          if (!isEmptyUndefined(getOne.imageUrl)) {
-            await this.deleteImageCloudinary(getOne.imageUrl, parseInt(dto.user))
-          }
-        } else {
-          if (!isEmptyUndefined(getOne.imageBack)) {
-            await this.deleteImageCloudinary(getOne.imageBack, parseInt(dto.user))
-          }
-        }
+    if (userLogin.isVisitante) {
+      if (parseInt(dto.isBack) == 0) {
+        await this.galeriaRP.delete(getOne.imageUrl)
+      } else {
+        await this.galeriaRP.delete(getOne.imageBack)
       }
+    }
 
-      image = await this.uploadImageToCloudinary(file)
-      this.galeriaRP.createQueryBuilder()
-        .insert()
-        .into(GaleriaEntity)
-        .values({
-          entidad: dto.entidad,
-          entId: parseInt(dto.entId),
-          titular: 'user',
-          refId: parseInt(dto.user),
-          file: image.url
-        })
-        .execute();
+    let imageId;
+    let res: GaleriaEntity
+    try {
+      const data = {
+        entidad: 'user',
+        entId: parseInt(dto.user),
+        referencia: 'user',
+        refId: parseInt(dto.user),
+      }
+      res = await this.galeriaService.create(file, data, userLogin)
+      imageId = res.id
     } catch (error) {
-      image = { url: '' }
+      imageId = null
+      res = null
     }
 
     if (parseInt(dto.isBack) == 0) {
       await this.usersRP.update(parseInt(dto.user),
-        { imageUrl: image.url }
+        { imageUrl: imageId }
       );
     } else {
       await this.usersRP.update(parseInt(dto.user),
-        { imageBack: image.url }
+        { imageBack: imageId }
       );
     }
-    return await this.getOne(parseInt(dto.user));
+    return res;
   }
 
   async updateImage(dto: UpdateImageDto) {
     await this.usersRP.update(dto.user,
-      dto.isBack ? { imageBack: dto.url } : { imageUrl: dto.url }
+      dto.isBack ? { imageBack: dto.galeria } : { imageUrl: dto.galeria }
     );
     return await this.getOne(dto.user);
-  }
-
-  async deleteImageCloudinary(file: string, refId: number) {
-    // http://res.cloudinary.com/dqjirfzaa/image/upload/ - v1648706352/vwc7ptrctmetsx1uzmor.jpg
-    // http://res.cloudinary.com/hazhi123/image/upload/ - v1649893821/bsixu8p3dyekivgqyuxm.jpg
-    const getOneGaleria = await this.galeriaRP.findOne({
-      where: { refId, file },
-    });
-    if (!isEmptyUndefined(getOneGaleria)) {
-      await this.galeriaRP.delete(getOneGaleria.id);
-    }
-
-    const val = file.replace('http://res.cloudinary.com/dqjirfzaa/image/upload/', '');
-    const lista = val.split('/')[1].split('.');
-    let resCloud = await this.cloudinary.deleteImage(lista[0]).catch(() => {
-      throw new BadRequestException('Invalid file type.');
-    });
-
-    return resCloud.result;
   }
 
 }

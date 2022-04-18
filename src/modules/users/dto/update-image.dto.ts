@@ -16,9 +16,9 @@ export class UpdateImageDto {
   user: number;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  url: string;
+  galeria: number;
 
   @ApiProperty()
   @IsBoolean()

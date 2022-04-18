@@ -20,7 +20,7 @@ export class GaleriaEntity {
   entId: number;
 
   @Column({ type: 'varchar' })
-  titular: string;
+  referencia: string;
 
   @Column({ name: 'ref_id', type: 'integer' })
   refId: number;

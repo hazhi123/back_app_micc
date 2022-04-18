@@ -11,21 +11,11 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  entidad: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  entId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   user: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  isBack: string;
+  isBack: string; // 0 = imageUrl 1 = imageBack
 
 }

@@ -135,7 +135,7 @@ export class CategoriasService {
         .values({
           entidad: dto.entidad,
           entId: parseInt(dto.entId),
-          titular: 'categoria',
+          referencia: 'categoria',
           refId: parseInt(dto.categoria),
           file: image.url
         })

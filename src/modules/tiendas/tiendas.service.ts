@@ -256,7 +256,7 @@ export class TiendasService {
         .values({
           entidad: dto.entidad,
           entId: parseInt(dto.entId),
-          titular: 'tienda',
+          referencia: 'tienda',
           refId: parseInt(dto.tienda),
           file: image.url
         })

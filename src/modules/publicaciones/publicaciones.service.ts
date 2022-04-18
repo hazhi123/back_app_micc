@@ -152,6 +152,8 @@ export class PublicacionesService {
         'tie.id',
         'tie.nombre',
         'tie.imageUrl',
+        'tPub.id',
+        'tPub.nombre',
       ])
     query.where('tPub.id = :tPubId', { tPubId: dto.tipoPub })
     query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
@@ -221,7 +223,7 @@ export class PublicacionesService {
         .values({
           entidad: dto.entidad,
           entId: parseInt(dto.entId),
-          titular: 'publicacion',
+          referencia: 'publicacion',
           refId: parseInt(dto.publicacion),
           file: image.url
         })

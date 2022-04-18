@@ -48,16 +48,6 @@ export class createUsersDto {
   passwordConfirm: string;
 
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  imageUrl: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  imageBack: string;
-
-  @ApiProperty()
   @IsNumber()
   @IsOptional()
   perfil: any

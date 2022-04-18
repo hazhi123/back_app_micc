@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -75,12 +76,6 @@ export class UsersEntity {
   @Column({ name: 'is_visitante', type: 'bool', default: true })
   isVisitante: boolean;
 
-  @Column({ name: 'image_url', type: 'varchar', default: '' })
-  imageUrl: string;
-
-  @Column({ name: 'image_back', type: 'varchar', default: '' })
-  imageBack: string;
-
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
@@ -135,5 +130,14 @@ export class UsersEntity {
 
   @OneToMany(() => MensajesEntity, mensajes => mensajes.user)
   mensajes: MensajesEntity[];
+
+  @OneToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'imageUrl' })
+  imageUrl: number;
+
+  @OneToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'imageBack' })
+  imageBack: number;
+
 }
 

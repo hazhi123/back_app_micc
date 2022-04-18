@@ -205,7 +205,7 @@ export class CComercialesService {
         .values({
           entidad: dto.entidad,
           entId: parseInt(dto.entId),
-          titular: 'ccomercial',
+          referencia: 'ccomercial',
           refId: parseInt(dto.ccomercial),
           file: image.url
         })

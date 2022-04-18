@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import {
@@ -40,7 +39,6 @@ export class ComentariosService {
     @InjectRepository(PublicacionesEntity)
     private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
-    private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreateComentariosDto, userLogin: UsersEntity) {
@@ -69,13 +67,15 @@ export class ComentariosService {
   async getAll(id, options: IPaginationOptions): Promise<Pagination<ComentariosEntity>> {
     const find = await this.comentariosRP.createQueryBuilder('com')
       .leftJoinAndSelect("com.user", "user")
+      .leftJoinAndSelect("user.imageUrl", "iUrl")
       .select([
         'com.id',
         'com.comentario',
         'com.createdAt',
         'user.nombre',
         'user.apellido',
-        'user.imageUrl',
+        'iUrl.id',
+        'iUrl.file',
       ])
       .where("com.publicacion = :id", { id })
       .orderBy('com.id', 'DESC')
