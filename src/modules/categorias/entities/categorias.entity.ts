@@ -1,3 +1,4 @@
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
   Column,
   CreateDateColumn,
@@ -5,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -28,9 +30,6 @@ export class CategoriasEntity {
 
   @Column({ default: '' })
   desc: string;
-
-  @Column({ name: 'image_url', default: '' })
-  imageUrl: string;
 
   @Column({ name: 'created_by' })
   createdBy: number;
@@ -57,4 +56,8 @@ export class CategoriasEntity {
 
   @OneToMany(() => PublicacionesEntity, pub => pub.categoria)
   publicaciones: PublicacionesEntity[];
+
+  @OneToOne(() => GaleriaEntity)
+  @JoinColumn()
+  image: number;
 }

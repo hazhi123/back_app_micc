@@ -10,11 +10,6 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  entidad: string; //ccomercial - tienda
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   entId: string;
 
   @ApiProperty()

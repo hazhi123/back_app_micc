@@ -53,12 +53,14 @@ export class CategoriasService {
       .createQueryBuilder("cat")
     query
       .leftJoinAndSelect("cat.ccomercial", "cc")
+      .leftJoinAndSelect("cat.image", "gal")
       .select([
         'cat.id',
         'cat.nombre',
         'cat.desc',
-        'cat.imageUrl',
         'cat.status',
+        'gal.id',
+        'gal.file',
       ])
 
     if (!isEmptyUndefined(dto.status)) {
@@ -77,6 +79,7 @@ export class CategoriasService {
 
   async getOne(id: number): Promise<CategoriasEntity> {
     return await this.categoriasRP.findOne({
+      relations: ['image'],
       where: { id },
     });
   }
@@ -133,7 +136,7 @@ export class CategoriasService {
         .insert()
         .into(GaleriaEntity)
         .values({
-          entidad: dto.entidad,
+          entidad: 'ccomercial',
           entId: parseInt(dto.entId),
           referencia: 'categoria',
           refId: parseInt(dto.categoria),
@@ -145,18 +148,16 @@ export class CategoriasService {
     }
     await this.categoriasRP.createQueryBuilder()
       .update(CategoriasEntity)
-      .set({ imageUrl: image.url })
+      .set({ image: image.url })
       .where("id = :id", { id: parseInt(dto.categoria) })
       .execute();
     return await this.getOne(parseInt(dto.categoria));
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.categoriasRP.createQueryBuilder()
-      .update(CategoriasEntity)
-      .set({ imageUrl: dto.url })
-      .where("id = :id", { id: dto.categoria })
-      .execute();
+    await this.categoriasRP.update(dto.categoria,
+      { image: dto.galeria }
+    );
     return await this.getOne(dto.categoria);
   }
 

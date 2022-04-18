@@ -14,8 +14,8 @@ export class UpdateImageDto {
   categoria: number;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  url: string;
+  galeria: number;
 
 }
