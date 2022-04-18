@@ -217,7 +217,7 @@ export class TiendasController {
     let res = {
       statusCode: 200,
       data: data,
-      message: 'Se ha actualizado correctamente'
+      message: 'Se ha actualizado la apertura de la Tienda'
     }
     return res
   }

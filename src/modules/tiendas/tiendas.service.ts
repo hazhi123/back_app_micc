@@ -35,13 +35,6 @@ import { TiendasEntity } from './entities/tiendas.entity';
 @Injectable()
 export class TiendasService {
 
-  relations = [
-    'categoria',
-    'ccomercial',
-    'ccomercial.pais',
-    'horarios',
-  ]
-
   constructor(
     @InjectRepository(TiendasEntity)
     private readonly tiendasRP: Repository<TiendasEntity>,
@@ -177,6 +170,7 @@ export class TiendasService {
         'ti.updatedBy',
         'ti.updatedAt',
         'ti.status',
+        'ti.ubicacion',
         'ti.abierto',
         'ti.isGastro',
         'ti.imageUrl',
@@ -323,7 +317,7 @@ export class TiendasService {
     await this.tiendasRP.update(dto.id, {
       abierto: dto.abierto
     });
-    return;
+    return await this.getOne(dto.id);
   }
 
 }
