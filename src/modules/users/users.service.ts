@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
+import { GaleriaService } from '../galeria/galeria.service';
 import {
   CreateImageDto,
   createUsersDto,
@@ -20,7 +21,6 @@ import {
 } from './dto';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
-import { GaleriaService } from '../galeria/galeria.service';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +31,7 @@ export class UsersService {
     'licencia',
     'pais',
     'ciudad',
-    'imageUrl',
+    'image',
     'imageBack',
     'ccomercial',
     'ccomercial.pais',
@@ -319,13 +319,13 @@ export class UsersService {
     const getOne = await this.getOne(parseInt(dto.user));
     if (userLogin.isVisitante) {
       if (parseInt(dto.isBack) == 0) {
-        await this.galeriaRP.delete(getOne.imageUrl)
+        await this.galeriaRP.delete(getOne.image)
       } else {
         await this.galeriaRP.delete(getOne.imageBack)
       }
     }
 
-    let imageId;
+    let galeriaId;
     let res: GaleriaEntity
     try {
       const data = {
@@ -335,19 +335,19 @@ export class UsersService {
         refId: parseInt(dto.user),
       }
       res = await this.galeriaService.create(file, data, userLogin)
-      imageId = res.id
+      galeriaId = res.id
     } catch (error) {
-      imageId = null
+      galeriaId = null
       res = null
     }
 
     if (parseInt(dto.isBack) == 0) {
       await this.usersRP.update(parseInt(dto.user),
-        { imageUrl: imageId }
+        { image: galeriaId }
       );
     } else {
       await this.usersRP.update(parseInt(dto.user),
-        { imageBack: imageId }
+        { imageBack: galeriaId }
       );
     }
     return res;
@@ -355,7 +355,7 @@ export class UsersService {
 
   async updateImage(dto: UpdateImageDto) {
     await this.usersRP.update(dto.user,
-      dto.isBack ? { imageBack: dto.galeria } : { imageUrl: dto.galeria }
+      dto.isBack ? { imageBack: dto.galeria } : { image: dto.galeria }
     );
     return await this.getOne(dto.user);
   }

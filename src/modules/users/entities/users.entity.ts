@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt';
-import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -22,6 +21,7 @@ import {
   ComentariosEntity,
 } from '../../comentarios/entities/comentarios.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import { LicenciasEntity } from '../../licencias/entities/licencias.entity';
 import { LikesEntity } from '../../likes/entities/likes.entity';
@@ -132,8 +132,8 @@ export class UsersEntity {
   mensajes: MensajesEntity[];
 
   @OneToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'imageUrl' })
-  imageUrl: number;
+  @JoinColumn({ name: 'image' })
+  image: number;
 
   @OneToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'imageBack' })

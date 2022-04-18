@@ -2,7 +2,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -15,9 +14,9 @@ export class UpdateImageDto {
   ccomercial: number;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  url: string;
+  galeria: number;
 
   @ApiProperty()
   @IsNumber()

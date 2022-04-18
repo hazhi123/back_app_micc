@@ -1,4 +1,3 @@
-import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import {
   Column,
   CreateDateColumn,
@@ -14,6 +13,8 @@ import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
+import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
@@ -66,13 +67,14 @@ export class CComercialesEntity {
   @Column({ type: 'bool', default: true })
   abierto: boolean;
 
-  @Column({ name: 'image_url', type: 'varchar', default: '' })
-  imageUrl: string;
-
   @Column("text", { array: true, default: [] })
-  galeria: string[];
+  galeria: any[];
 
   // Relaciones
+  @OneToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'image' })
+  image: number;
+
   @OneToMany(() => UsersEntity, users => users.ccomercial)
   users: UsersEntity[];
 

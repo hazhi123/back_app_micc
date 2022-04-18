@@ -136,8 +136,9 @@ export class CComercialesController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.ccomercialesService.createImage(file, dto);
+    const data = await this.ccomercialesService.createImage(file, dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -166,8 +167,9 @@ export class CComercialesController {
   async createGaleria(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.ccomercialesService.createImage(file, dto);
+    const data = await this.ccomercialesService.createImage(file, dto, userLogin);
     return {
       statusCode: 200,
       data,

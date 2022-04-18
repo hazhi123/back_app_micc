@@ -22,9 +22,9 @@ import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
   CreatePublicacionesDto,
+  GetAllDto,
   UpdateImageDto,
   UpdatePublicacionesDto,
-  GetAllDto,
 } from './dto';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
 
@@ -148,7 +148,7 @@ export class PublicacionesService {
         'pub.createdAt',
         'cc.id',
         'cc.nombre',
-        'cc.imageUrl',
+        'cc.image',
         'tie.id',
         'tie.nombre',
         'tie.imageUrl',
