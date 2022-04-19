@@ -6,7 +6,6 @@ import {
 import { Repository } from 'typeorm';
 
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -14,13 +13,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import {
   CComercialesEntity,
 } from '../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
+import { GaleriaService } from '../galeria/galeria.service';
 import { LicenciasEntity } from '../licencias/entities/licencias.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -45,16 +44,14 @@ export class TiendasService {
     @InjectRepository(LicenciasEntity)
     private readonly licenciasRP: Repository<LicenciasEntity>,
 
-    @InjectRepository(GaleriaEntity)
-    private readonly galeriaRP: Repository<GaleriaEntity>,
+    private galeriaService: GaleriaService,
 
-    private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreateTiendasDto, userLogin: UsersEntity) {
     let galeria = []
     for (let x = 0; x < 9; x++) {
-      galeria.push("")
+      galeria.push("0")
     }
 
     const save = await this.tiendasRP.save({
@@ -84,6 +81,7 @@ export class TiendasService {
     query
       .leftJoinAndSelect("ti.ccomercial", "cc")
       .leftJoinAndSelect("ti.categoria", "cat")
+      .leftJoinAndSelect("ti.image", "gal")
       .select([
         'ti.id',
         'ti.nombre',
@@ -92,13 +90,14 @@ export class TiendasService {
         'ti.ubicacion',
         'ti.likes',
         'ti.isGastro',
-        'ti.imageUrl',
         'ti.status',
         'ti.abierto',
         'cc.id',
         'cc.nombre',
         'cat.id',
         'cat.nombre',
+        'gal.id',
+        'gal.file',
       ])
 
     if (!isEmptyUndefined(dto.ccomercial)) {
@@ -125,15 +124,17 @@ export class TiendasService {
     query
       .leftJoinAndSelect("ti.ccomercial", "cc")
       .leftJoinAndSelect("ti.categoria", "cat")
+      .leftJoinAndSelect("ti.image", "gal")
       .select([
         'ti.id',
         'ti.nombre',
         'ti.ubicacion',
         'ti.isGastro',
-        'ti.imageUrl',
         'ti.abierto',
         'cat.id',
         'cat.nombre',
+        'gal.id',
+        'gal.file',
       ])
     if (!isEmptyUndefined(dto.ccomercial)) {
       query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
@@ -151,11 +152,12 @@ export class TiendasService {
     return paginate<TiendasEntity>(query, options);
   }
 
-  async getOne(id: number): Promise<TiendasEntity> {
+  async getOne(id: number, isGaleria: boolean = true): Promise<TiendasEntity> {
     const getOne = await this.tiendasRP
       .createQueryBuilder("ti")
       .leftJoinAndSelect("ti.horarios", "hor")
       .leftJoinAndSelect("ti.categoria", "cat")
+      .leftJoinAndSelect("ti.image", "gal")
       .select([
         'ti.id',
         'ti.nombre',
@@ -173,7 +175,6 @@ export class TiendasService {
         'ti.ubicacion',
         'ti.abierto',
         'ti.isGastro',
-        'ti.imageUrl',
         'ti.galeria',
         'hor.id',
         'hor.lunes',
@@ -186,9 +187,20 @@ export class TiendasService {
         'hor.feriados',
         'cat.id',
         'cat.nombre',
+        'gal.id',
+        'gal.file',
       ])
       .where('ti.id = :id', { id })
       .getOne()
+
+    if (isGaleria) {
+      for (let x = 0; x < getOne.galeria.length; x++) {
+        if (getOne.galeria[x] != '0') {
+          getOne.galeria[x] = await this.galeriaService.getOne(parseInt(getOne.galeria[x]));
+        }
+      }
+    }
+
     if (isEmptyUndefined(getOne)) return null
     return getOne;
   }
@@ -238,66 +250,74 @@ export class TiendasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async uploadImageToCloudinary(file: Express.Multer.File) {
-    return await this.cloudinary.uploadImage(file).catch(() => {
-      throw new BadRequestException('Invalid file type.');
-    });
-  }
-
-  async createImage(file: any, dto: CreateImageDto) {
-    const dato = await this.getOne(parseInt(dto.tienda));
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+    const dato = await this.getOne(parseInt(dto.tienda), false);
     let galeria = dato.galeria
-    let image
-    try {
-      image = await this.uploadImageToCloudinary(file)
-      this.galeriaRP.createQueryBuilder()
-        .insert()
-        .into(GaleriaEntity)
-        .values({
-          entidad: dto.entidad,
-          entId: parseInt(dto.entId),
-          referencia: 'tienda',
-          refId: parseInt(dto.tienda),
-          file: image.url
-        })
-        .execute();
-    } catch (error) {
-      image = { url: '' }
-    }
 
     if (isEmptyUndefined(dto.index)) {
+      let galeriaId;
+      let res: GaleriaEntity
+      try {
+        const data = {
+          entidad: 'tienda',
+          entId: parseInt(dto.tienda),
+          referencia: 'image',
+          refId: parseInt(dto.tienda),
+        }
+        res = await this.galeriaService.create(file, data, userLogin)
+        galeriaId = res.id
+      } catch (error) {
+        galeriaId = null
+        res = null
+      }
+
       await this.tiendasRP.update(parseInt(dto.tienda), {
-        imageUrl: image.url
+        image: galeriaId
       });
-      return await this.getOne(parseInt(dto.tienda));
+      return res;
+    }
+
+    let galeriaId;
+    let res: GaleriaEntity
+    try {
+      const data = {
+        entidad: 'tienda',
+        entId: parseInt(dto.tienda),
+        referencia: 'galeria',
+        refId: parseInt(dto.tienda),
+      }
+      res = await this.galeriaService.create(file, data, userLogin)
+      galeriaId = res.id
+    } catch (error) {
+      galeriaId = null
+      res = null
     }
 
     for (let x = 0; x < 9; x++) {
       if (x == parseInt(dto.index)) {
-        galeria[x] = image.url
+        galeria[x] = galeriaId
       }
       if (isEmptyUndefined(galeria[x])) {
-        galeria[x] = ""
+        galeria[x] = '0'
       }
     }
-
     await this.tiendasRP.update(parseInt(dto.tienda), {
       galeria
     });
     return await this.getOne(parseInt(dto.tienda));
-
   }
 
   async updateImage(dto: UpdateImageDto) {
     await this.tiendasRP.update(dto.tienda, {
-      imageUrl: dto.url
+      image: dto.galeria
     });
-    return await this.getOne(dto.tienda);
+    const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
+    return getOneGaleria;
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    const data = await this.getOne(parseInt(dto.tienda));
-    data.galeria[parseInt(dto.index)] = ""
+    const data = await this.getOne(parseInt(dto.tienda), false);
+    data.galeria[parseInt(dto.index)] = '0'
     await this.tiendasRP.update(dto.tienda, {
       galeria: data.galeria
     });
@@ -305,8 +325,8 @@ export class TiendasService {
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    const data = await this.getOne(dto.tienda);
-    data.galeria[dto.index] = dto.url
+    const data = await this.getOne(dto.tienda, false);
+    data.galeria[dto.index] = dto.galeria
     await this.tiendasRP.update(dto.tienda, {
       galeria: data.galeria
     });

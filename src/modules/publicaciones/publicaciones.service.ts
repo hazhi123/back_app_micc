@@ -37,7 +37,9 @@ export class PublicacionesService {
     'userEditor',
     'tienda',
     'tienda.categoria',
+    'tienda.image',
     'ccomercial',
+    'ccomercial.image',
     'ccomercial.pais',
     'ccomercial.ciudad',
   ]
@@ -81,6 +83,7 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("pub.ccomercial", "cc")
       .leftJoinAndSelect("pub.tienda", "tie")
+      .leftJoinAndSelect("tie.image", "tieGal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -104,6 +107,8 @@ export class PublicacionesService {
         'uEdit.id',
         'uEdit.nombre',
         'uEdit.apellido',
+        'tieGal.id',
+        'tieGal.file',
       ])
 
     if (!isEmptyUndefined(dto.categoria)) {
@@ -138,6 +143,7 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.tipoPub", "tPub")
       .leftJoinAndSelect("pub.ccomercial", "cc")
       .leftJoinAndSelect("pub.tienda", "tie")
+      .leftJoinAndSelect("tie.image", "tieGal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -151,9 +157,10 @@ export class PublicacionesService {
         'cc.image',
         'tie.id',
         'tie.nombre',
-        'tie.imageUrl',
         'tPub.id',
         'tPub.nombre',
+        'tieGal.id',
+        'tieGal.file',
       ])
     query.where('tPub.id = :tPubId', { tPubId: dto.tipoPub })
     query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })

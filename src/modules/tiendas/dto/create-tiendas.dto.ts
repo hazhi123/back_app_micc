@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -42,11 +41,6 @@ export class CreateTiendasDto {
   desc: string;
 
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  imageUrl: string;
-
-  @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
   categoria: number;
@@ -55,11 +49,6 @@ export class CreateTiendasDto {
   @IsNumber()
   @IsNotEmpty()
   ccomercial: number;
-
-  @ApiProperty()
-  @IsArray()
-  @IsOptional()
-  galeria: any; // Array de textos
 
   @ApiProperty()
   @IsOptional()

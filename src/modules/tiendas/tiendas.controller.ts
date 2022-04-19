@@ -143,8 +143,9 @@ export class TiendasController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.tiendasService.createImage(file, dto);
+    const data = await this.tiendasService.createImage(file, dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -173,8 +174,9 @@ export class TiendasController {
   async createGaleria(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.tiendasService.createImage(file, dto);
+    const data = await this.tiendasService.createImage(file, dto, userLogin);
     return {
       statusCode: 200,
       data,

@@ -1,4 +1,3 @@
-import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import {
   Column,
   CreateDateColumn,
@@ -15,6 +14,8 @@ import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 
 @Entity(CONST.MODULES.TIENDAS)
@@ -65,13 +66,14 @@ export class TiendasEntity {
   @Column({ name: 'is_gastro', type: 'bool', default: false })
   isGastro: boolean;
 
-  @Column({ name: 'image_url', default: '' })
-  imageUrl: string;
-
   @Column("text", { array: true, default: [] })
-  galeria: string[];
+  galeria: any[];
 
   // Relaciones
+  @OneToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'image' })
+  image: number;
+
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'categorias_id' })
   categoria: number;

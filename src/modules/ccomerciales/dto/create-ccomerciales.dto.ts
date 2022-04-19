@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsBoolean,
   IsEmail,
   IsNotEmpty,
@@ -61,11 +60,6 @@ export class CreateCComercialesDto {
   @ApiProperty()
   @IsOptional()
   imageUrl: any;
-
-  @ApiProperty()
-  @IsArray()
-  @IsOptional()
-  galeria: any; // Array de textos
 
   @ApiProperty()
   @IsOptional()

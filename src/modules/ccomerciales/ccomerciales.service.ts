@@ -199,7 +199,6 @@ export class CComercialesService {
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
     const dato = await this.getOne(parseInt(dto.ccomercial), false);
     let galeria = dato.galeria
-    let image
 
     if (isEmptyUndefined(dto.index)) {
       let galeriaId;
