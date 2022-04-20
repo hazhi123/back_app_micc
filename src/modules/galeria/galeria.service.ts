@@ -95,7 +95,7 @@ export class GaleriaService {
     //http://res.cloudinary.com/dqjirfzaa/image/upload/v1648706352/vwc7ptrctmetsx1uzmor.jpg
     const getOne = await this.getOne(id);
 
-    const val = getOne.file.replace('http://res.cloudinary.com/dqjirfzaa/image/upload/', '');
+    const val = getOne.file.replace('http://res.cloudinary.com/hazhi123/image/upload/', '');
     const lista = val.split('/')[1].split('.');
 
     let image = await this.deleteImageToCloudinary(lista[0])

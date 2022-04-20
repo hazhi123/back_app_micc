@@ -70,12 +70,14 @@ export class LikesService {
       .createQueryBuilder("like")
     query
       .leftJoinAndSelect("like.user", "user")
+      .leftJoinAndSelect("user.image", "userGal")
       .leftJoinAndSelect("like.publicacion", "pub")
       .select([
         'like.id',
         'user.nombre',
         'user.apellido',
-        'user.imageUrl',
+        'userGal.id',
+        'userGal.file',
       ])
     query.where('pub.id = :pubId', { pubId: dto.publicacion })
     query.orderBy("like.id", "DESC")

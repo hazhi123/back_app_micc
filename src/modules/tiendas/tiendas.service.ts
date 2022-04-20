@@ -240,7 +240,6 @@ export class TiendasService {
     return getOne;
   }
 
-
   async findNombre(nombre: string, data: boolean) {
     const findOne = await this.tiendasRP.findOne({ where: { nombre } })
     if (data) return findOne

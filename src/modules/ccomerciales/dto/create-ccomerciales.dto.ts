@@ -59,10 +59,6 @@ export class CreateCComercialesDto {
 
   @ApiProperty()
   @IsOptional()
-  imageUrl: any;
-
-  @ApiProperty()
-  @IsOptional()
   @IsBoolean()
   status: boolean;
 

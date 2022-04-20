@@ -26,24 +26,24 @@ import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
-  CreatePublicacionesDto,
+  CreateProductosDto,
   GetAllDto,
   UpdateImageDto,
-  UpdatePublicacionesDto,
+  UpdateProductosDto,
 } from './dto';
-import { PublicacionesService } from './publicaciones.service';
+import { ProductosService } from './productos.service';
 
-@ApiTags(CONST.MODULES.PUBLICACIONES.toUpperCase())
-@Controller(CONST.MODULES.PUBLICACIONES)
-export class PublicacionesController {
+@ApiTags(CONST.MODULES.PRODUCTOS.toUpperCase())
+@Controller(CONST.MODULES.PRODUCTOS)
+export class ProductosController {
   constructor(
-    private readonly publicacionesService: PublicacionesService
+    private readonly publicacionesService: ProductosService
   ) { }
 
   @Auth()
   @Post()
   async create(
-    @Body() dto: CreatePublicacionesDto,
+    @Body() dto: CreateProductosDto,
     @UserLogin() userLogin: UsersEntity
   ) {
     let data = await this.publicacionesService.create(dto, userLogin);
@@ -64,7 +64,7 @@ export class PublicacionesController {
     const data = await this.publicacionesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all`,
+      route: `${URLPAGE}/${CONST.MODULES.PRODUCTOS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -87,7 +87,7 @@ export class PublicacionesController {
     const data = await this.publicacionesService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all/publico`,
+      route: `${URLPAGE}/${CONST.MODULES.PRODUCTOS}/all/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -113,7 +113,7 @@ export class PublicacionesController {
   @Auth()
   @Patch()
   async update(
-    @Body() dto: UpdatePublicacionesDto,
+    @Body() dto: UpdateProductosDto,
     @UserLogin() userLogin: UsersEntity
   ) {
     const data = await this.publicacionesService.update(dto, userLogin);

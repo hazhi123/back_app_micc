@@ -52,9 +52,6 @@ export class UsersService {
     @InjectRepository(UsersInformacionEntity)
     private readonly informacionRP: Repository<UsersInformacionEntity>,
 
-    @InjectRepository(GaleriaEntity)
-    private readonly galeriaRP: Repository<GaleriaEntity>,
-
     private galeriaService: GaleriaService
   ) { }
 
@@ -316,12 +313,18 @@ export class UsersService {
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
 
-    const getOne = await this.getOne(parseInt(dto.user));
+    const getOne = await this.usersRP.findOne({
+      where: { id: dto.user },
+    })
     if (userLogin.isVisitante) {
       if (parseInt(dto.isBack) == 0) {
-        await this.galeriaRP.delete(getOne.image)
+        if (!isEmptyUndefined(getOne.image)) {
+          await this.galeriaService.delete(getOne.image)
+        }
       } else {
-        await this.galeriaRP.delete(getOne.imageBack)
+        if (!isEmptyUndefined(getOne.imageBack)) {
+          await this.galeriaService.delete(getOne.imageBack)
+        }
       }
     }
 

@@ -4,5 +4,5 @@ export const EnumToString = (_enum: object) =>
     .filter(value => typeof value === 'string') as string[];
 
 export const isEmptyUndefined = (data) => {
-  return data === null || data === undefined || data === 0 || data === '' || data === 'null' || data === {} || data === 'undefined';
+  return data === null || data === undefined || data === 0 || data === '' || data === '0' || data === 'null' || data === {} || data === 'undefined';
 }

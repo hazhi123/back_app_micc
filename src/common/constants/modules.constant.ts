@@ -32,4 +32,5 @@ export const MODULES = {
     MENSAJES: 'mensajes',
     CONTACTOS: 'contactos',
     HORARIOS: 'horarios',
+    PRODUCTOS: 'productos',
 }

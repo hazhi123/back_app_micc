@@ -39,14 +39,8 @@ export class CComercialesService {
   ) { }
 
   async create(dto: CreateCComercialesDto, userLogin: UsersEntity) {
-    let galeria = []
-    for (let x = 0; x < 9; x++) {
-      galeria.push('0')
-    }
-
     const save = await this.ccomercialesRP.save({
       ...dto,
-      galeria,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,

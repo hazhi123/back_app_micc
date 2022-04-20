@@ -67,7 +67,7 @@ export class ComentariosService {
   async getAll(id, options: IPaginationOptions): Promise<Pagination<ComentariosEntity>> {
     const find = await this.comentariosRP.createQueryBuilder('com')
       .leftJoinAndSelect("com.user", "user")
-      .leftJoinAndSelect("user.imageUrl", "iUrl")
+      .leftJoinAndSelect("user.image", "iUrl")
       .select([
         'com.id',
         'com.comentario',

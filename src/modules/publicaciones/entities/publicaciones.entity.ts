@@ -1,4 +1,3 @@
-import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import {
   Column,
   CreateDateColumn,
@@ -6,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -17,6 +17,8 @@ import {
 import {
   ComentariosEntity,
 } from '../../comentarios/entities/comentarios.entity';
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
+import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import { LikesEntity } from '../../likes/entities/likes.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import {
@@ -32,9 +34,6 @@ export class PublicacionesEntity {
 
   @Column({ type: 'varchar', default: '' })
   nombre: string;
-
-  @Column({ type: 'varchar', default: '' })
-  imageUrl: string;
 
   @Column({ type: 'varchar', default: '' })
   desc: string;
@@ -72,13 +71,17 @@ export class PublicacionesEntity {
   @Column({ type: 'integer', default: 0 })
   totalCompartidos: number;
 
-  @Column("text", { array: true, default: [] })
-  galeria: string[];
+  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
+  galeria: any[];
 
   @Column({ name: 'link_ref', type: 'varchar', default: '' })
   linkRef: string;
 
   // Relaciones
+  @OneToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'image' })
+  image: number;
+
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'categorias_id' })
   categoria: number;

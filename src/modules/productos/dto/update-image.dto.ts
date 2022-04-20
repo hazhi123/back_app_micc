@@ -11,7 +11,7 @@ export class UpdateImageDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  publicacion: number;
+  producto: number;
 
   @ApiProperty()
   @IsNumber()

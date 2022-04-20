@@ -17,6 +17,7 @@ import {
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
+import { ProductosEntity } from '../../productos/entities/productos.entity';
 
 @Entity(CONST.MODULES.TIENDAS)
 export class TiendasEntity {
@@ -66,7 +67,7 @@ export class TiendasEntity {
   @Column({ name: 'is_gastro', type: 'bool', default: false })
   isGastro: boolean;
 
-  @Column("text", { array: true, default: [] })
+  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
   galeria: any[];
 
   // Relaciones
@@ -87,5 +88,8 @@ export class TiendasEntity {
 
   @OneToOne(() => HorariosEntity, horarios => horarios.tienda, { eager: true })
   horarios: number;
+
+  @OneToMany(() => ProductosEntity, productos => productos.tienda)
+  productos: ProductosEntity[];
 
 }

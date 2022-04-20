@@ -26,3 +26,5 @@ export * from './guardados/guardados.module';
 export * from './contactos/contactos.module';
 export * from './mensajes/mensajes.module';
 export * from './galeria/galeria.module';
+
+export * from './productos/productos.module';

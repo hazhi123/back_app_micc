@@ -1,26 +1,26 @@
 import {
   IsNotEmpty,
-  IsNumber,
   IsOptional,
+  IsString,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateImageDto {
+export class CreateImageDto {
 
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  publicacion: number;
+  entId: string;
 
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  galeria: number;
+  producto: string;
 
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  index: number;
+  index: string;
 
 }

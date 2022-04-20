@@ -6,7 +6,6 @@ import {
 import { Repository } from 'typeorm';
 
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -14,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
+import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
@@ -35,6 +34,7 @@ export class PublicacionesService {
     'categoria',
     'tipoPub',
     'userEditor',
+    'image',
     'tienda',
     'tienda.categoria',
     'tienda.image',
@@ -48,23 +48,14 @@ export class PublicacionesService {
     @InjectRepository(PublicacionesEntity)
     private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
-    @InjectRepository(GaleriaEntity)
-    private readonly galeriaRP: Repository<GaleriaEntity>,
+    private galeriaService: GaleriaService,
 
-    private cloudinary: CloudinaryService
   ) { }
 
   async create(dto: CreatePublicacionesDto, userLogin: UsersEntity) {
     await this.findNombre(dto.nombre, false)
-
-    let galeria = []
-    for (let x = 0; x < 9; x++) {
-      galeria.push("")
-    }
-
     const save = await this.publicacionesRP.save({
       ...dto,
-      galeria,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -79,6 +70,7 @@ export class PublicacionesService {
       .createQueryBuilder("pub")
     query
       .leftJoinAndSelect("pub.categoria", "cat")
+      .leftJoinAndSelect("pub.image", "pubGal")
       .leftJoinAndSelect("pub.tipoPub", "tPub")
       .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("pub.ccomercial", "cc")
@@ -87,7 +79,6 @@ export class PublicacionesService {
       .select([
         'pub.id',
         'pub.nombre',
-        'pub.imageUrl',
         'pub.desc',
         'pub.isPermanente',
         'pub.fechaInicio',
@@ -98,10 +89,14 @@ export class PublicacionesService {
         'pub.galeria',
         'pub.linkRef',
         'pub.createdAt',
+        'pubGal.id',
+        'pubGal.file',
         'tPub.id',
         'tPub.nombre',
         'cc.id',
         'cc.nombre',
+        'cat.id',
+        'cat.nombre',
         'tie.id',
         'tie.nombre',
         'uEdit.id',
@@ -132,7 +127,6 @@ export class PublicacionesService {
     query.orderBy("pub.id", "DESC")
     query.getMany();
     return paginate<PublicacionesEntity>(query, options);
-
   }
 
   async getAllPublico(dto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
@@ -142,25 +136,33 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.categoria", "cat")
       .leftJoinAndSelect("pub.tipoPub", "tPub")
       .leftJoinAndSelect("pub.ccomercial", "cc")
+      .leftJoinAndSelect("pub.userEditor", "uEdit")
+      .leftJoinAndSelect("cc.image", "ccGal")
+      .leftJoinAndSelect("pub.image", "pubGal")
       .leftJoinAndSelect("pub.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieGal")
       .select([
         'pub.id',
         'pub.nombre',
-        'pub.imageUrl',
         'pub.desc',
         'pub.totalLikes',
         'pub.totalComentarios',
         'pub.createdAt',
+        'pubGal.id',
+        'pubGal.file',
         'cc.id',
         'cc.nombre',
-        'cc.image',
+        'ccGal.id',
+        'ccGal.file',
         'tie.id',
         'tie.nombre',
         'tPub.id',
         'tPub.nombre',
         'tieGal.id',
         'tieGal.file',
+        'uEdit.id',
+        'uEdit.nombre',
+        'uEdit.apellido',
       ])
     query.where('tPub.id = :tPubId', { tPubId: dto.tipoPub })
     query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
@@ -169,11 +171,21 @@ export class PublicacionesService {
     return paginate<PublicacionesEntity>(query, options);
   }
 
-  async getOne(id: number): Promise<PublicacionesEntity> {
-    return await this.publicacionesRP.findOne({
+  async getOne(id: number, isGaleria: boolean = true): Promise<PublicacionesEntity> {
+    const getOne = await this.publicacionesRP.findOne({
       where: { id },
       relations: this.relations
     });
+
+    if (isGaleria) {
+      for (let x = 0; x < getOne.galeria.length; x++) {
+        if (!isEmptyUndefined(getOne.galeria[x])) {
+          getOne.galeria[x] = await this.galeriaService.getOne(parseInt(getOne.galeria[x]));
+        }
+      }
+    }
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
   }
 
   async update(dto: UpdatePublicacionesDto, userLogin: UsersEntity) {
@@ -212,46 +224,56 @@ export class PublicacionesService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async uploadImageToCloudinary(file: Express.Multer.File) {
-    return await this.cloudinary.uploadImage(file).catch(() => {
-      throw new BadRequestException('Invalid file type.');
-    });
-  }
-
-  async createImage(file: any, dto: CreateImageDto) {
-    const dato = await this.getOne(parseInt(dto.publicacion));
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+    const dato = await this.getOne(parseInt(dto.publicacion), false);
     let galeria = dato.galeria
     let image
-    try {
-      image = await this.uploadImageToCloudinary(file)
-      this.galeriaRP.createQueryBuilder()
-        .insert()
-        .into(GaleriaEntity)
-        .values({
+
+    if (isEmptyUndefined(dto.index)) {
+      let galeriaId;
+      let res: GaleriaEntity
+      try {
+        const data = {
           entidad: dto.entidad,
           entId: parseInt(dto.entId),
           referencia: 'publicacion',
           refId: parseInt(dto.publicacion),
-          file: image.url
-        })
-        .execute();
-    } catch (error) {
-      image = { url: '' }
+        }
+        res = await this.galeriaService.create(file, data, userLogin)
+        galeriaId = res.id
+      } catch (error) {
+        galeriaId = null
+        res = null
+      }
+
+      await this.publicacionesRP.update(parseInt(dto.publicacion), {
+        image: galeriaId
+      });
+      return res;
     }
 
-    if (isEmptyUndefined(dto.index)) {
-      await this.publicacionesRP.update(parseInt(dto.publicacion), {
-        imageUrl: image.url
-      });
-      return await this.getOne(parseInt(dto.publicacion));
+    let galeriaId;
+    let res: GaleriaEntity
+    try {
+      const data = {
+        entidad: dto.entidad,
+        entId: parseInt(dto.entId),
+        referencia: 'publicacion',
+        refId: parseInt(dto.publicacion),
+      }
+      res = await this.galeriaService.create(file, data, userLogin)
+      galeriaId = res.id
+    } catch (error) {
+      galeriaId = null
+      res = null
     }
 
     for (let x = 0; x < 9; x++) {
       if (x == parseInt(dto.index)) {
-        galeria[x] = image.url
+        galeria[x] = galeriaId
       }
       if (isEmptyUndefined(galeria[x])) {
-        galeria[x] = ""
+        galeria[x] = '0'
       }
     }
     await this.publicacionesRP.update(parseInt(dto.publicacion), {
@@ -262,14 +284,15 @@ export class PublicacionesService {
 
   async updateImage(dto: UpdateImageDto) {
     await this.publicacionesRP.update(dto.publicacion, {
-      imageUrl: dto.url
+      image: dto.galeria
     });
-    return await this.getOne(dto.publicacion);
+    const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
+    return getOneGaleria;
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    const data = await this.getOne(parseInt(dto.publicacion));
-    data.galeria[parseInt(dto.index)] = ""
+    const data = await this.getOne(parseInt(dto.publicacion), false);
+    data.galeria[parseInt(dto.index)] = '0'
     await this.publicacionesRP.update(parseInt(dto.publicacion), {
       galeria: data.galeria
     });
@@ -277,8 +300,8 @@ export class PublicacionesService {
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    const data = await this.getOne(dto.publicacion);
-    data.galeria[dto.index] = dto.url
+    const data = await this.getOne(dto.publicacion, false);
+    data.galeria[dto.index] = dto.galeria
     await this.publicacionesRP.update(dto.publicacion, {
       galeria: data.galeria
     });

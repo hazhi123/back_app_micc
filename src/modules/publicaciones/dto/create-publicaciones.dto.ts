@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -15,11 +14,6 @@ export class CreatePublicacionesDto {
   @IsString()
   @IsNotEmpty()
   nombre: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  imageUrl: string;
 
   @ApiProperty()
   @IsString()
@@ -40,11 +34,6 @@ export class CreatePublicacionesDto {
   @IsString()
   @IsOptional()
   linkRef: string;
-
-  @ApiProperty()
-  @IsArray()
-  @IsOptional()
-  galeria: Array<string>;
 
   @ApiProperty()
   @IsOptional()

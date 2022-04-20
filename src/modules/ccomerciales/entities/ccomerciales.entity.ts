@@ -67,7 +67,7 @@ export class CComercialesEntity {
   @Column({ type: 'bool', default: true })
   abierto: boolean;
 
-  @Column("text", { array: true, default: [] })
+  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
   galeria: any[];
 
   // Relaciones
