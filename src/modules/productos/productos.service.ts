@@ -91,8 +91,13 @@ export class ProductosService {
         'proGal.id',
         'proGal.file',
       ])
-      .where("pro.nombre like :name", { name: `%${dto.filtro}%` })
-      .andWhere('pro.status = :status', { status: true })
+    if (!isEmptyUndefined(dto.filtro)) {
+      query.andWhere("LOWER(pro.nombre) like :filtro", { filtro: `%${dto.filtro.toLowerCase()}%` })
+    }
+    if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
+      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+    }
+    query.andWhere('pro.status = :status', { status: true })
     query.getMany();
     return paginate<ProductosEntity>(query, options);
   }
@@ -119,6 +124,8 @@ export class ProductosService {
         'proGal.file',
         'tie.id',
         'tie.nombre',
+        'tieGal.id',
+        'tieGal.file',
         'cat.id',
         'cat.nombre',
       ])
