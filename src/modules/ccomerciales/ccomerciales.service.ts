@@ -176,7 +176,7 @@ export class CComercialesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-    await this.ccomercialesRP.delete(id);
+    // await this.ccomercialesRP.delete(id);
     return getOne;
   }
 

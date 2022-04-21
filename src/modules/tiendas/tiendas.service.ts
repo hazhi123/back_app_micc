@@ -232,11 +232,10 @@ export class TiendasService {
     const ccomercial = await this.ccomercialesRP.findOne({
       where: { id: getOne.ccomercial.id }
     })
-    await this.ccomercialesRP.update(getOne.ccomercial.id, {
-      totalTiendas: ccomercial.totalTiendas - 1
-    });
-    await this.tiendasRP.delete(id);
-
+    // await this.ccomercialesRP.update(getOne.ccomercial.id, {
+    //   totalTiendas: ccomercial.totalTiendas - 1
+    // });
+    // await this.tiendasRP.delete(id);
     return getOne;
   }
 

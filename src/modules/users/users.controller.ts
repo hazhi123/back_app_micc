@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,10 +22,11 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
 import {
   CreateImageDto,
   createUsersDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   updatedUsersDto,
   UpdateImageDto,
 } from './dto';
@@ -52,27 +56,22 @@ export class UsersController {
   }
 
   @Auth()
-  @Get()
-  async getAll(@UserLogin() userLogin: UsersEntity) {
-    const data = await this.usersService.getAll();
-    const res = {
-      statusCode: HttpStatus.OK,
-      data,
-      entries: data.length,
-      message: ''
-    }
-    return res;
-  }
-
-  @Auth()
   @Post('/all')
-  async getAllxAtributo(
-    @Body() dto: GetAllxAtributoDto,
+  async getAll(
+    @Body() dto: GetAllDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
-    const data = await this.usersService.getAllxAtributo(dto);
+    const data = await this.usersService.getAll(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.USERS.USERS}/all`,
+    });
     let res = {
       statusCode: HttpStatus.OK,
-      data: data,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
       message: ''
     }
     return res
@@ -82,7 +81,6 @@ export class UsersController {
   @Get(':id')
   async getOne(
     @Param('id') id: number,
-    @UserLogin() userLogin: UsersEntity
   ) {
     const data = await this.usersService.getOne(id);
     return {

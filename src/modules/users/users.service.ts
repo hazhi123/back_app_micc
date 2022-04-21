@@ -1,3 +1,8 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import {
@@ -15,7 +20,7 @@ import { GaleriaService } from '../galeria/galeria.service';
 import {
   CreateImageDto,
   createUsersDto,
-  GetAllxAtributoDto,
+  GetAllDto,
   updatedUsersDto,
   UpdateImageDto,
 } from './dto';
@@ -24,26 +29,6 @@ import { UsersEntity } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
-
-  relations = [
-    'perfil',
-    'informacion',
-    'licencia',
-    'pais',
-    'ciudad',
-    'image',
-    'imageBack',
-    'ccomercial',
-    'ccomercial.pais',
-    'ccomercial.ciudad',
-    'ccomercial.horarios',
-    'tienda',
-    'tienda.categoria',
-    'ccomerciales',
-    'ccomerciales.ccomercial',
-    'ccomerciales.ccomercial.pais',
-    'ccomerciales.ccomercial.ciudad',
-  ]
 
   constructor(
     @InjectRepository(UsersEntity)
@@ -147,53 +132,127 @@ export class UsersService {
       user: save.id
     });
     const getOne = await this.getOne(save.id)
-    delete getOne.password;
     return getOne;
   }
 
-  async getAll(isShowPassword: boolean = false) {
-    const find = await this.usersRP.find({
-      where: { isVisitante: false },
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    const arr = find.map(el => {
-      if (!isShowPassword) delete el.password;
-      return el;
-    });
-    return arr;
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<UsersEntity>> {
+    const query = await this.usersRP
+      .createQueryBuilder("user")
+    query.leftJoinAndSelect("user.perfil", "per")
+      .leftJoinAndSelect("user.image", "userGal")
+      .leftJoinAndSelect("user.imageBack", "userGalBack")
+      .leftJoinAndSelect("user.pais", "pais")
+      .leftJoinAndSelect("user.ciudad", "ciu")
+      .leftJoinAndSelect("user.informacion", "inf")
+      .leftJoinAndSelect("user.ccomercial", "cc")
+      .leftJoinAndSelect("user.tienda", "tie")
+      .select([
+        'user.id',
+        'user.nombre',
+        'user.apellido',
+        'user.user',
+        'user.status',
+        'userGal.id',
+        'userGal.file',
+        'userGalBack.id',
+        'userGalBack.file',
+        'per.id',
+        'per.nombre',
+        'pais.id',
+        'pais.nombre',
+        'cc.id',
+        'cc.nombre',
+        'tie.id',
+        'tie.nombre',
+        'ciu.id',
+        'ciu.nombre',
+        'inf.user',
+        'inf.celular',
+        'inf.dni',
+      ])
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.tienda)) {
+      query.andWhere('tie.id = :tieId', { ccId: dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.isVisitante)) {
+      query.andWhere('user.isVisitante = :valor', { valor: dto.isVisitante })
+    }
+    if (!isEmptyUndefined(dto.isTienda)) {
+      query.andWhere('user.isTienda = :valor', { valor: dto.isTienda })
+    }
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('user.status = :valor', { valor: dto.status })
+    }
+    query.addOrderBy("user.nombre", "ASC")
+    query.getMany();
+    return paginate<UsersEntity>(query, options);
   }
 
-  async getAllxAtributo(dto: GetAllxAtributoDto): Promise<UsersEntity[]> {
-    let search = {}
-    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
-    if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
-    if (!isEmptyUndefined(dto.isVisitante)) search['isVisitante'] = dto.isVisitante
-    if (!isEmptyUndefined(dto.isTienda)) search['isTienda'] = dto.isTienda
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-    const find = await this.usersRP.find({
-      where: search,
-      relations: this.relations,
-      order: { 'nombre': 'ASC' },
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
-  }
-
-  async getOne(id: number, userLogin?: UsersEntity) {
+  async getLogin(id: number, userLogin?: UsersEntity) {
     const findOne = await this.usersRP.findOne({
       where: { id },
-      relations: this.relations
+      relations: ['ccomercial', 'tienda', 'ccomerciales', 'ccomerciales.ccomercial', 'perfil'],
     })
       .then(u => !userLogin ? u : !!u && userLogin.id === u.id ? u : null)
     if (!findOne) throw new NotFoundException('Usuario no existe');
     return findOne;
   }
 
+  async getOne(id: number) {
+    const getOne = await this.usersRP
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.perfil", "per")
+      .leftJoinAndSelect("user.image", "userGal")
+      .leftJoinAndSelect("user.imageBack", "userGalBack")
+      .leftJoinAndSelect("user.pais", "pais")
+      .leftJoinAndSelect("user.ciudad", "ciu")
+      .leftJoinAndSelect("user.informacion", "inf")
+      .leftJoinAndSelect("user.ccomercial", "cc")
+      .leftJoinAndSelect("user.tienda", "tie")
+      .select([
+        'user.id',
+        'user.nombre',
+        'user.apellido',
+        'user.user',
+        'user.createdBy',
+        'user.createdAt',
+        'user.updatedBy',
+        'user.updatedAt',
+        'user.status',
+        'user.isTienda',
+        'user.isVisitante',
+        'userGal.id',
+        'userGal.file',
+        'userGalBack.id',
+        'userGalBack.file',
+        'per.id',
+        'per.nombre',
+        'tie.id',
+        'tie.nombre',
+        'cc.id',
+        'cc.nombre',
+        'pais.id',
+        'pais.nombre',
+        'ciu.id',
+        'ciu.nombre',
+        'inf.user',
+        'inf.dni',
+        'inf.celular',
+        'inf.direccion',
+        'inf.telefono',
+      ])
+      .where('user.id = :id', { id })
+      .getOne()
+
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
+  }
+
   async update(dto: updatedUsersDto, userLogin: UsersEntity) {
-    const getOne = await this.getOne(dto.id, null)
-    if (!getOne) throw new HttpException({
+    const getOne = await this.getOne(dto.id)
+    if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
@@ -232,13 +291,6 @@ export class UsersService {
       await this.informacionRP.update(getOne.informacion.user, assinginformacion);
     }
 
-    delete getOne.informacion
-    delete getOne.licencia
-    delete getOne.publicaciones
-    delete getOne.comentarios
-    delete getOne.likes
-    delete getOne.ccomerciales
-
     if (isVisitante) {
       getOne['ccomercial'] = null;
       getOne['tienda'] = null;
@@ -268,19 +320,18 @@ export class UsersService {
     await this.usersRP.update(getOne.id, objectUsers);
 
     const res = await this.getOne(dto.id);
-    delete res.password;
     return res;
   }
 
   async delete(id: number) {
-    const getOne = await this.getOne(id, null)
+    const getOne = await this.getOne(id)
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
 
     await this.usersRP.update(id, { status: false });
-    return await this.getOne(id, null);
+    return await this.getOne(id);
   }
 
   async findUser(user: string) {

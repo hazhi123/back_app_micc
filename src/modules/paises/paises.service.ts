@@ -44,7 +44,7 @@ export class PaisesService {
     const find = await this.paisesRP.find({
       where: search,
       order: { 'nombre': 'ASC' },
-      select: !isEmptyUndefined(dto.select) ? dto.select : ['id', 'nombre', 'imageUrl', 'code']
+      select: !isEmptyUndefined(dto.select) ? dto.select : ['id', 'nombre', 'imageUrl', 'code', 'status']
     });
     if (isEmptyUndefined(find)) return null
     return find;

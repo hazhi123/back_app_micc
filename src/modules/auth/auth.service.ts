@@ -30,7 +30,7 @@ export class AuthService {
       const comparePassword = await bcrypt.compare(password, find.password);
       delete find.password
       if (comparePassword) {
-        return await this.userService.getOne(find.id)
+        return await this.userService.getLogin(find.id)
       }
     }
     return null;

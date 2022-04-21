@@ -210,8 +210,9 @@ export class PublicacionesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-    await this.publicacionesRP.delete(id);
-    return getOne;
+    // await this.publicacionesRP.delete(id);
+    await this.publicacionesRP.update(id, { status: false });
+    return await this.getOne(id);
   }
 
 

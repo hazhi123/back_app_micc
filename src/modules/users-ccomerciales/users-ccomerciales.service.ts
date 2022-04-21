@@ -1,11 +1,18 @@
 import { Repository } from 'typeorm';
 
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
-import { AddCComercialDto, CreateUsersCComercialesDto } from './dto';
+import {
+  AddCComercialDto,
+  CreateUsersCComercialesDto,
+} from './dto';
 import { UsersCComercialesEntity } from './entities/users-ccomerciales.entity';
 
 @Injectable()
@@ -78,6 +85,13 @@ export class UsersCComercialesService {
       relations: this.relations,
     });
     return getOne;
+  }
+
+  async getUser(user: number): Promise<UsersCComercialesEntity> {
+    return await this.usersCComercialesRP.findOne({
+      where: { user },
+      relations: this.relations
+    });
   }
 
   async delCComercial(dto: AddCComercialDto) {

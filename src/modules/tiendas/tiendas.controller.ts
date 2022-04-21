@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -47,7 +48,7 @@ export class TiendasController {
   ) {
     let data = await this.tiendasService.create(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -67,7 +68,7 @@ export class TiendasController {
       route: `${URLPAGE}/${CONST.MODULES.TIENDAS}/all`,
     });
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data.items,
       meta: data.meta,
       links: data.links,
@@ -90,7 +91,7 @@ export class TiendasController {
       route: `${URLPAGE}/${CONST.MODULES.TIENDAS}/all/publico`,
     });
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data.items,
       meta: data.meta,
       links: data.links,
@@ -104,7 +105,7 @@ export class TiendasController {
   async getOne(@Param('id') id: number) {
     const data = await this.tiendasService.getOne(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
     }
@@ -118,7 +119,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.update(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.UPDATE_DATA
     }
@@ -129,7 +130,7 @@ export class TiendasController {
   async delete(@Param('id') id: number) {
     const data = await this.tiendasService.delete(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.DELETE_DATA
     }
@@ -147,7 +148,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.createImage(file, dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -160,7 +161,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.updateImage(dto);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -178,7 +179,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.createImage(file, dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -191,7 +192,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.deleteGaleria(dto);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: 'Se ha eliminado la imagen correctamente'
     };
@@ -204,7 +205,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.updateGaleria(dto);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: 'Se ha eliminado la imagen correctamente'
     };
@@ -217,7 +218,7 @@ export class TiendasController {
   ) {
     const data = await this.tiendasService.actualizarApertura(dto);
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data,
       message: 'Se ha actualizado la apertura de la Tienda'
     }
