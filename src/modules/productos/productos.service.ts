@@ -83,6 +83,7 @@ export class ProductosService {
       .leftJoinAndSelect("pro.image", "proGal")
       .leftJoinAndSelect("pro.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieGal")
+      .leftJoinAndSelect("tie.ccomercial", "tiecc")
       .select([
         'pro.id',
         'pro.nombre',
@@ -96,6 +97,9 @@ export class ProductosService {
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
       query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('tiecc.id = :tieccId', { tieccId: dto.ccomercial })
     }
     query.andWhere('pro.status = :status', { status: true })
     query.getMany();

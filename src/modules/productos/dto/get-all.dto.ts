@@ -15,6 +15,11 @@ export class GetAllDto {
   tienda: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  ccomercial: number;
+
+  @ApiProperty()
   @IsString()
   @IsOptional()
   filtro: string;
