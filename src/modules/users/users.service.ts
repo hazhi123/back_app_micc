@@ -49,22 +49,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     const {
-      nombre,
-      apellido,
-      user,
-      isVisitante,
-      pais,
-      password,
-      ccomercial,
-      tienda,
-      perfil,
-      status,
-      dni,
-      direccion,
-      celular,
-      telefono,
-      ciudad,
-      isTienda,
+      nombre, apellido, user, isVisitante, pais, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, ciudad, isTienda,
     } = dto
 
     // Es cuando el usuario se registra.
@@ -174,7 +159,7 @@ export class UsersService {
       query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :tieId', { ccId: dto.tienda })
+      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
     }
     if (!isEmptyUndefined(dto.isVisitante)) {
       query.andWhere('user.isVisitante = :valor', { valor: dto.isVisitante })
@@ -265,23 +250,8 @@ export class UsersService {
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
 
-    let { id,
-      nombre,
-      apellido,
-      user,
-      pais,
-      ciudad,
-      password,
-      perfil,
-      status,
-      celular,
-      ccomercial,
-      isVisitante,
-      tienda,
-      dni,
-      isTienda,
-      direccion,
-      telefono,
+    let {
+      id, nombre, apellido, user, pais, ciudad, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTienda, direccion, telefono,
     } = dto
 
     const dataInformacion = {

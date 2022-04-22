@@ -93,6 +93,7 @@ export class GaleriaService {
 
   async delete(id: number) {
     //http://res.cloudinary.com/dqjirfzaa/image/upload/v1648706352/vwc7ptrctmetsx1uzmor.jpg
+    //http://res.cloudinary.com/hazhi123/image/upload/v1648706352/vwc7ptrctmetsx1uzmor.jpg
     const getOne = await this.getOne(id);
 
     const val = getOne.file.replace('http://res.cloudinary.com/hazhi123/image/upload/', '');
