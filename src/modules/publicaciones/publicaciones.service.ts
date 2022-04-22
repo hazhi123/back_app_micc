@@ -129,7 +129,7 @@ export class PublicacionesService {
     return paginate<PublicacionesEntity>(query, options);
   }
 
-  async getAllPublico(dto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
+  async getAllPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
     const query = await this.publicacionesRP
       .createQueryBuilder("pub")
     query
@@ -164,8 +164,15 @@ export class PublicacionesService {
         'uEdit.nombre',
         'uEdit.apellido',
       ])
-    query.where('tPub.id = :tPubId', { tPubId: dto.tipoPub })
-    query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    if (!isEmptyUndefined(dto.tipoPub)) {
+      query.andWhere('tPub.id = :tPubId', { tPubId: dto.tipoPub })
+    }
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.tienda)) {
+      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+    }
     query.orderBy("pub.createdAt", "DESC")
     query.getMany();
     return paginate<PublicacionesEntity>(query, options);

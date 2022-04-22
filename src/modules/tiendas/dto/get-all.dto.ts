@@ -21,6 +21,11 @@ export class GetAllDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
+  tienda: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
   categoria: number;
 
   @ApiProperty()
