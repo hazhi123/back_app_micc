@@ -266,7 +266,7 @@ export class UsersService {
       await this.informacionRP.save(dataInformacion);
     } else {
       const assinginformacion = Object.assign(getOne.informacion, dataInformacion)
-      await this.informacionRP.update(getOne.informacion.user, assinginformacion);
+      await this.informacionRP.update(getOne.id, assinginformacion);
     }
 
     if (isVisitante) {
@@ -295,6 +295,8 @@ export class UsersService {
     if (isEmptyUndefined(dto.password)) {
       delete objectUsers.password
     }
+
+    delete getOne.informacion
     await this.usersRP.update(getOne.id, objectUsers);
 
     const res = await this.getOne(dto.id);
