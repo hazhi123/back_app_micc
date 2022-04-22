@@ -193,7 +193,15 @@ export class UsersService {
   async getLogin(id: number, userLogin?: UsersEntity) {
     const findOne = await this.usersRP.findOne({
       where: { id },
-      relations: ['ccomercial', 'tienda', 'ccomerciales', 'ccomerciales.ccomercial', 'perfil'],
+      relations: [
+        'ccomercial',
+        'tienda',
+        'ccomerciales',
+        'ccomerciales.ccomercial',
+        'perfil',
+        'pais',
+        'ciudad',
+      ],
     })
       .then(u => !userLogin ? u : !!u && userLogin.id === u.id ? u : null)
     if (!findOne) throw new NotFoundException('Usuario no existe');

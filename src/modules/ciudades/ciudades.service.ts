@@ -38,7 +38,7 @@ export class CiudadesService {
   }
 
   async getAll(dto: GetAllDto): Promise<CiudadesEntity[]> {
-    const find = await this.ciudadesRP
+    const query = await this.ciudadesRP
       .createQueryBuilder("ciu")
       .leftJoinAndSelect("ciu.pais", "pais")
       .select([
@@ -48,11 +48,15 @@ export class CiudadesService {
         'pais.nombre',
       ])
       .orderBy("ciu.nombre", "ASC")
-      .where(
-        !isEmptyUndefined(dto.status) ? `ciu.status = ${dto.status}` : '')
-      .getMany();
-    if (isEmptyUndefined(find)) return null
-    return find;
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('ciu.status = :valor', { valor: dto.status })
+    }
+    if (!isEmptyUndefined(dto.pais)) {
+      query.andWhere('pais.id = :paisId', { paisId: dto.pais })
+    }
+    const getAll = query.getMany();
+    if (isEmptyUndefined(getAll)) return null
+    return getAll;
   }
 
   async getOne(id: number): Promise<CiudadesEntity> {
