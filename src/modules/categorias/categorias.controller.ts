@@ -109,8 +109,9 @@ export class CategoriasController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.categoriaService.createImage(file, dto);
+    const data = await this.categoriaService.createImage(file, dto, userLogin);
     return {
       statusCode: 200,
       data,

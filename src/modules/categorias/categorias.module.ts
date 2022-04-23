@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
-import { GaleriaEntity } from '../galeria/entities/galeria.entity';
+import { GaleriaModule } from '../galeria/galeria.module';
 import { CategoriasController } from './categorias.controller';
 import { CategoriasService } from './categorias.service';
 import { CategoriasEntity } from './entities/categorias.entity';
 
 @Module({
-  imports: [CloudinaryModule, TypeOrmModule.forFeature([CategoriasEntity, GaleriaEntity])],
+  imports: [GaleriaModule, TypeOrmModule.forFeature([CategoriasEntity])],
   controllers: [CategoriasController],
   providers: [CategoriasService],
   exports: [CategoriasService]

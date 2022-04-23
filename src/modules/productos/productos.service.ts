@@ -232,6 +232,15 @@ export class ProductosService {
   }
 
   async updateImage(dto: UpdateImageDto) {
+    const getOne = await this.productosRP.findOne({
+      where: { image: dto.galeria },
+    });
+
+    if (!isEmptyUndefined(getOne)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: 'Esta imagén se encuentra en uso',
+    }, HttpStatus.ACCEPTED)
+
     await this.productosRP.update(dto.producto, {
       image: dto.galeria
     });

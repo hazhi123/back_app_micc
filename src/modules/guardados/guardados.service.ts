@@ -72,6 +72,7 @@ export class GuardadosService {
       relations: [
         'user',
         'publicacion',
+        'publicacion.tipoPub',
         'publicacion.ccomercial',
         'publicacion.tienda',
       ],

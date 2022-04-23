@@ -1,17 +1,16 @@
 import { Repository } from 'typeorm';
 
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
+import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCategoriasDto,
@@ -29,10 +28,7 @@ export class CategoriasService {
     @InjectRepository(CategoriasEntity)
     private readonly categoriasRP: Repository<CategoriasEntity>,
 
-    @InjectRepository(GaleriaEntity)
-    private readonly galeriaRP: Repository<GaleriaEntity>,
-
-    private cloudinary: CloudinaryService
+    private galeriaService: GaleriaService
 
   ) { }
 
@@ -122,36 +118,28 @@ export class CategoriasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async uploadImageToCloudinary(file: Express.Multer.File) {
-    return await this.cloudinary.uploadImage(file).catch(() => {
-      throw new BadRequestException('Invalid file type.');
-    });
-  }
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
 
-  async createImage(file: any, dto: CreateImageDto) {
-    let image
+    let galeriaId;
+    let res: GaleriaEntity
     try {
-      image = await this.uploadImageToCloudinary(file)
-      this.galeriaRP.createQueryBuilder()
-        .insert()
-        .into(GaleriaEntity)
-        .values({
-          entidad: 'ccomercial',
-          entId: parseInt(dto.entId),
-          referencia: 'categoria',
-          refId: parseInt(dto.categoria),
-          file: image.url
-        })
-        .execute();
+      const data = {
+        entidad: 'ccomercial',
+        entId: parseInt(dto.entId),
+        referencia: 'categoria',
+        refId: parseInt(dto.categoria),
+      }
+      res = await this.galeriaService.create(file, data, userLogin)
+      galeriaId = res.id
     } catch (error) {
-      image = { url: '' }
+      galeriaId = null
+      res = null
     }
-    await this.categoriasRP.createQueryBuilder()
-      .update(CategoriasEntity)
-      .set({ image: image.url })
-      .where("id = :id", { id: parseInt(dto.categoria) })
-      .execute();
-    return await this.getOne(parseInt(dto.categoria));
+
+    await this.categoriasRP.update(parseInt(dto.categoria),
+      { image: galeriaId }
+    );
+    return res;
   }
 
   async updateImage(dto: UpdateImageDto) {
