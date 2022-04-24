@@ -199,7 +199,7 @@ export class CComercialesController {
     return {
       statusCode: 200,
       data,
-      message: 'Se ha eliminado la imagen correctamente'
+      message: 'La imagén se ha actualizado correctamente'
     };
   }
 
