@@ -35,12 +35,12 @@ export class CreateCComercialesDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  pais: number;
+  ciudad: number;
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
-  ciudad: number;
+  @IsOptional()
+  parroquia: number;
 
   @ApiProperty()
   @IsString()

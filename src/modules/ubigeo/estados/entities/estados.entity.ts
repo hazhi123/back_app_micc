@@ -22,13 +22,13 @@ export class EstadosEntity {
   @Column()
   nombre: string;
 
-  @Column({ name: 'created_by', default: 1 })
+  @Column({ name: 'created_by' })
   createdBy: number;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ name: 'updated_by', default: 1 })
+  @Column({ name: 'updated_by' })
   updatedBy: number;
 
   @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })

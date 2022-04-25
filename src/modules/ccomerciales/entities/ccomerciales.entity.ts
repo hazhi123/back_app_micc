@@ -15,7 +15,10 @@ import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
-import { PaisesEntity } from '../../ubigeo/paises/entities/paises.entity';
+import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
+import {
+  ParroquiasEntity,
+} from '../../ubigeo/parroquias/entities/parroquias.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES)
@@ -27,7 +30,7 @@ export class CComercialesEntity {
   @Column({ type: 'varchar' })
   nombre: string;
 
-  @Column({ type: 'varchar', default: '' })
+  @Column({ type: 'varchar' })
   correo: string;
 
   @Column({ name: 'tel_primero', type: 'varchar', default: '' })
@@ -86,9 +89,14 @@ export class CComercialesEntity {
   @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
   contactos: ContactosEntity[];
 
-  @ManyToOne(() => PaisesEntity)
-  @JoinColumn({ name: 'paises_id' })
-  pais: number;
+
+  @ManyToOne(() => CiudadesEntity)
+  @JoinColumn({ name: 'id_ciudad' })
+  ciudad: number;
+
+  @ManyToOne(() => ParroquiasEntity)
+  @JoinColumn({ name: 'id_parroquia' })
+  parroquia: number;
 
   @OneToOne(() => HorariosEntity, horarios => horarios.ccomercial, { eager: true })
   horarios: number;

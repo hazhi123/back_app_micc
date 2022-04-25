@@ -32,10 +32,10 @@ export class PublicacionesEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', default: '' })
+  @Column({ type: 'varchar' })
   nombre: string;
 
-  @Column({ type: 'varchar', default: '' })
+  @Column({ type: 'varchar' })
   desc: string;
 
   @Column({ name: 'is_permanente', type: 'bool', default: true })
@@ -79,27 +79,27 @@ export class PublicacionesEntity {
 
   // Relaciones
   @OneToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'image' })
+  @JoinColumn({ name: 'id_galeria' })
   image: number;
 
   @ManyToOne(() => CategoriasEntity)
-  @JoinColumn({ name: 'categorias_id' })
+  @JoinColumn({ name: 'id_categoria' })
   categoria: number;
 
   @ManyToOne(() => TiposPublicacionEntity)
-  @JoinColumn({ name: 'tipo_pub_id' })
+  @JoinColumn({ name: 'id_tipo_pub' })
   tipoPub: number;
 
   @ManyToOne(() => CComercialesEntity)
-  @JoinColumn({ name: 'ccomerciales_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
   @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'tiendas_id' })
+  @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
   @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: 'users_id' })
+  @JoinColumn({ name: 'id_user' })
   userEditor: number;
 
   @OneToMany(() => ComentariosEntity, comentarios => comentarios.publicacion, { eager: true })

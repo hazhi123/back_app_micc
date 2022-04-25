@@ -1,4 +1,3 @@
-import { UsersEntity } from '../../users/entities/users.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,7 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.MENSAJES)
 export class MensajesEntity {
@@ -17,7 +17,7 @@ export class MensajesEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', default: '' })
+  @Column({ type: 'varchar' })
   mensaje: string;
 
   @Column({ name: 'created_by' })
@@ -37,11 +37,11 @@ export class MensajesEntity {
 
   // Relaciones
   @ManyToOne(() => ContactosEntity, contactos => contactos.mensajes)
-  @JoinColumn({ name: 'contactos_id' })
+  @JoinColumn({ name: 'id_contacto' })
   contacto: number;
 
   @ManyToOne(() => UsersEntity, users => users.mensajes)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'id_user' })
   user: number;
 
 }

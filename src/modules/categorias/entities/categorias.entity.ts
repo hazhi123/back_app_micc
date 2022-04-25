@@ -1,4 +1,3 @@
-import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
   Column,
   CreateDateColumn,
@@ -14,6 +13,7 @@ import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
@@ -25,7 +25,7 @@ export class CategoriasEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: '' })
+  @Column()
   nombre: string;
 
   @Column({ default: '' })
@@ -48,7 +48,7 @@ export class CategoriasEntity {
 
   // Relaciones
   @ManyToOne(() => CComercialesEntity, cc => cc.categorias)
-  @JoinColumn({ name: 'ccomerciales_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
   @OneToMany(() => TiendasEntity, tiendas => tiendas.categoria)

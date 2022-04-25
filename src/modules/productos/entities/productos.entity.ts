@@ -47,11 +47,11 @@ export class ProductosEntity {
 
   // Relaciones
   @OneToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'image' })
+  @JoinColumn({ name: 'id_galeria' })
   image: number;
 
   @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'tiendas_id' })
+  @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
 }

@@ -1,4 +1,3 @@
-import { CComercialesEntity } from '../../ccomerciales/entities/ccomerciales.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +8,9 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import {
+  CComercialesEntity,
+} from '../../ccomerciales/entities/ccomerciales.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 
 @Entity(CONST.MODULES.HORARIOS)
@@ -58,11 +60,11 @@ export class HorariosEntity {
 
   // Relaciones
   @OneToOne(() => CComercialesEntity, cc => cc.horarios, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ccomercial_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
   @OneToOne(() => TiendasEntity, tienda => tienda.horarios, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'tiendas_id' })
+  @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
 }

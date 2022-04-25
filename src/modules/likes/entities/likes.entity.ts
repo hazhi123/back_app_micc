@@ -1,4 +1,3 @@
-import { PublicacionesEntity } from '../../publicaciones/entities/publicaciones.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +8,9 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import {
+  PublicacionesEntity,
+} from '../../publicaciones/entities/publicaciones.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.LIKES)
@@ -31,11 +33,11 @@ export class LikesEntity {
 
   // Relaciones
   @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: 'users_id' })
+  @JoinColumn({ name: 'id_user' })
   user: number;
 
   @ManyToOne(() => PublicacionesEntity, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'publicaciones_id' })
+  @JoinColumn({ name: 'id_publicacion' })
   publicacion: any;
 
 }

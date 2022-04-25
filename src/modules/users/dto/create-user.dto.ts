@@ -70,7 +70,7 @@ export class createUsersDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   parroquia: number;
 
   @ApiProperty()
@@ -101,7 +101,7 @@ export class createUsersDto {
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  isTienda: boolean;
+  isTrabajador: boolean;
 
 
 }

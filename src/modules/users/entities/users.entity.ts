@@ -30,9 +30,7 @@ import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
-import {
-  ParroquiasEntity,
-} from '../../ubigeo/parroquias/entities/parroquias.entity';
+import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
 import {
   UsersCComercialesEntity,
 } from '../../users-ccomerciales/entities/users-ccomerciales.entity';
@@ -71,10 +69,10 @@ export class UsersEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column({ name: 'is_tienda', type: 'bool', default: false })
-  isTienda: boolean;
+  @Column({ name: 'is_trabajador', type: 'bool', default: false })
+  isTrabajador: boolean;
 
-  @Column({ name: 'is_visitante', type: 'bool', default: true })
+  @Column({ name: 'is_visitante', type: 'bool', default: false })
   isVisitante: boolean;
 
   @BeforeInsert()
@@ -86,20 +84,20 @@ export class UsersEntity {
 
   // Relaciones 
   @ManyToOne(() => PerfilesEntity)
-  @JoinColumn({ name: 'perfiles_id' })
+  @JoinColumn({ name: 'id_perfil' })
   perfil: number;
 
   @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'tiendas_id' })
+  @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
   @ManyToOne(() => CComercialesEntity)
-  @JoinColumn({ name: 'ccomerciales_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @ManyToOne(() => ParroquiasEntity)
-  @JoinColumn({ name: 'id_parr' })
-  parroquia: number;
+  @ManyToOne(() => CiudadesEntity)
+  @JoinColumn({ name: 'id_ciudad' })
+  ciudad: number;
 
   @OneToOne(() => UsersInformacionEntity, informacion => informacion.user, { eager: true })
   informacion: UsersInformacionEntity;
@@ -129,11 +127,11 @@ export class UsersEntity {
   mensajes: MensajesEntity[];
 
   @OneToOne(() => GaleriaEntity, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'image' })
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
   @OneToOne(() => GaleriaEntity, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'imageBack' })
+  @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
 }

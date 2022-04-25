@@ -31,11 +31,11 @@ export class PerfilesModulosEntity {
 
   // Relaciones
   @ManyToOne(() => PerfilesEntity, perfiles => perfiles, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'perfiles_id' })
+  @JoinColumn({ name: 'id_perfil' })
   perfil: number;
 
   @ManyToOne(() => ModulosEntity, modulos => modulos)
-  @JoinColumn({ name: 'modulos_id' })
+  @JoinColumn({ name: 'id_modulo' })
   modulo: number;
 
 }

@@ -16,12 +16,12 @@ export class GetAllDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  pais: number;
+  ciudad: number;
 
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  ciudad: number;
+  pais: number;
 
   @ApiProperty()
   @IsBoolean()

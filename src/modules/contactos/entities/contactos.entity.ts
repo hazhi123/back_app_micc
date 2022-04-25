@@ -9,10 +9,12 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
-import { UsersEntity } from '../../users/entities/users.entity';
-import { CComercialesEntity } from '../../ccomerciales/entities/ccomerciales.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  CComercialesEntity,
+} from '../../ccomerciales/entities/ccomerciales.entity';
 import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
+import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.CONTACTOS)
 export class ContactosEntity {
@@ -40,15 +42,15 @@ export class ContactosEntity {
 
   // Relaciones
   @ManyToOne(() => UsersEntity, users => users.contactos)
-  @JoinColumn({ name: 'users_id' })
+  @JoinColumn({ name: 'id_user' })
   user: number;
 
   @ManyToOne(() => CComercialesEntity, users => users.contactos)
-  @JoinColumn({ name: 'ccomerciales_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
   @ManyToOne(() => TiendasEntity, users => users.contactos)
-  @JoinColumn({ name: 'tiendas_id' })
+  @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
   @OneToMany(() => MensajesEntity, mensajes => mensajes.contacto)

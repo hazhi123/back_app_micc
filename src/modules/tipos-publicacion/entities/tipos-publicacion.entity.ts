@@ -17,7 +17,7 @@ export class TiposPublicacionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: '' })
+  @Column()
   nombre: string;
 
   @Column({ default: '' })

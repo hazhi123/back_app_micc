@@ -1,4 +1,3 @@
-import { PublicacionesEntity } from '../../publicaciones/entities/publicaciones.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +8,9 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import {
+  PublicacionesEntity,
+} from '../../publicaciones/entities/publicaciones.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.GUARDADOS)
@@ -31,11 +33,11 @@ export class GuardadosEntity {
 
   // Relaciones
   @ManyToOne(() => UsersEntity, users => users.guardados)
-  @JoinColumn({ name: 'perfiles_id' })
+  @JoinColumn({ name: 'id_user' })
   user: number;
 
   @ManyToOne(() => PublicacionesEntity, publicacion => publicacion.guardados)
-  @JoinColumn({ name: 'publicaciones_id' })
+  @JoinColumn({ name: 'id_publicacion' })
   publicacion: number;
 
 }

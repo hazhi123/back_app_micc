@@ -33,11 +33,11 @@ export class UsersCComercialesEntity {
 
   // Relaciones
   @ManyToOne(() => UsersEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'users_id' })
+  @JoinColumn({ name: 'id_user' })
   user: number;
 
   @ManyToOne(() => CComercialesEntity)
-  @JoinColumn({ name: 'ccomerciales_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
 }

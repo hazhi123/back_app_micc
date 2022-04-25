@@ -54,8 +54,8 @@ export class CComercialesService {
     const query = await this.ccomercialesRP
       .createQueryBuilder("cc")
     query
-      .leftJoinAndSelect("cc.pais", "pais")
-      .leftJoinAndSelect("cc.ciudad", "ciudad")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .leftJoinAndSelect("ciu.pais", "pais")
       .leftJoinAndSelect("cc.image", "gal")
       .select([
         'cc.id',
@@ -65,19 +65,19 @@ export class CComercialesService {
         'cc.totalTiendas',
         'cc.abierto',
         'cc.status',
+        'ciu.id',
+        'ciu.ciudad',
         'pais.id',
         'pais.nombre',
-        'ciudad.id',
-        'ciudad.nombre',
         'gal.id',
         'gal.file',
       ])
 
-    if (!isEmptyUndefined(dto.pais)) {
-      query.andWhere('cc.pais = :pais', { pais: dto.pais })
-    }
     if (!isEmptyUndefined(dto.ciudad)) {
       query.andWhere('cc.ciudad = :ciudad', { ciudad: dto.ciudad })
+    }
+    if (!isEmptyUndefined(dto.pais)) {
+      query.andWhere('ciu.pais = :pais', { pais: dto.pais })
     }
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('cc.status = :status', { status: dto.status })
@@ -85,8 +85,6 @@ export class CComercialesService {
     if (!isEmptyUndefined(dto.abierto)) {
       query.andWhere('cc.abierto = :abierto', { abierto: dto.abierto })
     }
-    query.orderBy("pais.nombre", "ASC")
-    query.addOrderBy("ciudad.nombre", "ASC")
     query.addOrderBy("cc.nombre", "ASC")
 
     query.getMany();
@@ -96,8 +94,8 @@ export class CComercialesService {
   async getOne(id: number, isGaleria: boolean = true): Promise<CComercialesEntity> {
     const getOne = await this.ccomercialesRP
       .createQueryBuilder("cc")
-      .leftJoinAndSelect("cc.pais", "pais")
-      .leftJoinAndSelect("cc.ciudad", "ciudad")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .leftJoinAndSelect("ciu.pais", "pais")
       .leftJoinAndSelect("cc.horarios", "hor")
       .leftJoinAndSelect("cc.image", "gal")
       .select([
@@ -117,10 +115,10 @@ export class CComercialesService {
         'cc.updatedBy',
         'cc.updatedAt',
         'cc.status',
+        'ciu.id',
+        'ciu.nombre',
         'pais.id',
         'pais.nombre',
-        'ciudad.id',
-        'ciudad.nombre',
         'hor.id',
         'hor.lunes',
         'hor.martes',

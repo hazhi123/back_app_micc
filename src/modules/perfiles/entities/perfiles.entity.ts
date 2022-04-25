@@ -18,7 +18,7 @@ export class PerfilesEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: '' })
+  @Column()
   nombre: string;
 
   @Column({ default: '' })

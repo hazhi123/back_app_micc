@@ -47,11 +47,11 @@ export class LicenciasEntity {
 
   //relaciones
   @OneToOne(() => UsersEntity, users => users.licencia, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'users_id' })
+  @JoinColumn({ name: 'id_user' })
   user: UsersEntity;
 
   @ManyToOne(() => PlanesEntity, planes => planes.licencias)
-  @JoinColumn({ name: 'planes_id' })
+  @JoinColumn({ name: 'id_plan' })
   plan: PlanesEntity;
 
 }

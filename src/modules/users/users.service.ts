@@ -49,7 +49,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     const {
-      nombre, apellido, user, isVisitante, parroquia, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, isTienda,
+      nombre, apellido, user, isVisitante, ciudad, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, isTrabajador,
     } = dto
 
     // Es cuando el usuario se registra.
@@ -62,7 +62,7 @@ export class UsersService {
         nombre,
         apellido,
         user,
-        parroquia,
+        ciudad,
         isVisitante: true,
         perfil: 4,
         password,
@@ -95,8 +95,8 @@ export class UsersService {
       ccomercial,
       tienda,
       isVisitante,
-      parroquia,
-      isTienda,
+      isTrabajador,
+      ciudad,
       perfil,
       createdBy: userLogin.id,
       createdAt: new Date(),
@@ -124,8 +124,8 @@ export class UsersService {
     query.leftJoinAndSelect("user.perfil", "per")
       .leftJoinAndSelect("user.image", "userGal")
       .leftJoinAndSelect("user.imageBack", "userGalBack")
-      .leftJoinAndSelect("user.pais", "pais")
       .leftJoinAndSelect("user.ciudad", "ciu")
+      .leftJoinAndSelect("ciu.pais", "pais")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -148,7 +148,7 @@ export class UsersService {
         'tie.id',
         'tie.nombre',
         'ciu.id',
-        'ciu.nombre',
+        'ciu.ciudad',
         'inf.user',
         'inf.celular',
         'inf.dni',
@@ -162,11 +162,14 @@ export class UsersService {
     if (!isEmptyUndefined(dto.isVisitante)) {
       query.andWhere('user.isVisitante = :valor', { valor: dto.isVisitante })
     }
-    if (!isEmptyUndefined(dto.isTienda)) {
-      query.andWhere('user.isTienda = :valor', { valor: dto.isTienda })
+    if (!isEmptyUndefined(dto.isTrabajador)) {
+      query.andWhere('user.isTrabajador = :valor', { valor: dto.isTrabajador })
     }
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('user.status = :valor', { valor: dto.status })
+    }
+    if (!isEmptyUndefined(dto.ciudad)) {
+      query.andWhere('user.ciudad = :id', { id: dto.ciudad })
     }
     query.addOrderBy("user.nombre", "ASC")
     query.getMany();
@@ -182,7 +185,6 @@ export class UsersService {
         'ccomerciales',
         'ccomerciales.ccomercial',
         'perfil',
-        'pais',
         'ciudad',
       ],
     })
@@ -197,8 +199,8 @@ export class UsersService {
       .leftJoinAndSelect("user.perfil", "per")
       .leftJoinAndSelect("user.image", "userGal")
       .leftJoinAndSelect("user.imageBack", "userGalBack")
-      .leftJoinAndSelect("user.pais", "pais")
       .leftJoinAndSelect("user.ciudad", "ciu")
+      .leftJoinAndSelect("ciu.pais", "pais")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -212,7 +214,7 @@ export class UsersService {
         'user.updatedBy',
         'user.updatedAt',
         'user.status',
-        'user.isTienda',
+        'user.isTrabajador',
         'user.isVisitante',
         'userGal.id',
         'userGal.file',
@@ -227,7 +229,7 @@ export class UsersService {
         'pais.id',
         'pais.nombre',
         'ciu.id',
-        'ciu.nombre',
+        'ciu.ciudad',
         'inf.user',
         'inf.dni',
         'inf.celular',
@@ -249,7 +251,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     let {
-      id, nombre, apellido, user, parroquia, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTienda, direccion, telefono,
+      id, nombre, apellido, user, parroquia, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTrabajador, direccion, telefono,
     } = dto
 
     const dataInformacion = {
@@ -281,7 +283,7 @@ export class UsersService {
       parroquia,
       password,
       isVisitante,
-      isTienda,
+      isTrabajador,
       perfil,
       ccomercial,
       tienda,

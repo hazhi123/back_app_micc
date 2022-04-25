@@ -19,6 +19,11 @@ export class GetAllDto {
   tienda: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  ciudad: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
@@ -26,7 +31,7 @@ export class GetAllDto {
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  isTienda: boolean;
+  isTrabajador: boolean;
 
   @ApiProperty()
   @IsBoolean()

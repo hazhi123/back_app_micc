@@ -16,13 +16,13 @@ export class GaleriaEntity {
   @Column({ type: 'varchar', default: '' })
   entidad: string;
 
-  @Column({ name: 'ent_id', type: 'integer', default: 0 })
+  @Column({ name: 'id_ent', type: 'integer', default: 0 })
   entId: number;
 
   @Column({ type: 'varchar' })
   referencia: string;
 
-  @Column({ name: 'ref_id', type: 'integer' })
+  @Column({ name: 'id_ref', type: 'integer' })
   refId: number;
 
   @Column({ type: 'varchar' })

@@ -72,15 +72,15 @@ export class TiendasEntity {
 
   // Relaciones
   @OneToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'image' })
+  @JoinColumn({ name: 'id_galeria' })
   image: number;
 
   @ManyToOne(() => CategoriasEntity)
-  @JoinColumn({ name: 'categorias_id' })
+  @JoinColumn({ name: 'id_categoria' })
   categoria: number;
 
   @ManyToOne(() => CComercialesEntity)
-  @JoinColumn({ name: 'ccomerciales_id' })
+  @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: any;
 
   @OneToMany(() => ContactosEntity, categoria => categoria.tienda)

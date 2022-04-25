@@ -2,10 +2,14 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import {
+  ParroquiasEntity,
+} from '../../ubigeo/parroquias/entities/parroquias.entity';
 import { UsersEntity } from './users.entity';
 
 @Entity(CONST.MODULES.USERS.USERS_INFORMACION)
@@ -28,7 +32,11 @@ export class UsersInformacionEntity {
 
   //relaciones
   @OneToOne(() => UsersEntity, users => users.informacion, { primary: true, onDelete: "CASCADE" })
-  @JoinColumn({ name: 'users_id' })
+  @JoinColumn({ name: 'id_user' })
   user: number;
+
+  @ManyToOne(() => ParroquiasEntity)
+  @JoinColumn({ name: 'id_parroquia' })
+  parroquia: number;
 
 }
