@@ -49,7 +49,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     const {
-      nombre, apellido, user, isVisitante, pais, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, ciudad, isTienda,
+      nombre, apellido, user, isVisitante, parroquia, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, isTienda,
     } = dto
 
     // Es cuando el usuario se registra.
@@ -62,10 +62,9 @@ export class UsersService {
         nombre,
         apellido,
         user,
-        pais,
-        ciudad,
+        parroquia,
         isVisitante: true,
-        perfil: 3,
+        perfil: 4,
         password,
         createdBy: 0,
         createdAt: new Date(),
@@ -96,8 +95,7 @@ export class UsersService {
       ccomercial,
       tienda,
       isVisitante,
-      pais,
-      ciudad,
+      parroquia,
       isTienda,
       perfil,
       createdBy: userLogin.id,
@@ -251,7 +249,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     let {
-      id, nombre, apellido, user, pais, ciudad, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTienda, direccion, telefono,
+      id, nombre, apellido, user, parroquia, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTienda, direccion, telefono,
     } = dto
 
     const dataInformacion = {
@@ -280,8 +278,7 @@ export class UsersService {
       nombre,
       apellido,
       user,
-      pais,
-      ciudad,
+      parroquia,
       password,
       isVisitante,
       isTienda,

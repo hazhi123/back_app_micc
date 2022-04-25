@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as CONST from '../../common/constants';
-import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import * as CONST from '../../../common/constants';
+import { isEmptyUndefined } from '../../../common/helpers';
+import { UsersEntity } from '../../users/entities/users.entity';
 import {
   CreatePaisesDto,
   GetAllDto,
@@ -44,7 +44,6 @@ export class PaisesService {
     const find = await this.paisesRP.find({
       where: search,
       order: { 'nombre': 'ASC' },
-      select: !isEmptyUndefined(dto.select) ? dto.select : ['id', 'nombre', 'imageUrl', 'code', 'status']
     });
     if (isEmptyUndefined(find)) return null
     return find;

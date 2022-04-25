@@ -6,14 +6,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
-import {
-  CComercialesEntity,
-} from '../../ccomerciales/entities/ccomerciales.entity';
-import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import * as CONST from '../../../../common/constants';
+import { EstadosEntity } from '../../estados/entities/estados.entity';
 
-@Entity(CONST.MODULES.PAISES)
+@Entity(`${CONST.MODULES.UBIGEO.UBIGEO}_${CONST.MODULES.UBIGEO.PAISES}`)
 export class PaisesEntity {
 
   @PrimaryGeneratedColumn()
@@ -26,7 +22,7 @@ export class PaisesEntity {
   code: string;
 
   @Column({ default: '' })
-  imageUrl: string;
+  image: string;
 
   @Column({ name: 'created_by' })
   createdBy: number;
@@ -44,13 +40,7 @@ export class PaisesEntity {
   status: boolean;
 
   // Relaciones
-  @OneToMany(() => CComercialesEntity, ccomerciales => ccomerciales.pais)
-  ccomerciales: CComercialesEntity[];
-
-  @OneToMany(() => UsersEntity, users => users.pais)
-  users: UsersEntity[];
-
-  @OneToMany(() => CiudadesEntity, ciudades => ciudades.pais)
-  ciudades: CiudadesEntity[];
+  @OneToMany(() => EstadosEntity, edo => edo.pais)
+  estados: EstadosEntity[];
 
 }

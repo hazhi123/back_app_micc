@@ -11,12 +11,11 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
-import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
-import { PaisesEntity } from '../../paises/entities/paises.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import { PaisesEntity } from '../../ubigeo/paises/entities/paises.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES)
@@ -87,13 +86,9 @@ export class CComercialesEntity {
   @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
   contactos: ContactosEntity[];
 
-  @ManyToOne(() => PaisesEntity, paises => paises.ccomerciales)
+  @ManyToOne(() => PaisesEntity)
   @JoinColumn({ name: 'paises_id' })
   pais: number;
-
-  @ManyToOne(() => CiudadesEntity, ciudades => ciudades.ccomerciales)
-  @JoinColumn({ name: 'ciudades_id' })
-  ciudad: number;
 
   @OneToOne(() => HorariosEntity, horarios => horarios.ccomercial, { eager: true })
   horarios: number;

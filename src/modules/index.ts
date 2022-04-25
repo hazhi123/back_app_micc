@@ -8,8 +8,10 @@ export * from './perfiles-modulos/perfiles-modulos.module';
 export * from './planes/planes.module';
 export * from './licencias/licencias.module';
 
-export * from './paises/paises.module';
-export * from './ciudades/ciudades.module';
+export * from './ubigeo/paises/paises.module';
+export * from './ubigeo/estados/estados.module';
+export * from './ubigeo/municipios/municipios.module';
+export * from './ubigeo/parroquias/parroquias.module';
 
 export * from './ccomerciales/ccomerciales.module';
 export * from './horarios/horarios.module';

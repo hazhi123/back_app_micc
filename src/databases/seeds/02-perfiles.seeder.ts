@@ -16,7 +16,8 @@ export default class PerfilesSeeder implements Seeder {
       .into(PerfilesEntity)
       .values([
         { nombre: 'Administrador', desc: 'Control total del sistema', createdBy: 1, updatedBy: 1, status: true },
-        { nombre: 'Editor', desc: 'Registra informacion sobre tienda', createdBy: 1, updatedBy: 1, status: true },
+        { nombre: 'Centro Comercial', desc: 'Registra informacion sobre el Centro Comercial', createdBy: 1, updatedBy: 1, status: true },
+        { nombre: 'Tienda', desc: 'Registra informacion sobre la Tienda', createdBy: 1, updatedBy: 1, status: true },
         { nombre: 'Visitante', desc: 'Solo consume datos', createdBy: 1, updatedBy: 1, status: true },
       ])
       .execute()

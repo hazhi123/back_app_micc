@@ -1,8 +1,6 @@
 import {
-  IsBoolean,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -13,16 +11,16 @@ export class CreateCiudadesDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  pais: any;
+  estado: any;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  nombre: string;
+  ciudad: string;
 
   @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  status: boolean;
+  @IsNumber()
+  @IsNotEmpty()
+  capital: number;
 
 }

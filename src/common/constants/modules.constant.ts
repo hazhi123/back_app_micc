@@ -8,6 +8,14 @@ export const MODULES = {
         RECOVERY_PASSWORD: 'recoveryPassword',
         CHANGE_PASSWORD: 'changePassword'
     },
+    UBIGEO: {
+        UBIGEO: 'ubigeo',
+        PAISES: 'paises',
+        EDO: 'estados',
+        MCPIO: 'municipios',
+        PARR: 'parroquias',
+        CIU: 'ciudades',
+    },
     USERS: {
         USERS: 'users',
         USERS_CCOMERCIALES: 'users_ccomerciales',
@@ -26,7 +34,6 @@ export const MODULES = {
     GUARDADOS: 'guardados',
     COMENTARIOS: 'comentarios',
     LIKES: 'likes',
-    PAISES: 'paises',
     CIUDADES: 'ciudades',
     TIPOS_PUBLICACION: 'tipos_publicacion',
     MENSAJES: 'mensajes',

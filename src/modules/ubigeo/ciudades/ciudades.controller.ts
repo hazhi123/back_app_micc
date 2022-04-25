@@ -9,34 +9,34 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import * as CONST from '../../common/constants';
+import * as CONST from '../../../common/constants';
 import {
   Auth,
   UserLogin,
-} from '../../common/decorators';
-import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+} from '../../../common/decorators';
+import { isEmptyUndefined } from '../../../common/helpers';
+import { UsersEntity } from '../../users/entities/users.entity';
+import { CiudadesService } from './ciudades.service';
 import {
-  CreatePaisesDto,
+  CreateCiudadesDto,
   GetAllDto,
-  UpdatePaisesDto,
+  UpdateCiudadesDto,
 } from './dto';
-import { PaisesService } from './paises.service';
 
-@ApiTags(CONST.MODULES.PAISES.toUpperCase())
-@Controller(CONST.MODULES.PAISES)
-export class PaisesController {
+@ApiTags(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.CIU}`)
+@Controller(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.CIU}`)
+export class CiudadesController {
   constructor(
-    private readonly paisesService: PaisesService
+    private readonly ciudadesService: CiudadesService
   ) { }
 
   @Auth()
   @Post()
   async create(
-    @Body() dto: CreatePaisesDto,
+    @Body() dto: CreateCiudadesDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    let data = await this.paisesService.create(dto, userLogin);
+    let data = await this.ciudadesService.create(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -48,7 +48,7 @@ export class PaisesController {
   async getAll(
     @Body() dto: GetAllDto,
   ) {
-    const data = await this.paisesService.getAll(dto);
+    const data = await this.ciudadesService.getAll(dto);
     let res = {
       statusCode: 200,
       data: data,
@@ -60,7 +60,7 @@ export class PaisesController {
   @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
-    const data = await this.paisesService.getOne(id);
+    const data = await this.ciudadesService.getOne(id);
     return {
       statusCode: 200,
       data,
@@ -71,10 +71,10 @@ export class PaisesController {
   @Auth()
   @Patch()
   async update(
-    @Body() dto: UpdatePaisesDto,
+    @Body() dto: UpdateCiudadesDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.paisesService.update(dto, userLogin);
+    const data = await this.ciudadesService.update(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -87,7 +87,7 @@ export class PaisesController {
   async delete(
     @Param('id') id: number,
   ) {
-    const data = await this.paisesService.delete(id);
+    const data = await this.ciudadesService.delete(id);
     return {
       statusCode: 200,
       data,

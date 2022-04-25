@@ -71,7 +71,7 @@ export class createUsersDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  pais: number;
+  parroquia: number;
 
   @ApiProperty()
   @IsNumber()

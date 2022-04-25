@@ -7,27 +7,27 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as CONST from '../../common/constants';
-import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import * as CONST from '../../../common/constants';
+import { isEmptyUndefined } from '../../../common/helpers';
+import { UsersEntity } from '../../users/entities/users.entity';
 import {
-  CreateCiudadesDto,
+  CreateEstadosDto,
   GetAllDto,
-  UpdateCiudadesDto,
+  UpdateEstadosDto,
 } from './dto';
-import { CiudadesEntity } from './entities/ciudades.entity';
+import { EstadosEntity } from './entities/estados.entity';
 
 @Injectable()
-export class CiudadesService {
+export class EstadosService {
 
   constructor(
-    @InjectRepository(CiudadesEntity)
-    private readonly ciudadesRP: Repository<CiudadesEntity>
+    @InjectRepository(EstadosEntity)
+    private readonly estadosRP: Repository<EstadosEntity>
   ) { }
 
-  async create(dto: CreateCiudadesDto, userLogin: UsersEntity) {
+  async create(dto: CreateEstadosDto, userLogin: UsersEntity) {
     await this.findNombre(dto.nombre, false)
-    const save = await this.ciudadesRP.save({
+    const save = await this.estadosRP.save({
       ...dto,
       createdBy: userLogin.id,
       createdAt: new Date(),
@@ -37,19 +37,20 @@ export class CiudadesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(dto: GetAllDto): Promise<CiudadesEntity[]> {
-    const query = await this.ciudadesRP
-      .createQueryBuilder("ciu")
-      .leftJoinAndSelect("ciu.pais", "pais")
+  async getAll(dto: GetAllDto): Promise<EstadosEntity[]> {
+    const query = await this.estadosRP
+      .createQueryBuilder("edo")
+      .leftJoinAndSelect("edo.pais", "pais")
       .select([
-        'ciu.id',
-        'ciu.nombre',
-        'ciu.status',
+        'edo.id',
+        'edo.nombre',
+        'edo.status',
+        'pais.id',
         'pais.nombre',
       ])
-      .orderBy("ciu.nombre", "ASC")
+      .orderBy("edo.nombre", "ASC")
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('ciu.status = :valor', { valor: dto.status })
+      query.andWhere('edo.status = :valor', { valor: dto.status })
     }
     if (!isEmptyUndefined(dto.pais)) {
       query.andWhere('pais.id = :paisId', { paisId: dto.pais })
@@ -59,19 +60,18 @@ export class CiudadesService {
     return getAll;
   }
 
-  async getOne(id: number): Promise<CiudadesEntity> {
-    const find = await this.ciudadesRP
-      .createQueryBuilder("ciu")
-      .leftJoinAndSelect("ciu.pais", "pais")
+  async getOne(id: number): Promise<EstadosEntity> {
+    const find = await this.estadosRP
+      .createQueryBuilder("edo")
+      .leftJoinAndSelect("edo.pais", "pais")
       .select([
-        'ciu.id',
-        'ciu.nombre',
-        'ciu.createdBy',
-        'ciu.createdAt',
-        'ciu.updatedBy',
-        'ciu.updatedAt',
-        'ciu.status',
-        'ciu.id',
+        'edo.id',
+        'edo.nombre',
+        'edo.createdBy',
+        'edo.createdAt',
+        'edo.updatedBy',
+        'edo.updatedAt',
+        'edo.status',
         'pais.id',
         'pais.nombre',
         'pais.code',
@@ -82,7 +82,7 @@ export class CiudadesService {
     return find;
   }
 
-  async update(dto: UpdateCiudadesDto, userLogin: UsersEntity) {
+  async update(dto: UpdateEstadosDto, userLogin: UsersEntity) {
     const findNombre = await this.findNombre(dto.nombre, true)
     if (!isEmptyUndefined(findNombre)) delete dto.nombre
 
@@ -97,7 +97,7 @@ export class CiudadesService {
       updatedBy: userLogin.id,
       updatedAt: Date(),
     })
-    await this.ciudadesRP.update(getOne.id, assingUsers);
+    await this.estadosRP.update(getOne.id, assingUsers);
     return await this.getOne(dto.id);
   }
 
@@ -107,12 +107,12 @@ export class CiudadesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-    await this.ciudadesRP.delete(id);
+    await this.estadosRP.delete(id);
     return getOne;
   }
 
   async findNombre(nombre: string, data: boolean) {
-    const findOne = await this.ciudadesRP.findOne({ where: { nombre } })
+    const findOne = await this.estadosRP.findOne({ where: { nombre } })
     if (data) return findOne
     if (!isEmptyUndefined(findOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
