@@ -72,7 +72,7 @@ export class UsersEntity {
   @Column({ name: 'is_trabajador', type: 'bool', default: false })
   isTrabajador: boolean;
 
-  @Column({ name: 'is_visitante', type: 'bool', default: false })
+  @Column({ name: 'is_visitante', type: 'bool', default: true })
   isVisitante: boolean;
 
   @BeforeInsert()

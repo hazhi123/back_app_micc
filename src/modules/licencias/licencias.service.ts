@@ -1,3 +1,8 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import {
@@ -13,14 +18,13 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLicenciasDto,
+  GetAllDto,
   UpdateLicenciasDto,
 } from './dto';
 import { LicenciasEntity } from './entities/licencias.entity';
 
 @Injectable()
 export class LicenciasService {
-
-  relations = ['user']
 
   constructor(
     @InjectRepository(LicenciasEntity)
@@ -31,28 +35,67 @@ export class LicenciasService {
     await this.findLicencia(dto.licencia);
     const save = await this.licenciasRP.save({
       ...dto,
-      createdBy: userLogin.id,
+      createdBy: isEmptyUndefined(userLogin) ? dto.user : userLogin.id,
       createdAt: new Date(),
-      updatedBy: userLogin.id,
+      updatedBy: isEmptyUndefined(userLogin) ? dto.user : userLogin.id,
       updatedAt: new Date(),
       status: true
     });
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<LicenciasEntity[]> {
-    const find = await this.licenciasRP.find({
-      relations: this.relations
-    });
-    if (isEmptyUndefined(find)) return null
-    return find;
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<LicenciasEntity>> {
+    const query = await this.licenciasRP
+      .createQueryBuilder("lic")
+    query.leftJoinAndSelect("lic.user", "user")
+      .leftJoinAndSelect("lic.plan", "plan")
+      .select([
+        'lic.id',
+        'lic.licencia',
+        'lic.fechaInicio',
+        'lic.fechaFinal',
+        'lic.isGratis',
+        'user.id',
+        'user.nombre',
+        'user.apellido',
+        'user.user',
+        'plan.id',
+        'plan.nombre',
+      ])
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('lic.status = :status', { status: dto.status })
+    }
+    query.orderBy("lic.id", "DESC")
+    query.getMany();
+    return paginate<LicenciasEntity>(query, options);
   }
 
   async getOne(id: number): Promise<LicenciasEntity> {
-    return await this.licenciasRP.findOne({
-      where: { id },
-      relations: this.relations
-    });
+    const find = await this.licenciasRP
+      .createQueryBuilder("lic")
+      .leftJoinAndSelect("lic.user", "user")
+      .leftJoinAndSelect("lic.plan", "plan")
+      .select([
+        'lic.id',
+        'lic.licencia',
+        'lic.fechaInicio',
+        'lic.fechaFinal',
+        'lic.isGratis',
+        'lic.createdBy',
+        'lic.createdAt',
+        'lic.updatedBy',
+        'lic.updatedAt',
+        'user.id',
+        'user.nombre',
+        'user.apellido',
+        'user.user',
+        'plan.id',
+        'plan.nombre',
+      ])
+      .where('lic.id = :id', { id })
+      .getOne();
+    if (isEmptyUndefined(find)) return null
+    return find;
   }
 
   async update(dto: UpdateLicenciasDto, userLogin: UsersEntity) {
@@ -62,7 +105,7 @@ export class LicenciasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
-    if (dto.userId !== getOne.user.id) throw new HttpException({
+    if (dto.id !== getOne.user.id) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: 'Esta licencia no esta registrada con el usuario correcto',
     }, HttpStatus.ACCEPTED)
@@ -88,8 +131,8 @@ export class LicenciasService {
     return getOne;
   }
 
-  async findLicencia(license: string) {
-    const findOne = await this.licenciasRP.findOne({ where: { license } })
+  async findLicencia(licencia: string) {
+    const findOne = await this.licenciasRP.findOne({ where: { licencia } })
     if (!isEmptyUndefined(findOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: 'Esta licencia ya se encuentra registrada',

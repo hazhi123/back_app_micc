@@ -1,3 +1,3 @@
 export * from './create-galeria.dto';
 export * from './update-galeria.dto';
-export * from './getall-xatributo.dto';
+export * from './get-all.dto';

@@ -18,7 +18,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateGaleriaDto,
-  GetAllxAtributoDto,
+  GetAllDto,
 } from './dto';
 import { GaleriaEntity } from './entities/galeria.entity';
 
@@ -78,7 +78,7 @@ export class GaleriaService {
     return search
   }
 
-  async getAllxAtributo(dto: GetAllxAtributoDto, options: IPaginationOptions): Promise<Pagination<GaleriaEntity>> {
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<GaleriaEntity>> {
     return paginate<GaleriaEntity>(this.galeriaRP, options, {
       where: await this.buscador(dto),
       order: { 'id': 'DESC' },

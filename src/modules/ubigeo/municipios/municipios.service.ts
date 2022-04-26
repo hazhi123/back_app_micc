@@ -39,15 +39,14 @@ export class MunicipiosService {
         'mun.id',
         'mun.nombre',
         'mun.status',
-        'pais.nombre',
       ])
-      .orderBy("edo.nombre", "ASC")
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('edo.status = :valor', { valor: dto.status })
+      query.andWhere('edo.status = :status', { status: dto.status })
     }
-    if (!isEmptyUndefined(dto.pais)) {
-      query.andWhere('pais.id = :paisId', { paisId: dto.pais })
+    if (!isEmptyUndefined(dto.estado)) {
+      query.andWhere('edo.id = :id', { id: dto.estado })
     }
+    query.orderBy("edo.nombre", "ASC")
     const getAll = query.getMany();
     if (isEmptyUndefined(getAll)) return null
     return getAll;
@@ -55,22 +54,20 @@ export class MunicipiosService {
 
   async getOne(id: number): Promise<MunicipiosEntity> {
     const find = await this.municipiosRP
-      .createQueryBuilder("edo")
-      .leftJoinAndSelect("edo.pais", "pais")
+      .createQueryBuilder("mun")
+      .leftJoinAndSelect("edo.estado", "edo")
       .select([
+        'mun.id',
+        'mun.municipio',
+        'mun.createdBy',
+        'mun.createdAt',
+        'mun.updatedBy',
+        'mun.updatedAt',
+        'mun.status',
         'edo.id',
         'edo.nombre',
-        'edo.createdBy',
-        'edo.createdAt',
-        'edo.updatedBy',
-        'edo.updatedAt',
-        'edo.status',
-        'edo.id',
-        'pais.id',
-        'pais.nombre',
-        'pais.code',
       ])
-      .where('ciu.id = :id', { id })
+      .where('mun.id = :id', { id })
       .getOne();
     if (isEmptyUndefined(find)) return null
     return find;

@@ -20,7 +20,7 @@ export class UsersCComercialesService {
 
   relations = [
     'ccomercial',
-    'ccomercial.pais',
+    'ccomercial.ciudad',
   ]
 
   constructor(

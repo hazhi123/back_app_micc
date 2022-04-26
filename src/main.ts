@@ -15,7 +15,10 @@ import {
 } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
-import { SERVER_PORT } from './config';
+import {
+  SERVER_PORT,
+  URL,
+} from './config';
 import { SocketAdapter } from './websocket/web-adapter';
 
 async function bootstrap() {
@@ -39,8 +42,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('v1/api');
-  await app.listen(port);
-  // await app.listen(port, URL);
+  // await app.listen(port);
+  await app.listen(port, URL);
   logger.log(`Server is running at ${await app.getUrl()}`);
 }
 bootstrap();

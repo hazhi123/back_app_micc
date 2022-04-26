@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import {
   IPaginationOptions,
   paginate,
@@ -15,8 +16,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import { codigoLincencia } from '../../utils/create-licenses-free';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
+import { LicenciasService } from '../licencias/licencias.service';
 import {
   CreateImageDto,
   createUsersDto,
@@ -37,7 +40,8 @@ export class UsersService {
     @InjectRepository(UsersInformacionEntity)
     private readonly informacionRP: Repository<UsersInformacionEntity>,
 
-    private galeriaService: GaleriaService
+    private galeriaService: GaleriaService,
+    private licenciasService: LicenciasService
   ) { }
 
   async create(isRegister, dto: createUsersDto, userLogin: UsersEntity) {
@@ -78,6 +82,17 @@ export class UsersService {
         user: save.id
       });
       delete save.password;
+
+      const dataLic = {
+        licencia: await codigoLincencia(),
+        fechaInicio: moment().format('YYYY-MM-DD').toString(),
+        fechaFinal: moment().add(20, 'days').format('YYYY-MM-DD').toString(),
+        user: save.id,
+        status: true
+      }
+
+      await this.licenciasService.create(dataLic, null)
+
       return save;
     }
 
@@ -115,6 +130,19 @@ export class UsersService {
       user: save.id
     });
     const getOne = await this.getOne(save.id)
+
+    const dataLic = {
+      licencia: await codigoLincencia(),
+      fechaInicio: moment().format('YYYY-MM-DD').toString(),
+      fechaFinal: moment().add(20, 'days').format('YYYY-MM-DD').toString(),
+      user: save.id,
+      ccomercial: null,
+      tienda: null,
+      status: true
+    }
+
+    await this.licenciasService.create(dataLic, userLogin)
+
     return getOne;
   }
 
@@ -125,7 +153,7 @@ export class UsersService {
       .leftJoinAndSelect("user.image", "userGal")
       .leftJoinAndSelect("user.imageBack", "userGalBack")
       .leftJoinAndSelect("user.ciudad", "ciu")
-      .leftJoinAndSelect("ciu.pais", "pais")
+      .leftJoinAndSelect("ciu.estado", "edo")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -134,6 +162,7 @@ export class UsersService {
         'user.nombre',
         'user.apellido',
         'user.user',
+        'user.isTrabajador',
         'user.status',
         'userGal.id',
         'userGal.file',
@@ -141,14 +170,14 @@ export class UsersService {
         'userGalBack.file',
         'per.id',
         'per.nombre',
-        'pais.id',
-        'pais.nombre',
         'cc.id',
         'cc.nombre',
         'tie.id',
         'tie.nombre',
         'ciu.id',
         'ciu.ciudad',
+        'edo.id',
+        'edo.nombre',
         'inf.user',
         'inf.celular',
         'inf.dni',
@@ -179,14 +208,6 @@ export class UsersService {
   async getLogin(id: number, userLogin?: UsersEntity) {
     const findOne = await this.usersRP.findOne({
       where: { id },
-      relations: [
-        'ccomercial',
-        'tienda',
-        'ccomerciales',
-        'ccomerciales.ccomercial',
-        'perfil',
-        'ciudad',
-      ],
     })
       .then(u => !userLogin ? u : !!u && userLogin.id === u.id ? u : null)
     if (!findOne) throw new NotFoundException('Usuario no existe');
@@ -200,10 +221,14 @@ export class UsersService {
       .leftJoinAndSelect("user.image", "userGal")
       .leftJoinAndSelect("user.imageBack", "userGalBack")
       .leftJoinAndSelect("user.ciudad", "ciu")
-      .leftJoinAndSelect("ciu.pais", "pais")
+      .leftJoinAndSelect("ciu.estado", "edo")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
+      .leftJoinAndSelect("user.ccomerciales", "usCcs")
+      .leftJoinAndSelect("usCcs.ccomercial", "ucc")
+      .leftJoinAndSelect("user.licencia", "lic")
+      .leftJoinAndSelect("lic.plan", "plan")
       .select([
         'user.id',
         'user.nombre',
@@ -226,15 +251,27 @@ export class UsersService {
         'tie.nombre',
         'cc.id',
         'cc.nombre',
-        'pais.id',
-        'pais.nombre',
         'ciu.id',
         'ciu.ciudad',
+        'edo.id',
+        'edo.nombre',
         'inf.user',
         'inf.dni',
         'inf.celular',
         'inf.direccion',
         'inf.telefono',
+        'usCcs.id',
+        'ucc.id',
+        'ucc.nombre',
+        'lic.id',
+        'lic.licencia',
+        'lic.fechaInicio',
+        'lic.fechaFinal',
+        'lic.isGratis',
+        'plan.id',
+        'plan.nombre',
+        'plan.desc',
+        'plan.costo',
       ])
       .where('user.id = :id', { id })
       .getOne()
@@ -260,6 +297,7 @@ export class UsersService {
       direccion,
       correo: user,
       telefono,
+      parroquia,
       user: id,
     }
     if (isEmptyUndefined(getOne.informacion)) {
@@ -280,7 +318,6 @@ export class UsersService {
       nombre,
       apellido,
       user,
-      parroquia,
       password,
       isVisitante,
       isTrabajador,
@@ -296,6 +333,9 @@ export class UsersService {
     }
 
     delete getOne.informacion
+    delete getOne.ccomerciales
+    delete getOne.licencia
+
     await this.usersRP.update(getOne.id, objectUsers);
 
     const res = await this.getOne(dto.id);

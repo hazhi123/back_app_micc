@@ -27,8 +27,8 @@ export class CreateLicenciasDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
-  userId: any;
+  @IsOptional()
+  user: number;
 
   @ApiProperty()
   @IsBoolean()

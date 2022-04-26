@@ -39,15 +39,14 @@ export class CiudadesService {
         'ciu.id',
         'ciu.ciudad',
         'ciu.capital',
-        'edo.estado',
       ])
-      .orderBy("edo.nombre", "ASC")
+    if (!isEmptyUndefined(dto.estado)) {
+      query.andWhere('edo.id = :id', { id: dto.estado })
+    }
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('edo.status = :valor', { valor: dto.status })
+      query.andWhere('ciu.status = :status', { status: dto.status })
     }
-    if (!isEmptyUndefined(dto.pais)) {
-      query.andWhere('pais.id = :paisId', { paisId: dto.pais })
-    }
+    query.orderBy("ciu.ciudad", "ASC")
     const getAll = query.getMany();
     if (isEmptyUndefined(getAll)) return null
     return getAll;
@@ -55,8 +54,8 @@ export class CiudadesService {
 
   async getOne(id: number): Promise<CiudadesEntity> {
     const find = await this.ciudadessRP
-      .createQueryBuilder("edo")
-      .leftJoinAndSelect("edo.pais", "pais")
+      .createQueryBuilder("ciu")
+      .leftJoinAndSelect("ciu.estado", "edo")
       .where('ciu.id = :id', { id })
       .getOne();
     if (isEmptyUndefined(find)) return null

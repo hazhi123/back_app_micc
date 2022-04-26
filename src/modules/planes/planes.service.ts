@@ -1,3 +1,8 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
 import {
@@ -12,6 +17,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePlanesDto,
+  GetAllDto,
   UpdatePlanesDto,
 } from './dto';
 import { PlanesEntity } from './entities/planes.entity';
@@ -37,12 +43,10 @@ export class PlanesService {
     return await this.getOne(save.id);
   }
 
-  async getAll(): Promise<PlanesEntity[]> {
-    const find = await this.planesRP.find({
-      relations: this.relations
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PlanesEntity>> {
+    return paginate<PlanesEntity>(this.planesRP, options, {
+      order: { 'id': 'DESC' },
     });
-    if (isEmptyUndefined(find)) return null
-    return find;
   }
 
   async getOne(id: number): Promise<PlanesEntity> {

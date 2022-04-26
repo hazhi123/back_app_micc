@@ -39,7 +39,7 @@ export class CiudadesEntity {
 
   // Relaciones
   @ManyToOne(() => EstadosEntity)
-  @JoinColumn({ name: 'id_edo' })
+  @JoinColumn({ name: 'id_estado' })
   estado: number;
 
 }

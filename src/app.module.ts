@@ -29,11 +29,13 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.PerfilesModule,
     MOD.ModulosModule,
     MOD.PerfilesModulosModule,
-    MOD.LicenciasModule,
+
     MOD.PlanesModule,
+    MOD.LicenciasModule,
 
     MOD.PaisesModule,
     MOD.EstadosModule,
+    MOD.CiudadesModule,
     MOD.MunicipiosModule,
     MOD.ParroquiasModule,
 

@@ -1,11 +1,15 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -15,18 +19,20 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreatePlanesDto,
+  GetAllDto,
   UpdatePlanesDto,
 } from './dto';
 import { PlanesService } from './planes.service';
 
-@ApiTags(CONST.MODULES.PLANES.toUpperCase())
+@ApiTags(CONST.MODULES.PLANES)
 @Controller(CONST.MODULES.PLANES)
 export class PlanesController {
   constructor(
-    private readonly plansService: PlanesService
+    private readonly planesService: PlanesService
   ) { }
 
   @Auth()
@@ -35,7 +41,7 @@ export class PlanesController {
     @Body() dto: CreatePlanesDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    let data = await this.plansService.create(dto, userLogin);
+    let data = await this.planesService.create(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -44,13 +50,24 @@ export class PlanesController {
   }
 
   @Auth()
-  @Get()
-  async getAll() {
-    const data = await this.plansService.getAll();
+  @Post('/all')
+  async getAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+    @Body() dto: GetAllDto,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.planesService.getAll(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.PLANES}`,
+    });
     let res = {
-      statusCode: 200,
-      data,
-      message: isEmptyUndefined(data.length) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
     }
     return res
   }
@@ -58,7 +75,7 @@ export class PlanesController {
   @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
-    const data = await this.plansService.getOne(id);
+    const data = await this.planesService.getOne(id);
     return {
       statusCode: 200,
       data,
@@ -72,7 +89,7 @@ export class PlanesController {
     @Body() dto: UpdatePlanesDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.plansService.update(dto, userLogin);
+    const data = await this.planesService.update(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -85,7 +102,7 @@ export class PlanesController {
   async delete(
     @Param('id') id: number,
   ) {
-    const data = await this.plansService.delete(id);
+    const data = await this.planesService.delete(id);
     return {
       statusCode: 200,
       data,

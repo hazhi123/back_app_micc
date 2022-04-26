@@ -33,20 +33,19 @@ export class ParroquiasService {
 
   async getAll(dto: GetAllDto): Promise<ParroquiasEntity[]> {
     const query = await this.municipiosRP
-      .createQueryBuilder("mun")
-      .leftJoinAndSelect("mun.estado", "edo")
+      .createQueryBuilder("parr")
+      .leftJoinAndSelect("parr.municipio", "mcpio")
       .select([
-        'mun.id',
-        'mun.nombre',
-        'mun.status',
-        'pais.nombre',
+        'parr.id',
+        'parr.parroquia',
+        'parr.status',
       ])
       .orderBy("edo.nombre", "ASC")
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('edo.status = :valor', { valor: dto.status })
+      query.andWhere('edo.status = :status', { status: dto.status })
     }
-    if (!isEmptyUndefined(dto.pais)) {
-      query.andWhere('pais.id = :paisId', { paisId: dto.pais })
+    if (!isEmptyUndefined(dto.municipio)) {
+      query.andWhere('mcpio.id = :id', { id: dto.municipio })
     }
     const getAll = query.getMany();
     if (isEmptyUndefined(getAll)) return null
@@ -55,22 +54,16 @@ export class ParroquiasService {
 
   async getOne(id: number): Promise<ParroquiasEntity> {
     const find = await this.municipiosRP
-      .createQueryBuilder("edo")
-      .leftJoinAndSelect("edo.pais", "pais")
+      .createQueryBuilder("parr")
+      .leftJoinAndSelect("parr.munipicio", "mcpio")
       .select([
-        'edo.id',
-        'edo.nombre',
-        'edo.createdBy',
-        'edo.createdAt',
-        'edo.updatedBy',
-        'edo.updatedAt',
-        'edo.status',
-        'edo.id',
-        'pais.id',
-        'pais.nombre',
-        'pais.code',
+        'parr.id',
+        'parr.parroquia',
+        'parr.status',
+        'mcpio.id',
+        'mcpio.municipio'
       ])
-      .where('ciu.id = :id', { id })
+      .where('parr.id = :id', { id })
       .getOne();
     if (isEmptyUndefined(find)) return null
     return find;

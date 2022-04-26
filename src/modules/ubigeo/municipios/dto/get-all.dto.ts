@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsBoolean,
   IsNumber,
   IsOptional,
@@ -12,7 +11,7 @@ export class GetAllDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  pais: number;
+  estado: number;
 
   @ApiProperty()
   @IsBoolean()

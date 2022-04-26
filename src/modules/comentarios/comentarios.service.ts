@@ -51,16 +51,6 @@ export class ComentariosService {
       status: true
     });
 
-    const pub = await this.publicacionesRP.findOne({
-      where: { id: dto.publicacion },
-    });
-
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ totalComentarios: pub.totalComentarios + 1 })
-      .where("id = :id", { id: dto.publicacion })
-      .execute();
-
     return await this.getOne(save.id);
   }
 
@@ -113,19 +103,7 @@ export class ComentariosService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-
-    const pub = await this.publicacionesRP.findOne({
-      where: { id: getOne.publicacion.id },
-    });
-
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ totalComentarios: pub.totalComentarios - 1 })
-      .where("id = :id", { id: getOne.publicacion.id })
-      .execute();
-
     await this.comentariosRP.delete(id);
-
     return await this.getOne(getOne.id);
   }
 

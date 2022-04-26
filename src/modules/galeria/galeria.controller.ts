@@ -23,7 +23,7 @@ import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateGaleriaDto,
-  GetAllxAtributoDto,
+  GetAllDto,
 } from './dto';
 import { GaleriaService } from './galeria.service';
 
@@ -57,13 +57,13 @@ export class GaleriaController {
   async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number = 100,
-    @Body() dto: GetAllxAtributoDto,
+    @Body() dto: GetAllDto,
   ) {
     limit = limit > 100 ? 100 : limit;
-    const data = await this.galeriaService.getAllxAtributo(dto, {
+    const data = await this.galeriaService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.GALERIA}`,
+      route: `${URLPAGE}/${CONST.MODULES.GALERIA}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,

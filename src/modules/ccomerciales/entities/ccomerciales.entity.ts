@@ -45,9 +45,6 @@ export class CComercialesEntity {
   @Column({ name: 'ubic_latlng', type: 'varchar', default: '' })
   ubicLatLng: string;
 
-  @Column({ name: 'total_tiendas', type: 'integer', default: 0 })
-  totalTiendas: number;
-
   @Column({ type: 'varchar', default: '' })
   desc: string;
 
@@ -88,7 +85,6 @@ export class CComercialesEntity {
 
   @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
   contactos: ContactosEntity[];
-
 
   @ManyToOne(() => CiudadesEntity)
   @JoinColumn({ name: 'id_ciudad' })

@@ -84,8 +84,6 @@ export class PublicacionesService {
         'pub.fechaInicio',
         'pub.fechaFinal',
         'pub.status',
-        'pub.totalLikes',
-        'pub.totalComentarios',
         'pub.galeria',
         'pub.linkRef',
         'pub.createdAt',
@@ -145,8 +143,6 @@ export class PublicacionesService {
         'pub.id',
         'pub.nombre',
         'pub.desc',
-        'pub.totalLikes',
-        'pub.totalComentarios',
         'pub.createdAt',
         'pubGal.id',
         'pubGal.file',
@@ -164,6 +160,9 @@ export class PublicacionesService {
         'uEdit.nombre',
         'uEdit.apellido',
       ])
+      .loadRelationCountAndMap('cc.totalLikes', 'cc.likes')
+      .loadRelationCountAndMap('cc.totalComentarios', 'cc.comentarios')
+
     if (!isEmptyUndefined(dto.tipoPub)) {
       query.andWhere('tPub.id = :tPubId', { tPubId: dto.tipoPub })
     }

@@ -44,17 +44,15 @@ export class EstadosService {
       .select([
         'edo.id',
         'edo.nombre',
-        'edo.status',
-        'pais.id',
-        'pais.nombre',
+        'edo.status'
       ])
-      .orderBy("edo.nombre", "ASC")
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('edo.status = :valor', { valor: dto.status })
     }
     if (!isEmptyUndefined(dto.pais)) {
       query.andWhere('pais.id = :paisId', { paisId: dto.pais })
     }
+    query.orderBy("edo.nombre", "ASC")
     const getAll = query.getMany();
     if (isEmptyUndefined(getAll)) return null
     return getAll;

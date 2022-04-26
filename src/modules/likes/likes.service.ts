@@ -42,7 +42,7 @@ export class LikesService {
     const existe = await this.existe(dto.user, dto.publicacion);
     if (!isEmptyUndefined(existe)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
-      message: 'Ya diste un like',
+      message: 'Ya diste like',
     }, HttpStatus.ACCEPTED)
     const save = await this.likesRP.save({
       ...dto,
@@ -51,16 +51,6 @@ export class LikesService {
       updatedBy: userLogin.id,
       updatedAt: new Date(),
     });
-
-    const pub = await this.publicacionesRP.findOne({
-      where: { id: dto.publicacion },
-    });
-
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ totalLikes: pub.totalLikes + 1 })
-      .where("id = :id", { id: dto.publicacion })
-      .execute();
 
     return await this.getOne(save.id);
   }
@@ -123,16 +113,6 @@ export class LikesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-
-    const pub = await this.publicacionesRP.findOne({
-      where: { id: getOne.publicacion.id },
-    });
-
-    await this.publicacionesRP.createQueryBuilder()
-      .update(PublicacionesEntity)
-      .set({ totalLikes: pub.totalLikes - 1 })
-      .where("id = :id", { id: getOne.publicacion.id })
-      .execute();
 
     await this.likesRP.delete(id);
     return await this.getOne(getOne.id);

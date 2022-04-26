@@ -10,6 +10,7 @@ export * from './licencias/licencias.module';
 
 export * from './ubigeo/paises/paises.module';
 export * from './ubigeo/estados/estados.module';
+export * from './ubigeo/ciudades/ciudades.module';
 export * from './ubigeo/municipios/municipios.module';
 export * from './ubigeo/parroquias/parroquias.module';
 

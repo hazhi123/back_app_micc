@@ -11,7 +11,7 @@ export class GetAllDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  estado: number;
+  id: number;
 
   @ApiProperty()
   @IsBoolean()

@@ -20,7 +20,6 @@ import {
 } from '../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
-import { LicenciasEntity } from '../licencias/entities/licencias.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateImageDto,
@@ -41,9 +40,6 @@ export class TiendasService {
     @InjectRepository(CComercialesEntity)
     private readonly ccomercialesRP: Repository<CComercialesEntity>,
 
-    @InjectRepository(LicenciasEntity)
-    private readonly licenciasRP: Repository<LicenciasEntity>,
-
     private galeriaService: GaleriaService,
 
   ) { }
@@ -62,14 +58,6 @@ export class TiendasService {
       updatedBy: userLogin.id,
       updatedAt: new Date(),
       status: true
-    });
-
-    const ccomercial = await this.ccomercialesRP.findOne({
-      where: { id: dto.ccomercial }
-    })
-
-    await this.ccomercialesRP.update(dto.ccomercial, {
-      totalTiendas: ccomercial.totalTiendas + 1
     });
 
     return await this.getOne(save.id);
@@ -229,12 +217,6 @@ export class TiendasService {
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
 
-    const ccomercial = await this.ccomercialesRP.findOne({
-      where: { id: getOne.ccomercial.id }
-    })
-    // await this.ccomercialesRP.update(getOne.ccomercial.id, {
-    //   totalTiendas: ccomercial.totalTiendas - 1
-    // });
     // await this.tiendasRP.delete(id);
     return getOne;
   }

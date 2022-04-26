@@ -1,11 +1,15 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -15,9 +19,11 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateLicenciasDto,
+  GetAllDto,
   UpdateLicenciasDto,
 } from './dto';
 import { LicenciasService } from './licencias.service';
@@ -44,16 +50,25 @@ export class LicenciasController {
   }
 
   @Auth()
-  @Get('/all')
-  async getAll() {
-    const data = await this.licenciasService.getAll();
+  @Post('/all')
+  async getAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit: number = 100,
+    @Body() dto: GetAllDto,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    const data = await this.licenciasService.getAll(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.LICENCIAS}/all`,
+    });
     let res = {
-      statusCode: 200,
-      data,
-      entries: data.length,
-      message: isEmptyUndefined(data.length) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : ''
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
     }
-    if (data.length > 0) delete res.message
     return res
   }
 

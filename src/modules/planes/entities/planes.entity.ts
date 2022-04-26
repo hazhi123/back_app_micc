@@ -15,6 +15,9 @@ export class PlanesEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'int' })
+  tipo: number; // 1 = ccomercial, 2 = tiendas, 3 = visitante
+
   @Column({ type: 'varchar' })
   nombre: string;
 

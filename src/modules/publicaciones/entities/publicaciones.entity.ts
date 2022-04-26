@@ -62,15 +62,6 @@ export class PublicacionesEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column({ type: 'integer', default: 0 })
-  totalLikes: number;
-
-  @Column({ type: 'integer', default: 0 })
-  totalComentarios: number;
-
-  @Column({ type: 'integer', default: 0 })
-  totalCompartidos: number;
-
   @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
   galeria: any[];
 

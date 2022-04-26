@@ -39,16 +39,13 @@ export class LicenciasEntity {
   @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
-  @Column({ type: 'bool', default: true })
-  status: boolean;
-
   @Column({ name: 'is_gratis', type: 'bool', default: true })
   isGratis: boolean;
 
   //relaciones
   @OneToOne(() => UsersEntity, users => users.licencia, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'id_user' })
-  user: UsersEntity;
+  user: any;
 
   @ManyToOne(() => PlanesEntity, planes => planes.licencias)
   @JoinColumn({ name: 'id_plan' })

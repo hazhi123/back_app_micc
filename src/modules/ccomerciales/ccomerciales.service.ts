@@ -53,25 +53,25 @@ export class CComercialesService {
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<CComercialesEntity>> {
     const query = await this.ccomercialesRP
       .createQueryBuilder("cc")
-    query
       .leftJoinAndSelect("cc.ciudad", "ciu")
-      .leftJoinAndSelect("ciu.pais", "pais")
+      .leftJoinAndSelect("ciu.estado", "edo")
       .leftJoinAndSelect("cc.image", "gal")
+      .leftJoinAndSelect("cc.tiendas", "tie")
       .select([
         'cc.id',
         'cc.nombre',
         'cc.telPrimero',
         'cc.direccion',
-        'cc.totalTiendas',
         'cc.abierto',
         'cc.status',
         'ciu.id',
         'ciu.ciudad',
-        'pais.id',
-        'pais.nombre',
+        'edo.id',
+        'edo.nombre',
         'gal.id',
         'gal.file',
       ])
+      .loadRelationCountAndMap('cc.totalTiendas', 'cc.tiendas')
 
     if (!isEmptyUndefined(dto.ciudad)) {
       query.andWhere('cc.ciudad = :ciudad', { ciudad: dto.ciudad })
@@ -95,7 +95,7 @@ export class CComercialesService {
     const getOne = await this.ccomercialesRP
       .createQueryBuilder("cc")
       .leftJoinAndSelect("cc.ciudad", "ciu")
-      .leftJoinAndSelect("ciu.pais", "pais")
+      .leftJoinAndSelect("ciu.estado", "edo")
       .leftJoinAndSelect("cc.horarios", "hor")
       .leftJoinAndSelect("cc.image", "gal")
       .select([
@@ -107,7 +107,6 @@ export class CComercialesService {
         'cc.galeria',
         'cc.direccion',
         'cc.ubicLatLng',
-        'cc.totalTiendas',
         'cc.desc',
         'cc.abierto',
         'cc.createdBy',
@@ -116,9 +115,9 @@ export class CComercialesService {
         'cc.updatedAt',
         'cc.status',
         'ciu.id',
-        'ciu.nombre',
-        'pais.id',
-        'pais.nombre',
+        'ciu.ciudad',
+        'edo.id',
+        'edo.nombre',
         'hor.id',
         'hor.lunes',
         'hor.martes',
