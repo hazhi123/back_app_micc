@@ -60,6 +60,8 @@ export class ProductosService {
       .select([
         'pro.id',
         'pro.nombre',
+        'pro.desc',
+        'pro.etiqueta',
         'pro.status',
         'proGal.id',
         'proGal.file',

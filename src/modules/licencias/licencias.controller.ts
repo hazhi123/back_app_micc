@@ -22,6 +22,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
+  CambioPlanDto,
   CreateLicenciasDto,
   GetAllDto,
   UpdateLicenciasDto,
@@ -95,6 +96,20 @@ export class LicenciasController {
       data,
       message: CONST.MESSAGES.COMMON.UPDATE_DATA
     }
+  }
+
+  @Auth()
+  @Post('/plan')
+  async cambioPlan(
+    @Body() dto: CambioPlanDto,
+    @UserLogin() userLogin: UsersEntity
+  ) {
+    let data = await this.licenciasService.cambioPlan(dto, userLogin);
+    return {
+      statusCode: 200,
+      data,
+      message: 'Actualización exitosa'
+    };
   }
 
   @Auth()

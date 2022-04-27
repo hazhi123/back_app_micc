@@ -1,3 +1,4 @@
+import * as moment from 'moment';
 import {
   IPaginationOptions,
   paginate,
@@ -17,6 +18,7 @@ import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
+  CambioPlanDto,
   CreateLicenciasDto,
   GetAllDto,
   UpdateLicenciasDto,
@@ -54,7 +56,8 @@ export class LicenciasService {
         'lic.licencia',
         'lic.fechaInicio',
         'lic.fechaFinal',
-        'lic.isGratis',
+        'lic.isPrueba',
+        'lic.isCancelado',
         'user.id',
         'user.nombre',
         'user.apellido',
@@ -74,13 +77,15 @@ export class LicenciasService {
     const find = await this.licenciasRP
       .createQueryBuilder("lic")
       .leftJoinAndSelect("lic.user", "user")
+      .leftJoinAndSelect("user.perfil", "per")
       .leftJoinAndSelect("lic.plan", "plan")
       .select([
         'lic.id',
         'lic.licencia',
         'lic.fechaInicio',
         'lic.fechaFinal',
-        'lic.isGratis',
+        'lic.isPrueba',
+        'lic.isCancelado',
         'lic.createdBy',
         'lic.createdAt',
         'lic.updatedBy',
@@ -89,11 +94,18 @@ export class LicenciasService {
         'user.nombre',
         'user.apellido',
         'user.user',
+        'per.id',
+        'per.nombre',
         'plan.id',
         'plan.nombre',
       ])
       .where('lic.id = :id', { id })
       .getOne();
+
+    var fecha1 = moment.utc();
+    var fecha2 = moment(find.fechaFinal.toString());
+    find['diasRestantes'] = fecha2.diff(fecha1, 'days');
+
     if (isEmptyUndefined(find)) return null
     return find;
   }
@@ -105,11 +117,10 @@ export class LicenciasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
-    if (dto.id !== getOne.user.id) throw new HttpException({
+    if (dto.user !== getOne.user.id) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: 'Esta licencia no esta registrada con el usuario correcto',
     }, HttpStatus.ACCEPTED)
-    await this.findLicencia(dto.licencia)
     const assing = Object.assign(getOne, {
       ...dto,
       updatedBy: userLogin.id,
@@ -119,6 +130,18 @@ export class LicenciasService {
     await this.licenciasRP.update(getOne.id, assing)
     const res = await this.getOne(dto.id)
     return res
+  }
+
+
+  async cambioPlan(dto: CambioPlanDto, userLogin: UsersEntity) {
+    await this.licenciasRP.update(dto.licencia, {
+      plan: dto.plan == 0 ? null : dto.plan,
+      isPrueba: dto.plan == 0,
+      isCancelado: dto.isCancelado,
+      updatedBy: userLogin.id,
+      updatedAt: new Date(),
+    });
+    return await this.getOne(dto.licencia);
   }
 
   async delete(id: number) {

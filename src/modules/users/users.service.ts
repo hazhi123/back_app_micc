@@ -53,7 +53,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     const {
-      nombre, apellido, user, isVisitante, ciudad, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, isTrabajador,
+      nombre, apellido, user, isVisitante, ciudad, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, isTrabajaTienda,
     } = dto
 
     // Es cuando el usuario se registra.
@@ -110,7 +110,7 @@ export class UsersService {
       ccomercial,
       tienda,
       isVisitante,
-      isTrabajador,
+      isTrabajaTienda,
       ciudad,
       perfil,
       createdBy: userLogin.id,
@@ -129,7 +129,6 @@ export class UsersService {
       telefono,
       user: save.id
     });
-    const getOne = await this.getOne(save.id)
 
     const dataLic = {
       licencia: await codigoLincencia(),
@@ -143,7 +142,7 @@ export class UsersService {
 
     await this.licenciasService.create(dataLic, userLogin)
 
-    return getOne;
+    return await this.getOne(save.id);
   }
 
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<UsersEntity>> {
@@ -154,6 +153,7 @@ export class UsersService {
       .leftJoinAndSelect("user.imageBack", "userGalBack")
       .leftJoinAndSelect("user.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
+      .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -162,7 +162,7 @@ export class UsersService {
         'user.nombre',
         'user.apellido',
         'user.user',
-        'user.isTrabajador',
+        'user.isTrabajaTienda',
         'user.status',
         'userGal.id',
         'userGal.file',
@@ -178,6 +178,8 @@ export class UsersService {
         'ciu.ciudad',
         'edo.id',
         'edo.nombre',
+        'pais.id',
+        'pais.nombre',
         'inf.user',
         'inf.celular',
         'inf.dni',
@@ -186,13 +188,13 @@ export class UsersService {
       query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+      query.andWhere('tie.id = :tieId', { tieId: dto.tienda == 0 ? null : dto.tienda })
     }
     if (!isEmptyUndefined(dto.isVisitante)) {
       query.andWhere('user.isVisitante = :valor', { valor: dto.isVisitante })
     }
-    if (!isEmptyUndefined(dto.isTrabajador)) {
-      query.andWhere('user.isTrabajador = :valor', { valor: dto.isTrabajador })
+    if (!isEmptyUndefined(dto.isTrabajaTienda)) {
+      query.andWhere('user.isTrabajaTienda = :valor', { valor: dto.isTrabajaTienda })
     }
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('user.status = :valor', { valor: dto.status })
@@ -222,6 +224,7 @@ export class UsersService {
       .leftJoinAndSelect("user.imageBack", "userGalBack")
       .leftJoinAndSelect("user.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
+      .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -239,7 +242,7 @@ export class UsersService {
         'user.updatedBy',
         'user.updatedAt',
         'user.status',
-        'user.isTrabajador',
+        'user.isTrabajaTienda',
         'user.isVisitante',
         'userGal.id',
         'userGal.file',
@@ -255,6 +258,8 @@ export class UsersService {
         'ciu.ciudad',
         'edo.id',
         'edo.nombre',
+        'pais.id',
+        'pais.nombre',
         'inf.user',
         'inf.dni',
         'inf.celular',
@@ -267,7 +272,8 @@ export class UsersService {
         'lic.licencia',
         'lic.fechaInicio',
         'lic.fechaFinal',
-        'lic.isGratis',
+        'lic.isPrueba',
+        'lic.isCancelado',
         'plan.id',
         'plan.nombre',
         'plan.desc',
@@ -288,7 +294,7 @@ export class UsersService {
     }, HttpStatus.ACCEPTED)
 
     let {
-      id, nombre, apellido, user, parroquia, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTrabajador, direccion, telefono,
+      id, nombre, apellido, user, parroquia, password, perfil, status, celular, ccomercial, isVisitante, tienda, dni, isTrabajaTienda, direccion, telefono,
     } = dto
 
     const dataInformacion = {
@@ -320,7 +326,7 @@ export class UsersService {
       user,
       password,
       isVisitante,
-      isTrabajador,
+      isTrabajaTienda,
       perfil,
       ccomercial,
       tienda,

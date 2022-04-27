@@ -44,9 +44,26 @@ export class PlanesService {
   }
 
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PlanesEntity>> {
-    return paginate<PlanesEntity>(this.planesRP, options, {
-      order: { 'id': 'DESC' },
-    });
+    const query = await this.planesRP
+      .createQueryBuilder("plan")
+      .select([
+        'plan.id',
+        'plan.tipo',
+        'plan.nombre',
+        'plan.costo',
+        'plan.desc',
+      ])
+      .loadRelationCountAndMap('plan.totalLicencias', 'plan.licencias')
+
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('plan.status = :status', { status: dto.status })
+    }
+    if (!isEmptyUndefined(dto.tipo)) {
+      query.andWhere('plan.tipo = :tipo', { tipo: dto.tipo })
+    }
+    query.orderBy("plan.id", "DESC")
+    query.getMany();
+    return paginate<PlanesEntity>(query, options);
   }
 
   async getOne(id: number): Promise<PlanesEntity> {

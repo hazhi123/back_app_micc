@@ -101,7 +101,7 @@ export class createUsersDto {
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  isTrabajador: boolean;
+  isTrabajaTienda: boolean;
 
 
 }

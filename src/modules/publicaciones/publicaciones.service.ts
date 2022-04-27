@@ -40,8 +40,9 @@ export class PublicacionesService {
     'tienda.image',
     'ccomercial',
     'ccomercial.image',
-    'ccomercial.pais',
     'ccomercial.ciudad',
+    'ccomercial.ciudad.estado',
+    'ccomercial.ciudad.estado.pais',
   ]
 
   constructor(
@@ -103,6 +104,8 @@ export class PublicacionesService {
         'tieGal.id',
         'tieGal.file',
       ])
+      .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
+      .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
 
     if (!isEmptyUndefined(dto.categoria)) {
       query.andWhere('cat.id = :catId', { catId: dto.categoria })
@@ -160,8 +163,8 @@ export class PublicacionesService {
         'uEdit.nombre',
         'uEdit.apellido',
       ])
-      .loadRelationCountAndMap('cc.totalLikes', 'cc.likes')
-      .loadRelationCountAndMap('cc.totalComentarios', 'cc.comentarios')
+      .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
+      .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
 
     if (!isEmptyUndefined(dto.tipoPub)) {
       query.andWhere('tPub.id = :tPubId', { tPubId: dto.tipoPub })

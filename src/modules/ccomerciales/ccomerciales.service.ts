@@ -96,6 +96,7 @@ export class CComercialesService {
       .createQueryBuilder("cc")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
+      .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("cc.horarios", "hor")
       .leftJoinAndSelect("cc.image", "gal")
       .select([
@@ -118,6 +119,8 @@ export class CComercialesService {
         'ciu.ciudad',
         'edo.id',
         'edo.nombre',
+        'pais.id',
+        'pais.nombre',
         'hor.id',
         'hor.lunes',
         'hor.martes',

@@ -1,28 +1,26 @@
 import {
   IsBoolean,
+  IsNotEmpty,
   IsNumber,
-  IsOptional,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllDto {
+export class CambioPlanDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
-  id: number;
+  @IsNotEmpty()
+  licencia: number;
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
-  tipo: number;
+  @IsNotEmpty()
+  plan: number;
 
   @ApiProperty()
   @IsBoolean()
-  @IsOptional()
-  status: boolean;
-
-
+  @IsNotEmpty()
+  isCancelado: boolean;
 
 }

@@ -69,8 +69,8 @@ export class UsersEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column({ name: 'is_trabajador', type: 'bool', default: false })
-  isTrabajador: boolean;
+  @Column({ name: 'is_trabaja_tienda', type: 'bool', default: false })
+  isTrabajaTienda: boolean;
 
   @Column({ name: 'is_visitante', type: 'bool', default: true })
   isVisitante: boolean;
