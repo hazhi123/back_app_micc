@@ -2,12 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import * as CONST from '../../../../common/constants';
-import { EstadosEntity } from '../../estados/entities/estados.entity';
 
 @Entity(`${CONST.MODULES.UBIGEO.UBIGEO}_${CONST.MODULES.UBIGEO.PAISES}`)
 export class PaisesEntity {
@@ -40,7 +38,7 @@ export class PaisesEntity {
   status: boolean;
 
   // Relaciones
-  @OneToMany(() => EstadosEntity, edo => edo.pais)
-  estados: EstadosEntity[];
+  // @OneToMany(() => EstadosEntity, edo => edo.pais)
+  // estados: EstadosEntity[];
 
 }

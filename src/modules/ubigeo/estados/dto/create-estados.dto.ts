@@ -1,8 +1,5 @@
 import {
-  IsBoolean,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -10,19 +7,19 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEstadosDto {
 
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  pais: any;
+  // @ApiProperty()
+  // @IsNumber()
+  // @IsNotEmpty()
+  // pais: any;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  nombre: string;
+  estado: string;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  status: boolean;
+  // @ApiProperty()
+  // @IsOptional()
+  // @IsBoolean()
+  // status: boolean;
 
 }

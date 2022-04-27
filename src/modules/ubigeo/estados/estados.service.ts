@@ -26,14 +26,10 @@ export class EstadosService {
   ) { }
 
   async create(dto: CreateEstadosDto, userLogin: UsersEntity) {
-    await this.findNombre(dto.nombre, false)
-    const save = await this.estadosRP.save({
-      ...dto,
-      createdBy: userLogin.id,
-      createdAt: new Date(),
-      updatedBy: userLogin.id,
-      updatedAt: new Date(),
-    });
+    await this.findNombre(dto.estado, false)
+    const save = await this.estadosRP.save(
+      dto,
+    );
     return await this.getOne(save.id);
   }
 
@@ -81,8 +77,8 @@ export class EstadosService {
   }
 
   async update(dto: UpdateEstadosDto, userLogin: UsersEntity) {
-    const findNombre = await this.findNombre(dto.nombre, true)
-    if (!isEmptyUndefined(findNombre)) delete dto.nombre
+    const findNombre = await this.findNombre(dto.estado, true)
+    if (!isEmptyUndefined(findNombre)) delete dto.estado
 
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({
@@ -92,8 +88,6 @@ export class EstadosService {
 
     const assingUsers = Object.assign(getOne, {
       ...dto,
-      updatedBy: userLogin.id,
-      updatedAt: Date(),
     })
     await this.estadosRP.update(getOne.id, assingUsers);
     return await this.getOne(dto.id);

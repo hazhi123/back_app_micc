@@ -83,8 +83,8 @@ export class LikesService {
       .select([
         'like.id',
         'pub.id',
-        'pub.totalLikes',
       ])
+      .loadRelationCountAndMap('pub.totalLikes', 'pub.likes')
       .where('like.id = :id', { id })
       .getOne()
     if (isEmptyUndefined(getOne)) return null

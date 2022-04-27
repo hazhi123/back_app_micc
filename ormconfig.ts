@@ -21,4 +21,5 @@ export const typeormConfig: ConnectionOptions = {
 module.exports = {
     ...typeormConfig,
     seeds: ['src/databases/seeds/**/*.seeder{.ts,.js}'],
+    factories: ["src/databases/factories/**/*.factory{.ts,.js}"],
 };

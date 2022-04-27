@@ -44,7 +44,7 @@ export class CiudadesService {
       query.andWhere('edo.id = :id', { id: dto.estado })
     }
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('ciu.status = :status', { status: dto.status })
+      // query.andWhere('ciu.status = :status', { status: dto.status })
     }
     query.orderBy("ciu.ciudad", "ASC")
     const getAll = query.getMany();

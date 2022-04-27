@@ -47,6 +47,7 @@ export default class UsersSeeder implements Seeder {
           ciudad: 149,
           isVisitante: false,
           ccomercial: 1,
+          tienda: 1,
           createdBy: 1,
           updatedBy: 1,
           status: true
@@ -64,5 +65,14 @@ export default class UsersSeeder implements Seeder {
         },
       ])
       .execute()
+
+    await factory(UsersEntity)()
+      .map(async (user) => {
+        user.ccomercial = Math.floor((Math.random() * 20) + 1);
+        user.password = '$2b$10$BV0NRhnxZXkjKwiNu8IbJOFRXh4Q8BsoY/qLaEv9lw0/4ct.AemAi';
+        user.ciudad = 149;
+        return user;
+      })
+      .createMany(1388);
   }
 }

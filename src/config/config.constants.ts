@@ -7,4 +7,4 @@ export const DEFAULT_USER_PASSWORD = 'PASSWORD';
 export const CLOUDINARY = 'Cloudinary';
 
 export const URL = '192.168.137.1';
-export const URLPAGE = `${URL}:3000`;
+export const URLPAGE = `http://${URL}:3000/v1/api`;

@@ -77,17 +77,21 @@ export class PublicacionesController {
   }
 
   @Auth()
-  @Post('/all/publico')
+  @Get('/all/publico')
   async getAllPublico(
-    @Body() dto: GetAllDto,
+    // @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+    @Query('cc') cc: number,
+    @Query('tie') tie: number,
+    @Query('cat') cat: number,
+    @Query('tipo') tipo: number
   ) {
     limit = limit > 50 ? 50 : limit;
-    const data = await this.publicacionesService.getAllPublico(dto, {
+    const data = await this.publicacionesService.getAllPublico(cc, tie, cat, tipo, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all/publico`,
+      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all/publico?cc=${cc}&tie=${tie}&cat=${cat}&tipo=${tipo}`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -101,7 +105,9 @@ export class PublicacionesController {
 
   @Auth()
   @Get(':id')
-  async getOne(@Param('id') id: number) {
+  async getOne(
+    @Param('id') id: number
+  ) {
     const data = await this.publicacionesService.getOne(id);
     return {
       statusCode: HttpStatus.OK,

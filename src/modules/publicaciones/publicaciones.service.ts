@@ -42,7 +42,7 @@ export class PublicacionesService {
     'ccomercial.image',
     'ccomercial.ciudad',
     'ccomercial.ciudad.estado',
-    'ccomercial.ciudad.estado.pais',
+    // 'ccomercial.ciudad.estado.pais',
   ]
 
   constructor(
@@ -130,7 +130,7 @@ export class PublicacionesService {
     return paginate<PublicacionesEntity>(query, options);
   }
 
-  async getAllPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
+  async getAllPublico(cc, tie, cat, tipo, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
     const query = await this.publicacionesRP
       .createQueryBuilder("pub")
     query
@@ -166,17 +166,21 @@ export class PublicacionesService {
       .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
       .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
 
-    if (!isEmptyUndefined(dto.tipoPub)) {
-      query.andWhere('tPub.id = :tPubId', { tPubId: dto.tipoPub })
+    if (!isEmptyUndefined(cc) && cc !== 0) {
+      query.andWhere('cc.id = :id', { id: cc })
     }
-    if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+    if (!isEmptyUndefined(tie) && tie !== 0) {
+      query.andWhere('tie.id = :id', { id: tie })
     }
-    if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+    if (!isEmptyUndefined(cat) && cat !== 0) {
+      query.andWhere('cat.id = :id', { id: cat })
     }
-    query.orderBy("pub.createdAt", "DESC")
-    query.getMany();
+    if (!isEmptyUndefined(tipo) && tipo !== 0) {
+      query.andWhere('tPub.id = :id', { id: tipo })
+    }
+    query.andWhere('pub.status = :status', { status: true })
+      .orderBy("pub.createdAt", "DESC")
+      .getMany();
     return paginate<PublicacionesEntity>(query, options);
   }
 

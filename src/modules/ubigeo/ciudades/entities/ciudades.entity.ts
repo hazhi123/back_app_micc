@@ -1,6 +1,5 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -13,7 +12,7 @@ import { EstadosEntity } from '../../estados/entities/estados.entity';
 @Entity(`${CONST.MODULES.UBIGEO.UBIGEO}_${CONST.MODULES.UBIGEO.CIU}`)
 export class CiudadesEntity {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id_ciudad' })
   id: number;
 
   @Column()
@@ -21,21 +20,6 @@ export class CiudadesEntity {
 
   @Column({ type: 'smallint', })
   capital: number;
-
-  @Column({ name: 'created_by' })
-  createdBy: number;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt: Date;
-
-  @Column({ name: 'updated_by' })
-  updatedBy: number;
-
-  @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt: Date;
-
-  @Column({ type: 'bool', default: true })
-  status: boolean;
 
   // Relaciones
   @ManyToOne(() => EstadosEntity)

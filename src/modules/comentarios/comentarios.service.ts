@@ -15,9 +15,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import {
-  PublicacionesEntity,
-} from '../publicaciones/entities/publicaciones.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateComentariosDto,
@@ -35,9 +32,6 @@ export class ComentariosService {
   constructor(
     @InjectRepository(ComentariosEntity)
     private readonly comentariosRP: Repository<ComentariosEntity>,
-
-    @InjectRepository(PublicacionesEntity)
-    private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
   ) { }
 
@@ -74,10 +68,23 @@ export class ComentariosService {
   }
 
   async getOne(id: number): Promise<ComentariosEntity> {
-    return await this.comentariosRP.findOne({
-      where: { id },
-      relations: this.relations
-    });
+    const getOne = await this.comentariosRP
+      .createQueryBuilder("com")
+      .leftJoinAndSelect("com.publicacion", "pub")
+      .select([
+        'com.id',
+        'pub.id',
+        'pub.nombre',
+      ])
+      .loadRelationCountAndMap('pub.totalComentarios', 'pub.comentarios')
+      .where('com.id = :id', { id })
+      .getOne()
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
+    // return await this.comentariosRP.findOne({
+    //   where: { id },
+    //   relations: this.relations
+    // });
   }
 
   async update(dto: UpdateComentariosDto, userLogin: UsersEntity) {

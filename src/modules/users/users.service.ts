@@ -153,7 +153,7 @@ export class UsersService {
       .leftJoinAndSelect("user.imageBack", "userGalBack")
       .leftJoinAndSelect("user.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
-      .leftJoinAndSelect("edo.pais", "pais")
+      // .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -177,9 +177,7 @@ export class UsersService {
         'ciu.id',
         'ciu.ciudad',
         'edo.id',
-        'edo.nombre',
-        'pais.id',
-        'pais.nombre',
+        'edo.estado',
         'inf.user',
         'inf.celular',
         'inf.dni',
@@ -224,7 +222,7 @@ export class UsersService {
       .leftJoinAndSelect("user.imageBack", "userGalBack")
       .leftJoinAndSelect("user.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
-      .leftJoinAndSelect("edo.pais", "pais")
+      // .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
@@ -257,9 +255,9 @@ export class UsersService {
         'ciu.id',
         'ciu.ciudad',
         'edo.id',
-        'edo.nombre',
-        'pais.id',
-        'pais.nombre',
+        'edo.estado',
+        // 'pais.id',
+        // 'pais.nombre',
         'inf.user',
         'inf.dni',
         'inf.celular',
