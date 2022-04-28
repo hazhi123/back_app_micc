@@ -73,6 +73,6 @@ export default class UsersSeeder implements Seeder {
         user.ciudad = 149;
         return user;
       })
-      .createMany(1388);
+      .createMany(688);
   }
 }

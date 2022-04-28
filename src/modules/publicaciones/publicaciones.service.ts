@@ -130,7 +130,7 @@ export class PublicacionesService {
     return paginate<PublicacionesEntity>(query, options);
   }
 
-  async getAllPublico(cc, tie, cat, tipo, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
+  async getAllPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PublicacionesEntity>> {
     const query = await this.publicacionesRP
       .createQueryBuilder("pub")
     query
@@ -166,21 +166,21 @@ export class PublicacionesService {
       .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
       .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
 
-    if (!isEmptyUndefined(cc) && cc !== 0) {
-      query.andWhere('cc.id = :id', { id: cc })
+    if (!isEmptyUndefined(dto.tipoPub)) {
+      query.andWhere('tPub.id = :id', { id: dto.tipoPub })
     }
-    if (!isEmptyUndefined(tie) && tie !== 0) {
-      query.andWhere('tie.id = :id', { id: tie })
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('cc.id = :id', { id: dto.ccomercial })
     }
-    if (!isEmptyUndefined(cat) && cat !== 0) {
-      query.andWhere('cat.id = :id', { id: cat })
+    if (!isEmptyUndefined(dto.categoria)) {
+      query.andWhere('cat.id = :id', { id: dto.categoria })
     }
-    if (!isEmptyUndefined(tipo) && tipo !== 0) {
-      query.andWhere('tPub.id = :id', { id: tipo })
+    if (!isEmptyUndefined(dto.tienda)) {
+      query.andWhere('tie.id = :id', { id: dto.tienda })
     }
     query.andWhere('pub.status = :status', { status: true })
-      .orderBy("pub.createdAt", "DESC")
-      .getMany();
+    query.orderBy("pub.createdAt", "DESC")
+    query.getMany();
     return paginate<PublicacionesEntity>(query, options);
   }
 

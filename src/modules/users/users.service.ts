@@ -130,7 +130,7 @@ export class UsersService {
       user: save.id
     });
 
-    const dataLic = {
+    const dataLicencia = {
       licencia: await codigoLincencia(),
       fechaInicio: moment().format('YYYY-MM-DD').toString(),
       fechaFinal: moment().add(20, 'days').format('YYYY-MM-DD').toString(),
@@ -140,7 +140,7 @@ export class UsersService {
       status: true
     }
 
-    await this.licenciasService.create(dataLic, userLogin)
+    await this.licenciasService.create(dataLicencia, userLogin)
 
     return await this.getOne(save.id);
   }
