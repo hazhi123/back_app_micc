@@ -15,6 +15,6 @@ export default class CComercialesSeeder implements Seeder {
         cc.ciudad = 149;
         return cc;
       })
-      .createMany(144);
+      .createMany(3);
   }
 }

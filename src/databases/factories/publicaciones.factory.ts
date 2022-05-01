@@ -8,7 +8,7 @@ import {
 define(PublicacionesEntity, (faker: typeof Faker) => {
   const pub = new PublicacionesEntity();
   pub.nombre = faker.company.companyName()
-  pub.desc = faker.lorem.paragraph(10);
+  pub.desc = faker.lorem.paragraph(12);
   pub.isPermanente = true;
   pub.createdBy = 1;
   pub.updatedBy = 1;

@@ -6,7 +6,6 @@ import {
 
 export default class UbigeoEstadosSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
-
     // Estados - Venezuela
     // await connection
     //   .createQueryBuilder()

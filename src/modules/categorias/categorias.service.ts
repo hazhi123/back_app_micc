@@ -63,7 +63,7 @@ export class CategoriasService {
       query.andWhere('cat.status = :status', { status: dto.status })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+      query.andWhere('cc.id = :id', { id: dto.ccomercial })
     }
 
     query.orderBy("cat.nombre", "ASC")

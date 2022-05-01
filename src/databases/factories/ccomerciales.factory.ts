@@ -8,7 +8,7 @@ import {
 define(CComercialesEntity, (faker: typeof Faker) => {
   const cc = new CComercialesEntity();
   cc.nombre = faker.company.companyName()
-  cc.desc = faker.lorem.paragraph(3);
+  cc.desc = faker.lorem.paragraph(8);
   cc.correo = faker.internet.email();
   cc.telPrimero = faker.phone.phoneNumber();
   cc.abierto = faker.random.boolean();

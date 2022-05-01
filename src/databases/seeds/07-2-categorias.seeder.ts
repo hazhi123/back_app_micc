@@ -12,9 +12,9 @@ export default class CategoriasSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     await factory(CategoriasEntity)()
       .map(async (cat) => {
-        cat.ccomercial = Math.floor((Math.random() * 20) + 1);
+        cat.ccomercial = Math.floor((Math.random() * 3) + 1);
         return cat;
       })
-      .createMany(500);
+      .createMany(250);
   }
 }

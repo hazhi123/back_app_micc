@@ -68,11 +68,21 @@ export default class UsersSeeder implements Seeder {
 
     await factory(UsersEntity)()
       .map(async (user) => {
-        user.ccomercial = Math.floor((Math.random() * 20) + 1);
+        user.ccomercial = Math.floor((Math.random() * 3) + 1);
         user.password = '$2b$10$BV0NRhnxZXkjKwiNu8IbJOFRXh4Q8BsoY/qLaEv9lw0/4ct.AemAi';
         user.ciudad = 149;
         return user;
       })
-      .createMany(688);
+      .createMany(343);
+
+    await factory(UsersEntity)()
+      .map(async (user) => {
+        user.ccomercial = Math.floor((Math.random() * 3) + 1);
+        user.password = '$2b$10$BV0NRhnxZXkjKwiNu8IbJOFRXh4Q8BsoY/qLaEv9lw0/4ct.AemAi';
+        user.tienda = Math.floor((Math.random() * 3) + 1);
+        user.ciudad = 149;
+        return user;
+      })
+      .createMany(245);
   }
 }
