@@ -97,7 +97,7 @@ export class GaleriaService {
     const getOne = await this.getOne(id);
 
     // const val = getOne.file.replace('http://res.cloudinary.com/dqjirfzaa/image/upload/', '');
-    const val = getOne.file.replace('http://res.cloudinary.com/hazhi123/image/upload/', '');
+    const val = getOne.file.replace('http://res.cloudinary.com/dqjirfzaa/image/upload/', '');
     const lista = val.split('/')[1].split('.');
 
     try {
