@@ -39,16 +39,12 @@ export class EstadosService {
       .leftJoinAndSelect("edo.pais", "pais")
       .select([
         'edo.id',
-        'edo.nombre',
-        'edo.status'
+        'edo.estado',
       ])
-    if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('edo.status = :valor', { valor: dto.status })
-    }
     if (!isEmptyUndefined(dto.pais)) {
       query.andWhere('pais.id = :paisId', { paisId: dto.pais })
     }
-    query.orderBy("edo.nombre", "ASC")
+    query.orderBy("edo.estado", "ASC")
     const getAll = query.getMany();
     if (isEmptyUndefined(getAll)) return null
     return getAll;
@@ -60,12 +56,7 @@ export class EstadosService {
       .leftJoinAndSelect("edo.pais", "pais")
       .select([
         'edo.id',
-        'edo.nombre',
-        'edo.createdBy',
-        'edo.createdAt',
-        'edo.updatedBy',
-        'edo.updatedAt',
-        'edo.status',
+        'edo.estado',
         'pais.id',
         'pais.nombre',
         'pais.code',

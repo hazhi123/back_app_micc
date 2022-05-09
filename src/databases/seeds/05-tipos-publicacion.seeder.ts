@@ -18,6 +18,7 @@ export default class TiposPublicacionSeeder implements Seeder {
         { nombre: 'Noticia', desc: 'Noticia', createdBy: 1, updatedBy: 1 },
         { nombre: 'Promoción', desc: 'Promoción', createdBy: 1, updatedBy: 1 },
         { nombre: 'Evento', desc: 'Evento', createdBy: 1, updatedBy: 1 },
+        { nombre: 'Servicio', desc: 'Servicio', createdBy: 1, updatedBy: 1 },
         { nombre: 'Borrador', desc: 'Borrador', createdBy: 1, updatedBy: 1 },
       ])
       .execute()

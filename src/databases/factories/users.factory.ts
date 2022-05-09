@@ -10,7 +10,7 @@ define(UsersEntity, (faker: typeof Faker) => {
   user.user = faker.internet.email();
   user.isTrabajaTienda = faker.random.boolean();
   user.isVisitante = faker.random.boolean();
-  user.perfil = Math.floor((Math.random() * 4) + 1);
+  user.perfil = Math.floor((Math.random() * 3) + 1);
   user.createdBy = 1;
   user.updatedBy = 1;
   return user;

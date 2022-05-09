@@ -10,10 +10,10 @@ export default class TiendasSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     await factory(TiendasEntity)()
       .map(async (tie) => {
-        tie.ccomercial = Math.floor((Math.random() * 3) + 1);
-        tie.categoria = Math.floor((Math.random() * 10) + 1);
+        tie.ccomercial = 1
+        tie.categoria = Math.floor((Math.random() * 29) + 1);
         return tie;
       })
-      .createMany(607);
+      .createMany(60);
   }
 }

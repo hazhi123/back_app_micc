@@ -56,6 +56,7 @@ export class ProductosService {
     query
       .leftJoinAndSelect("pro.image", "proGal")
       .leftJoinAndSelect("pro.tienda", "tie")
+      .leftJoinAndSelect("pro.categoria", "cat")
       .leftJoinAndSelect("tie.image", "tieGal")
       .select([
         'pro.id',
@@ -65,6 +66,8 @@ export class ProductosService {
         'pro.status',
         'proGal.id',
         'proGal.file',
+        'cat.id',
+        'cat.nombre',
       ])
 
     if (!isEmptyUndefined(dto.status)) {
@@ -84,6 +87,7 @@ export class ProductosService {
     query
       .leftJoinAndSelect("pro.image", "proGal")
       .leftJoinAndSelect("pro.tienda", "tie")
+      .leftJoinAndSelect("pro.categoria", "cat")
       .leftJoinAndSelect("tie.image", "tieGal")
       .leftJoinAndSelect("tie.ccomercial", "tiecc")
       .select([
@@ -93,6 +97,8 @@ export class ProductosService {
         'pro.status',
         'proGal.id',
         'proGal.file',
+        'cat.id',
+        'cat.nombre',
       ])
     if (!isEmptyUndefined(dto.filtro)) {
       query.andWhere("LOWER(pro.nombre) like :filtro", { filtro: `%${dto.filtro.toLowerCase()}%` })

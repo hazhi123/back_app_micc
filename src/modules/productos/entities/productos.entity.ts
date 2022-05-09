@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
+import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 
@@ -53,5 +54,9 @@ export class ProductosEntity {
   @ManyToOne(() => TiendasEntity)
   @JoinColumn({ name: 'id_tienda' })
   tienda: number;
+
+  @ManyToOne(() => CategoriasEntity)
+  @JoinColumn({ name: 'id_categoria' })
+  categoria: number;
 
 }
