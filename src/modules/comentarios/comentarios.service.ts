@@ -56,6 +56,7 @@ export class ComentariosService {
         'com.id',
         'com.comentario',
         'com.createdAt',
+        'user.id',
         'user.nombre',
         'user.apellido',
         'iUrl.id',
@@ -71,20 +72,19 @@ export class ComentariosService {
     const getOne = await this.comentariosRP
       .createQueryBuilder("com")
       .leftJoinAndSelect("com.publicacion", "pub")
+      .leftJoinAndSelect("pub.tipoPub", "tPub")
       .select([
         'com.id',
         'pub.id',
         'pub.nombre',
+        'tPub.id',
+        'tPub.nombre',
       ])
       .loadRelationCountAndMap('pub.totalComentarios', 'pub.comentarios')
       .where('com.id = :id', { id })
       .getOne()
     if (isEmptyUndefined(getOne)) return null
     return getOne;
-    // return await this.comentariosRP.findOne({
-    //   where: { id },
-    //   relations: this.relations
-    // });
   }
 
   async update(dto: UpdateComentariosDto, userLogin: UsersEntity) {

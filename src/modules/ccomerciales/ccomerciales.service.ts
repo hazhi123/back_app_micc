@@ -25,6 +25,9 @@ import {
   UpdateCComercialesDto,
   UpdateImageDto,
 } from './dto';
+import {
+  CComercialesGaleriaEntity,
+} from './entities/ccomerciales-galeria.entity';
 import { CComercialesEntity } from './entities/ccomerciales.entity';
 
 @Injectable()
@@ -33,6 +36,9 @@ export class CComercialesService {
   constructor(
     @InjectRepository(CComercialesEntity)
     private readonly ccomercialesRP: Repository<CComercialesEntity>,
+
+    @InjectRepository(CComercialesGaleriaEntity)
+    private readonly ccomercialesGaleriaRP: Repository<CComercialesGaleriaEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -91,14 +97,17 @@ export class CComercialesService {
     return paginate<CComercialesEntity>(query, options);
   }
 
-  async getOne(id: number, isGaleria: boolean = true): Promise<CComercialesEntity> {
+  async getOne(id: number): Promise<CComercialesEntity> {
     const getOne = await this.ccomercialesRP
       .createQueryBuilder("cc")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
       // .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("cc.horarios", "hor")
-      .leftJoinAndSelect("cc.image", "gal")
+      .leftJoinAndSelect("cc.image", "imgGal")
+      .leftJoinAndSelect("cc.imageBack", "backGal")
+      .leftJoinAndSelect("cc.ccomercialGaleria", "ccgal")
+      .leftJoinAndSelect("ccgal.galeria", "gal")
       .select([
         'cc.id',
         'cc.nombre',
@@ -130,19 +139,18 @@ export class CComercialesService {
         'hor.sabado',
         'hor.domingo',
         'hor.feriados',
+        'imgGal.id',
+        'imgGal.file',
+        'backGal.id',
+        'backGal.file',
+        'ccgal.id',
+        'ccgal.galeria',
         'gal.id',
         'gal.file',
       ])
       .where('cc.id = :id', { id })
       .getOne()
 
-    if (isGaleria) {
-      for (let x = 0; x < getOne.galeria.length; x++) {
-        if (getOne.galeria[x] != '0') {
-          getOne.galeria[x] = await this.galeriaService.getOne(parseInt(getOne.galeria[x]));
-        }
-      }
-    }
     if (isEmptyUndefined(getOne)) return null
     return getOne;
   }
@@ -191,8 +199,7 @@ export class CComercialesService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    const dato = await this.getOne(parseInt(dto.ccomercial), false);
-    let galeria = dato.galeria
+    // const getOne = await this.getOne(parseInt(dto.ccomercial));
 
     if (isEmptyUndefined(dto.index)) {
       let galeriaId;
@@ -211,9 +218,16 @@ export class CComercialesService {
         res = null
       }
 
-      await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-        image: galeriaId
-      });
+      if (parseInt(dto.isBack) == 0) {
+        await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+          image: galeriaId
+        });
+      } else {
+        await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+          imageBack: galeriaId
+        });
+      }
+
       return res;
     }
 
@@ -233,42 +247,33 @@ export class CComercialesService {
       res = null
     }
 
-    for (let x = 0; x < 9; x++) {
-      if (x == parseInt(dto.index)) {
-        galeria[x] = galeriaId
-      }
-      if (isEmptyUndefined(galeria[x])) {
-        galeria[x] = '0'
-      }
-    }
-    await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-      galeria
+    await this.ccomercialesGaleriaRP.save({
+      index: parseInt(dto.index),
+      ccomercial: parseInt(dto.ccomercial),
+      galeria: res.id
     });
+
     return await this.getOne(parseInt(dto.ccomercial));
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.ccomercialesRP.update(dto.ccomercial, {
-      image: dto.galeria
-    });
+    await this.ccomercialesRP.update(dto.ccomercial,
+      dto.isBack ? { imageBack: dto.galeria } : { image: dto.galeria }
+    );
     const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
     return getOneGaleria;
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    const data = await this.getOne(parseInt(dto.ccomercial), false);
-    data.galeria[parseInt(dto.index)] = '0'
-    await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-      galeria: data.galeria
-    });
+    await this.ccomercialesGaleriaRP.delete(parseInt(dto.ccomercialGaleria));
     return await this.getOne(parseInt(dto.ccomercial));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    const data = await this.getOne(dto.ccomercial, false);
-    data.galeria[dto.index] = dto.galeria
-    await this.ccomercialesRP.update(dto.ccomercial, {
-      galeria: data.galeria
+    await this.ccomercialesGaleriaRP.update(dto.ccomercialGaleria, {
+      index: dto.index,
+      ccomercial: dto.ccomercial,
+      galeria: dto.galeria
     });
     return await this.getOne(dto.ccomercial);
   }

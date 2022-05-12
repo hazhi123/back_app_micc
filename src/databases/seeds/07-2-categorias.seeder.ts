@@ -13,6 +13,7 @@ export default class CategoriasSeeder implements Seeder {
     await factory(CategoriasEntity)()
       .map(async (cat) => {
         cat.ccomercial = 1;
+        cat.image = Math.floor((Math.random() * 900) + 1);
         return cat;
       })
       .createMany(30);

@@ -4,7 +4,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -47,7 +46,7 @@ export class ProductosEntity {
   galeria: any[];
 
   // Relaciones
-  @OneToOne(() => GaleriaEntity)
+  @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria' })
   image: number;
 

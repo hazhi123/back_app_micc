@@ -108,22 +108,22 @@ export class PublicacionesService {
       .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
 
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :catId', { catId: dto.categoria })
+      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.tipoPub)) {
-      query.andWhere('tPub.id = :tPubId', { tPubId: dto.tipoPub })
+      query.andWhere('tPub.id = :tipoPub', { tipoPub: dto.tipoPub })
     }
     if (!isEmptyUndefined(dto.userEditor)) {
-      query.andWhere('uEdit.id = :uEditId', { uEditId: dto.userEditor })
+      query.andWhere('uEdit.id = :userEditor', { userEditor: dto.userEditor })
     }
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('pub.status = :status', { status: dto.status })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
     }
     query.orderBy("pub.id", "DESC")
     query.getMany();
@@ -137,8 +137,8 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.categoria", "cat")
       .leftJoinAndSelect("pub.tipoPub", "tPub")
       .leftJoinAndSelect("pub.ccomercial", "cc")
-      .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("cc.image", "ccGal")
+      .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("pub.image", "pubGal")
       .leftJoinAndSelect("pub.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieGal")
@@ -166,29 +166,70 @@ export class PublicacionesService {
       .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
       .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
 
+    query.where('pub.status = :status', { status: true })
+
     if (!isEmptyUndefined(dto.tipoPub)) {
-      query.andWhere('tPub.id = :id', { id: dto.tipoPub })
+      query.andWhere('tPub.id = :tipoPub', { tipoPub: dto.tipoPub })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :id', { id: dto.ccomercial })
+      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :id', { id: dto.categoria })
+      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :id', { id: dto.tienda })
+      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
     }
-    query.andWhere('pub.status = :status', { status: true })
     query.orderBy("pub.createdAt", "DESC")
     query.getMany();
     return paginate<PublicacionesEntity>(query, options);
   }
 
   async getOne(id: number, isGaleria: boolean = true): Promise<PublicacionesEntity> {
-    const getOne = await this.publicacionesRP.findOne({
-      where: { id },
-      relations: this.relations
-    });
+    const getOne = await this.publicacionesRP
+      .createQueryBuilder("pub")
+      .leftJoinAndSelect("pub.categoria", "cat")
+      .leftJoinAndSelect("pub.tipoPub", "tPub")
+      .leftJoinAndSelect("pub.ccomercial", "cc")
+      .leftJoinAndSelect("cc.image", "ccGal")
+      .leftJoinAndSelect("pub.userEditor", "uEdit")
+      .leftJoinAndSelect("pub.image", "pubGal")
+      .leftJoinAndSelect("pub.tienda", "tie")
+      .leftJoinAndSelect("tie.image", "tieGal")
+      .select([
+        'pub.id',
+        'pub.nombre',
+        'pub.desc',
+        'pub.isPermanente',
+        'pub.fechaInicio',
+        'pub.fechaFinal',
+        'pub.createdAt',
+        'pub.updatedAt',
+        'pub.status',
+        'pub.galeria',
+        'pub.linkRef',
+        'pubGal.id',
+        'pubGal.file',
+        'cat.id',
+        'cat.nombre',
+        'tPub.id',
+        'tPub.nombre',
+        'cc.id',
+        'cc.nombre',
+        'ccGal.id',
+        'ccGal.file',
+        'tie.id',
+        'tie.nombre',
+        'tieGal.id',
+        'tieGal.file',
+        'uEdit.id',
+        'uEdit.nombre',
+        'uEdit.apellido',
+      ])
+      .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
+      .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
+      .where('pub.id = :id', { id })
+      .getOne();
 
     if (isGaleria) {
       for (let x = 0; x < getOne.galeria.length; x++) {
@@ -203,7 +244,7 @@ export class PublicacionesService {
 
   async update(dto: UpdatePublicacionesDto, userLogin: UsersEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
-    const getOne = await this.getOne(dto.id);
+    const getOne = await this.getOne(dto.id, false);
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
@@ -214,7 +255,7 @@ export class PublicacionesService {
       updatedAt: new Date(),
     })
     const save = await this.publicacionesRP.save(assing)
-    return await this.getOne(save.id);
+    return await this.getOne(save.id, true);
   }
 
   async delete(id: number) {

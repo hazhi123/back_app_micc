@@ -183,22 +183,22 @@ export class UsersService {
         'inf.dni',
       ])
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :tieId', { tieId: dto.tienda == 0 ? null : dto.tienda })
+      query.andWhere('tie.id = :tienda', { tienda: dto.tienda == 0 ? null : dto.tienda })
     }
     if (!isEmptyUndefined(dto.isVisitante)) {
-      query.andWhere('user.isVisitante = :valor', { valor: dto.isVisitante })
+      query.andWhere('user.isVisitante = :isVisitante', { isVisitante: dto.isVisitante })
     }
     if (!isEmptyUndefined(dto.isTrabajaTienda)) {
-      query.andWhere('user.isTrabajaTienda = :valor', { valor: dto.isTrabajaTienda })
+      query.andWhere('user.isTrabajaTienda = :isTrabajaTienda', { isTrabajaTienda: dto.isTrabajaTienda })
     }
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('user.status = :valor', { valor: dto.status })
+      query.andWhere('user.status = :status', { status: dto.status })
     }
     if (!isEmptyUndefined(dto.ciudad)) {
-      query.andWhere('user.ciudad = :id', { id: dto.ciudad })
+      query.andWhere('user.ciudad = :ciudad', { ciudad: dto.ciudad })
     }
     query.addOrderBy("user.nombre", "ASC")
     query.getMany();

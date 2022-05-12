@@ -7,7 +7,7 @@ import {
 
 define(ProductosEntity, (faker: typeof Faker) => {
   const pro = new ProductosEntity();
-  pro.nombre = faker.company.companyName()
+  pro.nombre = faker.commerce.product()
   pro.desc = faker.lorem.paragraph(12);
   pro.etiqueta = faker.name.firstName();
   pro.createdBy = 1;

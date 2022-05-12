@@ -74,7 +74,7 @@ export class ProductosService {
       query.andWhere('pro.status = :status', { status: dto.status })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
     }
     query.orderBy("pro.id", "DESC")
     query.getMany();
@@ -104,10 +104,10 @@ export class ProductosService {
       query.andWhere("LOWER(pro.nombre) like :filtro", { filtro: `%${dto.filtro.toLowerCase()}%` })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('tie.id = :tieId', { tieId: dto.tienda })
+      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('tiecc.id = :tieccId', { tieccId: dto.ccomercial })
+      query.andWhere('tiecc.id = :ccomercial', { ccomercial: dto.ccomercial })
     }
     query.andWhere('pro.status = :status', { status: true })
     query.getMany();

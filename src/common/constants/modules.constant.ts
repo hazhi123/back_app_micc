@@ -27,6 +27,7 @@ export const MODULES = {
     LICENCIAS: 'licencias',
     PLANES: 'planes',
     CCOMERCIALES: 'ccomerciales',
+    CCOMERCIALES_GALERIA: 'ccomerciales_galeria',
     GALERIA: 'galeria',
     CATEGORIAS: 'categorias',
     TIENDAS: 'tiendas',
@@ -40,4 +41,10 @@ export const MODULES = {
     CONTACTOS: 'contactos',
     HORARIOS: 'horarios',
     PRODUCTOS: 'productos',
+    CINES: {
+        CINES: 'cines',
+        CINES_GALERIA: 'cines_galeria',
+        CINES_PELICULAS: 'cines_peliculas',
+        PELICULAS: 'peliculas',
+    },
 }

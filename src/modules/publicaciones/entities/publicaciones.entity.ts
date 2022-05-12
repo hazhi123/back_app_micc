@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -69,7 +68,7 @@ export class PublicacionesEntity {
   linkRef: string;
 
   // Relaciones
-  @OneToOne(() => GaleriaEntity)
+  @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria' })
   image: number;
 

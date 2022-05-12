@@ -71,7 +71,7 @@ export class TiendasEntity {
   galeria: any[];
 
   // Relaciones
-  @OneToOne(() => GaleriaEntity)
+  @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria' })
   image: number;
 

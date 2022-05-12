@@ -20,6 +20,7 @@ import {
   ParroquiasEntity,
 } from '../../ubigeo/parroquias/entities/parroquias.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
+import { CComercialesGaleriaEntity } from './ccomerciales-galeria.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES)
 export class CComercialesEntity {
@@ -66,13 +67,14 @@ export class CComercialesEntity {
   @Column({ type: 'bool', default: true })
   abierto: boolean;
 
-  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
-  galeria: any[];
-
   // Relaciones
-  @OneToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'image' })
+  @ManyToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
+
+  @ManyToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'id_galeria_back' })
+  imageBack: number;
 
   @OneToMany(() => UsersEntity, users => users.ccomercial)
   users: UsersEntity[];
@@ -96,5 +98,8 @@ export class CComercialesEntity {
 
   @OneToOne(() => HorariosEntity, horarios => horarios.ccomercial, { eager: true })
   horarios: number;
+
+  @OneToMany(() => CComercialesGaleriaEntity, ccgal => ccgal.ccomercial)
+  ccomercialGaleria: CComercialesGaleriaEntity[];
 
 }

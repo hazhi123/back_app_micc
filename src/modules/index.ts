@@ -31,3 +31,6 @@ export * from './mensajes/mensajes.module';
 export * from './galeria/galeria.module';
 
 export * from './productos/productos.module';
+
+export * from './cines/cines/cines.module';
+export * from './cines/peliculas/peliculas.module';

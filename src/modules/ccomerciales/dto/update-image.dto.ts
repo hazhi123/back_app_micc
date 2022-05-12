@@ -16,11 +16,23 @@ export class UpdateImageDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
+  ccomercialGaleria: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
   galeria: number;
 
   @ApiProperty()
   @IsNumber()
   @IsOptional()
   index: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  isBack: number;
+
+
 
 }

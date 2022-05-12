@@ -12,6 +12,18 @@ export default class TiendasSeeder implements Seeder {
       .map(async (tie) => {
         tie.ccomercial = 1
         tie.categoria = Math.floor((Math.random() * 29) + 1);
+        tie.image = Math.floor((Math.random() * 900) + 1);
+        tie.galeria = [
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+          Math.floor((Math.random() * 900) + 1),
+        ];
         return tie;
       })
       .createMany(60);

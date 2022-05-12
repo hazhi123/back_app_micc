@@ -126,11 +126,11 @@ export class UsersEntity {
   @OneToMany(() => MensajesEntity, mensajes => mensajes.user)
   mensajes: MensajesEntity[];
 
-  @OneToOne(() => GaleriaEntity, { onDelete: "CASCADE" })
+  @ManyToOne(() => GaleriaEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
-  @OneToOne(() => GaleriaEntity, { onDelete: "CASCADE" })
+  @ManyToOne(() => GaleriaEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
