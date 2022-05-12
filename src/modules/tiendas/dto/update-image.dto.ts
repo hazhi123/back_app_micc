@@ -23,4 +23,14 @@ export class UpdateImageDto {
   @IsOptional()
   index: number;
 
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  file: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  isBack: number;
+
 }

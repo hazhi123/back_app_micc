@@ -31,6 +31,7 @@ export const MODULES = {
     GALERIA: 'galeria',
     CATEGORIAS: 'categorias',
     TIENDAS: 'tiendas',
+    TIENDAS_GALERIA: 'tiendas_galeria',
     PUBLICACIONES: 'publicaciones',
     GUARDADOS: 'guardados',
     COMENTARIOS: 'comentarios',

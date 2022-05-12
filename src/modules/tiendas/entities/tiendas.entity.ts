@@ -18,6 +18,7 @@ import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { ProductosEntity } from '../../productos/entities/productos.entity';
+import { TiendasGaleriaEntity } from './tiendas-galeria.entity';
 
 @Entity(CONST.MODULES.TIENDAS)
 export class TiendasEntity {
@@ -67,13 +68,14 @@ export class TiendasEntity {
   @Column({ name: 'is_gastro', type: 'bool', default: false })
   isGastro: boolean;
 
-  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
-  galeria: any[];
-
   // Relaciones
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'id_galeria' })
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
+
+  @ManyToOne(() => GaleriaEntity)
+  @JoinColumn({ name: 'id_galeria_back' })
+  imageBack: number;
 
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'id_categoria' })
@@ -91,5 +93,8 @@ export class TiendasEntity {
 
   @OneToMany(() => ProductosEntity, productos => productos.tienda)
   productos: ProductosEntity[];
+
+  @OneToMany(() => TiendasGaleriaEntity, tieGal => tieGal.tienda)
+  files: TiendasGaleriaEntity[];
 
 }

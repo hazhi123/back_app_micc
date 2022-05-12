@@ -16,7 +16,7 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  ccomercialGaleria: string;
+  file: string;
 
   @ApiProperty()
   @IsString()

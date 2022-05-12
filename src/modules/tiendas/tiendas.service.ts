@@ -15,9 +15,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import {
-  CComercialesEntity,
-} from '../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
@@ -28,6 +25,7 @@ import {
   UpdateImageDto,
   UpdateTiendasDto,
 } from './dto';
+import { TiendasGaleriaEntity } from './entities/tiendas-galeria.entity';
 import { TiendasEntity } from './entities/tiendas.entity';
 
 @Injectable()
@@ -37,22 +35,17 @@ export class TiendasService {
     @InjectRepository(TiendasEntity)
     private readonly tiendasRP: Repository<TiendasEntity>,
 
-    @InjectRepository(CComercialesEntity)
-    private readonly ccomercialesRP: Repository<CComercialesEntity>,
+    @InjectRepository(TiendasGaleriaEntity)
+    private readonly tiendasGaleriaRP: Repository<TiendasGaleriaEntity>,
+
 
     private galeriaService: GaleriaService,
 
   ) { }
 
   async create(dto: CreateTiendasDto, userLogin: UsersEntity) {
-    let galeria = []
-    for (let x = 0; x < 9; x++) {
-      galeria.push("0")
-    }
-
     const save = await this.tiendasRP.save({
       ...dto,
-      galeria,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -69,7 +62,8 @@ export class TiendasService {
     query
       .leftJoinAndSelect("ti.ccomercial", "cc")
       .leftJoinAndSelect("ti.categoria", "cat")
-      .leftJoinAndSelect("ti.image", "gal")
+      .leftJoinAndSelect("ti.image", "imgGal")
+      .leftJoinAndSelect("ti.imageBack", "imgBackGal")
       .select([
         'ti.id',
         'ti.nombre',
@@ -84,15 +78,17 @@ export class TiendasService {
         'cc.nombre',
         'cat.id',
         'cat.nombre',
-        'gal.id',
-        'gal.file',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
       ])
 
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :catId', { catId: dto.categoria })
+      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.isGastro)) {
       query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
@@ -112,7 +108,8 @@ export class TiendasService {
     query
       .leftJoinAndSelect("ti.ccomercial", "cc")
       .leftJoinAndSelect("ti.categoria", "cat")
-      .leftJoinAndSelect("ti.image", "gal")
+      .leftJoinAndSelect("ti.image", "imgGal")
+      .leftJoinAndSelect("ti.imageBack", "imgBackGal")
       .select([
         'ti.id',
         'ti.nombre',
@@ -121,14 +118,16 @@ export class TiendasService {
         'ti.abierto',
         'cat.id',
         'cat.nombre',
-        'gal.id',
-        'gal.file',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
       ])
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccId', { ccId: dto.ccomercial })
+      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :catId', { catId: dto.categoria })
+      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.isGastro)) {
       query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
@@ -140,12 +139,15 @@ export class TiendasService {
     return paginate<TiendasEntity>(query, options);
   }
 
-  async getOne(id: number, isGaleria: boolean = true): Promise<TiendasEntity> {
+  async getOne(id: number): Promise<TiendasEntity> {
     const getOne = await this.tiendasRP
       .createQueryBuilder("ti")
       .leftJoinAndSelect("ti.horarios", "hor")
       .leftJoinAndSelect("ti.categoria", "cat")
-      .leftJoinAndSelect("ti.image", "gal")
+      .leftJoinAndSelect("ti.image", "imgGal")
+      .leftJoinAndSelect("ti.imageBack", "imgBackGal")
+      .leftJoinAndSelect("ti.files", "file")
+      .leftJoinAndSelect("file.galeria", "gal")
       .select([
         'ti.id',
         'ti.nombre',
@@ -163,7 +165,6 @@ export class TiendasService {
         'ti.ubicacion',
         'ti.abierto',
         'ti.isGastro',
-        'ti.galeria',
         'hor.id',
         'hor.lunes',
         'hor.martes',
@@ -175,19 +176,17 @@ export class TiendasService {
         'hor.feriados',
         'cat.id',
         'cat.nombre',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'file.id',
+        'file.index',
         'gal.id',
         'gal.file',
       ])
       .where('ti.id = :id', { id })
       .getOne()
-
-    if (isGaleria) {
-      for (let x = 0; x < getOne.galeria.length; x++) {
-        if (getOne.galeria[x] != '0') {
-          getOne.galeria[x] = await this.galeriaService.getOne(parseInt(getOne.galeria[x]));
-        }
-      }
-    }
 
     if (isEmptyUndefined(getOne)) return null
     return getOne;
@@ -231,8 +230,7 @@ export class TiendasService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    const dato = await this.getOne(parseInt(dto.tienda), false);
-    let galeria = dato.galeria
+    // const dato = await this.getOne(parseInt(dto.tienda), false);
 
     if (isEmptyUndefined(dto.index)) {
       let galeriaId;
@@ -249,6 +247,16 @@ export class TiendasService {
       } catch (error) {
         galeriaId = null
         res = null
+      }
+
+      if (parseInt(dto.isBack) == 0) {
+        await this.tiendasRP.update(parseInt(dto.tienda), {
+          image: galeriaId
+        });
+      } else {
+        await this.tiendasRP.update(parseInt(dto.tienda), {
+          imageBack: galeriaId
+        });
       }
 
       await this.tiendasRP.update(parseInt(dto.tienda), {
@@ -273,17 +281,12 @@ export class TiendasService {
       res = null
     }
 
-    for (let x = 0; x < 9; x++) {
-      if (x == parseInt(dto.index)) {
-        galeria[x] = galeriaId
-      }
-      if (isEmptyUndefined(galeria[x])) {
-        galeria[x] = '0'
-      }
-    }
-    await this.tiendasRP.update(parseInt(dto.tienda), {
-      galeria
+    await this.tiendasGaleriaRP.save({
+      index: parseInt(dto.index),
+      ccomercial: parseInt(dto.tienda),
+      galeria: res.id
     });
+
     return await this.getOne(parseInt(dto.tienda));
   }
 
@@ -296,19 +299,15 @@ export class TiendasService {
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    const data = await this.getOne(parseInt(dto.tienda), false);
-    data.galeria[parseInt(dto.index)] = '0'
-    await this.tiendasRP.update(dto.tienda, {
-      galeria: data.galeria
-    });
+    await this.tiendasGaleriaRP.delete(parseInt(dto.file));
     return await this.getOne(parseInt(dto.tienda));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    const data = await this.getOne(dto.tienda, false);
-    data.galeria[dto.index] = dto.galeria
-    await this.tiendasRP.update(dto.tienda, {
-      galeria: data.galeria
+    await this.tiendasGaleriaRP.update(dto.file, {
+      index: dto.index,
+      tienda: dto.tienda,
+      galeria: dto.galeria
     });
     return await this.getOne(dto.tienda);
   }

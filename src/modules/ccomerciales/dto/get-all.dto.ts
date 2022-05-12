@@ -21,6 +21,11 @@ export class GetAllDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
+  estado: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
   pais: number;
 
   @ApiProperty()

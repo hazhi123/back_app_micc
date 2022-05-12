@@ -99,7 +99,7 @@ export class CComercialesEntity {
   @OneToOne(() => HorariosEntity, horarios => horarios.ccomercial, { eager: true })
   horarios: number;
 
-  @OneToMany(() => CComercialesGaleriaEntity, ccgal => ccgal.ccomercial)
-  ccomercialGaleria: CComercialesGaleriaEntity[];
+  @OneToMany(() => CComercialesGaleriaEntity, ccGal => ccGal.ccomercial)
+  files: CComercialesGaleriaEntity[];
 
 }

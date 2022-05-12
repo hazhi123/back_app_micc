@@ -4,14 +4,11 @@ import {
   Seeder,
 } from 'typeorm-seeding';
 
-import {
-  PaisesEntity,
-} from '../../modules/ubigeo/paises/entities/paises.entity';
-
 export default class UbigeoPaisesSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
 
     // Paises
+    /*
     await connection
       .createQueryBuilder()
       .insert()
@@ -30,5 +27,6 @@ export default class UbigeoPaisesSeeder implements Seeder {
         { nombre: "Uruguay", code: '+598', createdBy: 1, updatedBy: 1, image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Flag_of_Uruguay.svg/135px-Flag_of_Uruguay.svg.png' },
       ])
       .execute()
+      */
   }
 }

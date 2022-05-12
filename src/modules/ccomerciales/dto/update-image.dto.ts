@@ -16,7 +16,7 @@ export class UpdateImageDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  ccomercialGaleria: number;
+  file: number;
 
   @ApiProperty()
   @IsNumber()

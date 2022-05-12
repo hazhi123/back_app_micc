@@ -60,9 +60,10 @@ export class CComercialesService {
     const query = await this.ccomercialesRP
       .createQueryBuilder("cc")
       .leftJoinAndSelect("cc.ciudad", "ciu")
-      .leftJoinAndSelect("ciu.estado", "edo")
-      .leftJoinAndSelect("cc.image", "gal")
+      .leftJoinAndSelect("cc.image", "imgGal")
+      .leftJoinAndSelect("cc.imageBack", "imgBackGal")
       .leftJoinAndSelect("cc.tiendas", "tie")
+      .leftJoinAndSelect("ciu.estado", "edo")
       .select([
         'cc.id',
         'cc.nombre',
@@ -74,8 +75,10 @@ export class CComercialesService {
         'ciu.ciudad',
         'edo.id',
         'edo.estado',
-        'gal.id',
-        'gal.file',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
       ])
       .loadRelationCountAndMap('cc.totalTiendas', 'cc.tiendas')
 
@@ -102,19 +105,18 @@ export class CComercialesService {
       .createQueryBuilder("cc")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
-      // .leftJoinAndSelect("edo.pais", "pais")
+      .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("cc.horarios", "hor")
       .leftJoinAndSelect("cc.image", "imgGal")
       .leftJoinAndSelect("cc.imageBack", "backGal")
-      .leftJoinAndSelect("cc.ccomercialGaleria", "ccgal")
-      .leftJoinAndSelect("ccgal.galeria", "gal")
+      .leftJoinAndSelect("cc.files", "file")
+      .leftJoinAndSelect("file.galeria", "gal")
       .select([
         'cc.id',
         'cc.nombre',
         'cc.correo',
         'cc.telPrimero',
         'cc.telSegundo',
-        'cc.galeria',
         'cc.direccion',
         'cc.ubicLatLng',
         'cc.desc',
@@ -128,8 +130,8 @@ export class CComercialesService {
         'ciu.ciudad',
         'edo.id',
         'edo.estado',
-        // 'pais.id',
-        // 'pais.nombre',
+        'pais.id',
+        'pais.nombre',
         'hor.id',
         'hor.lunes',
         'hor.martes',
@@ -143,8 +145,8 @@ export class CComercialesService {
         'imgGal.file',
         'backGal.id',
         'backGal.file',
-        'ccgal.id',
-        'ccgal.galeria',
+        'file.id',
+        'file.index',
         'gal.id',
         'gal.file',
       ])
@@ -265,12 +267,12 @@ export class CComercialesService {
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    await this.ccomercialesGaleriaRP.delete(parseInt(dto.ccomercialGaleria));
+    await this.ccomercialesGaleriaRP.delete(parseInt(dto.file));
     return await this.getOne(parseInt(dto.ccomercial));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    await this.ccomercialesGaleriaRP.update(dto.ccomercialGaleria, {
+    await this.ccomercialesGaleriaRP.update(dto.file, {
       index: dto.index,
       ccomercial: dto.ccomercial,
       galeria: dto.galeria

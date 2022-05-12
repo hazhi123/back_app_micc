@@ -28,14 +28,15 @@ export default class CComercialesSeeder implements Seeder {
     await factory(CComercialesEntity)()
       .map(async (cc) => {
         cc.ciudad = 149;
-        cc.image = 1;
+        cc.image = Math.floor((Math.random() * 900) + 1);
+        cc.imageBack = Math.floor((Math.random() * 900) + 1);
         return cc;
       })
       .createMany(1);
 
     var data = []
 
-    for (let index = 0; index < 8; index++) {
+    for (let index = 0; index < 10; index++) {
       data.push({
         ccomercial: 1,
         index: index,
