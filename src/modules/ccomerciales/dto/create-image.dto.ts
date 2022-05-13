@@ -15,13 +15,18 @@ export class CreateImageDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   file: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
   index: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  vieja: string;
 
   @ApiProperty()
   @IsString()

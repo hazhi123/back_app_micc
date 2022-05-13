@@ -36,7 +36,7 @@ export default class CComercialesSeeder implements Seeder {
 
     var data = []
 
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 9; index++) {
       data.push({
         ccomercial: 1,
         index: index,

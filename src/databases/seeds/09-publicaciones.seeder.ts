@@ -53,7 +53,7 @@ export default class PublicacionesSeeder implements Seeder {
 
     for (let x = 1; x <= 1203; x++) {
       var data = []
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < 9; index++) {
         data.push({
           publicacion: x,
           index: index,

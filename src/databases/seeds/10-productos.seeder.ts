@@ -24,7 +24,7 @@ export default class ProductosSeeder implements Seeder {
 
     for (let x = 1; x <= 2490; x++) {
       var data = []
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < 9; index++) {
         data.push({
           producto: x,
           index: index,

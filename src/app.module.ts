@@ -27,8 +27,8 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.AuthModule,
     MOD.UsersModule,
     MOD.PerfilesModule,
-    MOD.ModulosModule,
-    MOD.PerfilesModulosModule,
+    // MOD.ModulosModule,
+    // MOD.PerfilesModulosModule,
 
     MOD.PlanesModule,
     MOD.LicenciasModule,

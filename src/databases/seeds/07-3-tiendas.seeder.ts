@@ -24,7 +24,7 @@ export default class TiendasSeeder implements Seeder {
     for (let x = 1; x <= 60; x++) {
       var data = []
 
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < 9; index++) {
         data.push({
           tienda: x,
           index: index,

@@ -24,7 +24,7 @@ export default class CinesSeeder implements Seeder {
 
     for (let x = 1; x <= 10; x++) {
       var data = []
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < 9; index++) {
         data.push({
           cine: x,
           index: index,

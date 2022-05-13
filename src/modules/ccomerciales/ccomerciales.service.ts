@@ -15,7 +15,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -201,11 +200,7 @@ export class CComercialesService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    // const getOne = await this.getOne(parseInt(dto.ccomercial));
-
-    if (isEmptyUndefined(dto.index)) {
-      let galeriaId;
-      let res: GaleriaEntity
+    if (!isEmptyUndefined(dto.isBack) && isEmptyUndefined(dto.index)) {
       try {
         const data = {
           entidad: 'ccomercial',
@@ -213,28 +208,26 @@ export class CComercialesService {
           referencia: 'image',
           refId: parseInt(dto.ccomercial),
         }
-        res = await this.galeriaService.create(file, data, userLogin)
-        galeriaId = res.id
+        const res = await this.galeriaService.create(file, data, userLogin)
+        const galeriaId = res.id
+        if (parseInt(dto.isBack) == 0) {
+          await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+            image: galeriaId
+          });
+        } else {
+          await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
+            imageBack: galeriaId
+          });
+        }
+        return res;
       } catch (error) {
-        galeriaId = null
-        res = null
+        throw new HttpException({
+          statusCode: HttpStatus.ACCEPTED,
+          message: 'Error al registrar la imagen',
+        }, HttpStatus.ACCEPTED)
       }
-
-      if (parseInt(dto.isBack) == 0) {
-        await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-          image: galeriaId
-        });
-      } else {
-        await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-          imageBack: galeriaId
-        });
-      }
-
-      return res;
     }
 
-    let galeriaId;
-    let res: GaleriaEntity
     try {
       const data = {
         entidad: 'ccomercial',
@@ -242,20 +235,41 @@ export class CComercialesService {
         referencia: 'galeria',
         refId: parseInt(dto.ccomercial),
       }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
+      const res = await this.galeriaService.create(file, data, userLogin)
+
+      if (isEmptyUndefined(dto.vieja)) {
+        await this.ccomercialesGaleriaRP.save({
+          index: parseInt(dto.index),
+          ccomercial: parseInt(dto.ccomercial),
+          galeria: res.id
+        });
+      } else {
+        const findOne = await this.ccomercialesGaleriaRP.findOne({
+          where: {
+            galeria: dto.vieja,
+            ccomercial: dto.ccomercial,
+          }
+        })
+        if (!isEmptyUndefined(findOne)) {
+          await this.ccomercialesGaleriaRP.update(findOne.id, {
+            galeria: res.id
+          });
+        } else {
+          await this.ccomercialesGaleriaRP.save({
+            index: parseInt(dto.index),
+            ccomercial: parseInt(dto.ccomercial),
+            galeria: res.id
+          });
+        }
+      }
+
+      return await this.getOne(parseInt(dto.ccomercial));
     } catch (error) {
-      galeriaId = null
-      res = null
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
-
-    await this.ccomercialesGaleriaRP.save({
-      index: parseInt(dto.index),
-      ccomercial: parseInt(dto.ccomercial),
-      galeria: res.id
-    });
-
-    return await this.getOne(parseInt(dto.ccomercial));
   }
 
   async updateImage(dto: UpdateImageDto) {
@@ -272,11 +286,23 @@ export class CComercialesService {
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    await this.ccomercialesGaleriaRP.update(dto.file, {
-      index: dto.index,
-      ccomercial: dto.ccomercial,
-      galeria: dto.galeria
-    });
+    const findOne = await this.ccomercialesGaleriaRP.findOne({
+      where: {
+        galeria: dto.vieja,
+        ccomercial: dto.ccomercial,
+      }
+    })
+    if (!isEmptyUndefined(findOne)) {
+      await this.ccomercialesGaleriaRP.update(findOne.id, {
+        galeria: dto.galeria,
+      });
+    } else {
+      await this.ccomercialesGaleriaRP.save({
+        index: dto.index,
+        ccomercial: dto.ccomercial,
+        galeria: dto.galeria
+      });
+    }
     return await this.getOne(dto.ccomercial);
   }
 
