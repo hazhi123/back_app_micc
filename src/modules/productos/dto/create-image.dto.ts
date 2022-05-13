@@ -23,4 +23,9 @@ export class CreateImageDto {
   @IsOptional()
   index: string;
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  file: string;
+
 }

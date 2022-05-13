@@ -25,29 +25,20 @@ import {
   UpdateImageDto,
   UpdatePublicacionesDto,
 } from './dto';
+import {
+  PublicacionesGaleriaEntity,
+} from './entities/publicaciones-galeria.entity';
 import { PublicacionesEntity } from './entities/publicaciones.entity';
 
 @Injectable()
 export class PublicacionesService {
 
-  relations = [
-    'categoria',
-    'tipoPub',
-    'userEditor',
-    'image',
-    'tienda',
-    'tienda.categoria',
-    'tienda.image',
-    'ccomercial',
-    'ccomercial.image',
-    'ccomercial.ciudad',
-    'ccomercial.ciudad.estado',
-    // 'ccomercial.ciudad.estado.pais',
-  ]
-
   constructor(
     @InjectRepository(PublicacionesEntity)
     private readonly publicacionesRP: Repository<PublicacionesEntity>,
+
+    @InjectRepository(PublicacionesGaleriaEntity)
+    private readonly publicacionesGaleriaRP: Repository<PublicacionesGaleriaEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -76,7 +67,8 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("pub.ccomercial", "cc")
       .leftJoinAndSelect("pub.tienda", "tie")
-      .leftJoinAndSelect("tie.image", "tieGal")
+      .leftJoinAndSelect("tie.image", "tieImgGal")
+      .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -85,7 +77,6 @@ export class PublicacionesService {
         'pub.fechaInicio',
         'pub.fechaFinal',
         'pub.status',
-        'pub.galeria',
         'pub.linkRef',
         'pub.createdAt',
         'pubGal.id',
@@ -101,8 +92,10 @@ export class PublicacionesService {
         'uEdit.id',
         'uEdit.nombre',
         'uEdit.apellido',
-        'tieGal.id',
-        'tieGal.file',
+        'tieImgGal.id',
+        'tieImgGal.file',
+        'tieImgBackGal.id',
+        'tieImgBackGal.file',
       ])
       .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
       .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
@@ -141,7 +134,8 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("pub.image", "pubGal")
       .leftJoinAndSelect("pub.tienda", "tie")
-      .leftJoinAndSelect("tie.image", "tieGal")
+      .leftJoinAndSelect("tie.image", "tieImgGal")
+      .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -157,8 +151,10 @@ export class PublicacionesService {
         'tie.nombre',
         'tPub.id',
         'tPub.nombre',
-        'tieGal.id',
-        'tieGal.file',
+        'tieImgGal.id',
+        'tieImgGal.file',
+        'tieImgBackGal.id',
+        'tieImgBackGal.file',
         'uEdit.id',
         'uEdit.nombre',
         'uEdit.apellido',
@@ -185,7 +181,7 @@ export class PublicacionesService {
     return paginate<PublicacionesEntity>(query, options);
   }
 
-  async getOne(id: number, isGaleria: boolean = true): Promise<PublicacionesEntity> {
+  async getOne(id: number): Promise<PublicacionesEntity> {
     const getOne = await this.publicacionesRP
       .createQueryBuilder("pub")
       .leftJoinAndSelect("pub.categoria", "cat")
@@ -195,7 +191,10 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.userEditor", "uEdit")
       .leftJoinAndSelect("pub.image", "pubGal")
       .leftJoinAndSelect("pub.tienda", "tie")
-      .leftJoinAndSelect("tie.image", "tieGal")
+      .leftJoinAndSelect("tie.image", "tieImgGal")
+      .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
+      .leftJoinAndSelect("pub.files", "file")
+      .leftJoinAndSelect("file.galeria", "gal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -206,7 +205,6 @@ export class PublicacionesService {
         'pub.createdAt',
         'pub.updatedAt',
         'pub.status',
-        'pub.galeria',
         'pub.linkRef',
         'pubGal.id',
         'pubGal.file',
@@ -220,31 +218,30 @@ export class PublicacionesService {
         'ccGal.file',
         'tie.id',
         'tie.nombre',
-        'tieGal.id',
-        'tieGal.file',
+        'tieImgGal.id',
+        'tieImgGal.file',
+        'tieImgBackGal.id',
+        'tieImgBackGal.file',
         'uEdit.id',
         'uEdit.nombre',
         'uEdit.apellido',
+        'file.id',
+        'file.index',
+        'gal.id',
+        'gal.file',
       ])
       .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
       .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
       .where('pub.id = :id', { id })
       .getOne();
 
-    if (isGaleria) {
-      for (let x = 0; x < getOne.galeria.length; x++) {
-        if (!isEmptyUndefined(getOne.galeria[x])) {
-          getOne.galeria[x] = await this.galeriaService.getOne(parseInt(getOne.galeria[x]));
-        }
-      }
-    }
     if (isEmptyUndefined(getOne)) return null
     return getOne;
   }
 
   async update(dto: UpdatePublicacionesDto, userLogin: UsersEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
-    const getOne = await this.getOne(dto.id, false);
+    const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
@@ -255,7 +252,7 @@ export class PublicacionesService {
       updatedAt: new Date(),
     })
     const save = await this.publicacionesRP.save(assing)
-    return await this.getOne(save.id, true);
+    return await this.getOne(save.id);
   }
 
   async delete(id: number) {
@@ -280,10 +277,7 @@ export class PublicacionesService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    const dato = await this.getOne(parseInt(dto.publicacion), false);
-    let galeria = dato.galeria
-    let image
-
+    // const dato = await this.getOne(parseInt(dto.publicacion), false);
     if (isEmptyUndefined(dto.index)) {
       let galeriaId;
       let res: GaleriaEntity
@@ -323,17 +317,12 @@ export class PublicacionesService {
       res = null
     }
 
-    for (let x = 0; x < 9; x++) {
-      if (x == parseInt(dto.index)) {
-        galeria[x] = galeriaId
-      }
-      if (isEmptyUndefined(galeria[x])) {
-        galeria[x] = '0'
-      }
-    }
-    await this.publicacionesRP.update(parseInt(dto.publicacion), {
-      galeria
+    await this.publicacionesGaleriaRP.save({
+      index: parseInt(dto.index),
+      publicacion: parseInt(dto.publicacion),
+      galeria: res.id
     });
+
     return await this.getOne(parseInt(dto.publicacion));
   }
 
@@ -346,19 +335,15 @@ export class PublicacionesService {
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    const data = await this.getOne(parseInt(dto.publicacion), false);
-    data.galeria[parseInt(dto.index)] = '0'
-    await this.publicacionesRP.update(parseInt(dto.publicacion), {
-      galeria: data.galeria
-    });
+    await this.publicacionesGaleriaRP.delete(parseInt(dto.file));
     return await this.getOne(parseInt(dto.publicacion));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    const data = await this.getOne(dto.publicacion, false);
-    data.galeria[dto.index] = dto.galeria
-    await this.publicacionesRP.update(dto.publicacion, {
-      galeria: data.galeria
+    await this.publicacionesGaleriaRP.update(dto.file, {
+      index: dto.index,
+      publicacion: dto.publicacion,
+      galeria: dto.galeria
     });
     return await this.getOne(dto.publicacion);
   }

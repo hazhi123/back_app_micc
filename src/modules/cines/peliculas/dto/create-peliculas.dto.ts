@@ -15,13 +15,19 @@ export class CreatePeliculasDto {
   nombre: string;
 
   @ApiProperty()
+  @IsString()
   @IsNotEmpty()
-  costo: any;
+  genero: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  duracion: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  desc: string;
+  sinopsis: string;
 
   @ApiProperty()
   @IsOptional()

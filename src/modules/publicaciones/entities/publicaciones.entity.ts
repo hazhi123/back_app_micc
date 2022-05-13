@@ -24,6 +24,7 @@ import {
   TiposPublicacionEntity,
 } from '../../tipos-publicacion/entities/tipos-publicacion.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
+import { PublicacionesGaleriaEntity } from './publicaciones-galeria.entity';
 
 @Entity(CONST.MODULES.PUBLICACIONES)
 export class PublicacionesEntity {
@@ -61,15 +62,12 @@ export class PublicacionesEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
-  galeria: any[];
-
   @Column({ name: 'link_ref', type: 'varchar', default: '' })
   linkRef: string;
 
   // Relaciones
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'id_galeria' })
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
   @ManyToOne(() => CategoriasEntity)
@@ -100,5 +98,8 @@ export class PublicacionesEntity {
 
   @OneToMany(() => GuardadosEntity, guardados => guardados.publicacion)
   guardados: GuardadosEntity[];
+
+  @OneToMany(() => PublicacionesGaleriaEntity, pubGal => pubGal.publicacion)
+  files: PublicacionesGaleriaEntity[];
 
 }

@@ -25,6 +25,7 @@ import {
   UpdateImageDto,
   UpdateProductosDto,
 } from './dto';
+import { ProductosGaleriaEntity } from './entities/productos-galeria.entity';
 import { ProductosEntity } from './entities/productos.entity';
 
 @Injectable()
@@ -33,6 +34,9 @@ export class ProductosService {
   constructor(
     @InjectRepository(ProductosEntity)
     private readonly productosRP: Repository<ProductosEntity>,
+
+    @InjectRepository(ProductosEntity)
+    private readonly productosGaleriaRP: Repository<ProductosGaleriaEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -68,6 +72,8 @@ export class ProductosService {
         'proGal.file',
         'cat.id',
         'cat.nombre',
+        'tie.id',
+        'tie.nombre',
       ])
 
     if (!isEmptyUndefined(dto.status)) {
@@ -99,6 +105,8 @@ export class ProductosService {
         'proGal.file',
         'cat.id',
         'cat.nombre',
+        'tie.id',
+        'tie.nombre',
       ])
     if (!isEmptyUndefined(dto.filtro)) {
       query.andWhere("LOWER(pro.nombre) like :filtro", { filtro: `%${dto.filtro.toLowerCase()}%` })
@@ -114,13 +122,15 @@ export class ProductosService {
     return paginate<ProductosEntity>(query, options);
   }
 
-  async getOne(id: number, isGaleria: boolean = true): Promise<ProductosEntity> {
+  async getOne(id: number): Promise<ProductosEntity> {
     const getOne = await this.productosRP
       .createQueryBuilder("pro")
       .leftJoinAndSelect("pro.image", "proGal")
       .leftJoinAndSelect("pro.tienda", "tie")
+      .leftJoinAndSelect("pro.categoria", "cat")
+      .leftJoinAndSelect("pro.files", "file")
+      .leftJoinAndSelect("file.galeria", "gal")
       .leftJoinAndSelect("tie.image", "tieGal")
-      .leftJoinAndSelect("tie.categoria", "cat")
       .select([
         'pro.id',
         'pro.nombre',
@@ -131,7 +141,6 @@ export class ProductosService {
         'pro.updatedBy',
         'pro.updatedAt',
         'pro.status',
-        'pro.galeria',
         'proGal.id',
         'proGal.file',
         'tie.id',
@@ -140,17 +149,13 @@ export class ProductosService {
         'tieGal.file',
         'cat.id',
         'cat.nombre',
+        'file.id',
+        'file.index',
+        'gal.id',
+        'gal.file',
       ])
       .where('pro.id = :id', { id })
       .getOne()
-
-    if (isGaleria) {
-      for (let x = 0; x < getOne.galeria.length; x++) {
-        if (getOne.galeria[x] != '0') {
-          getOne.galeria[x] = await this.galeriaService.getOne(parseInt(getOne.galeria[x]));
-        }
-      }
-    }
 
     if (isEmptyUndefined(getOne)) return null
     return getOne;
@@ -183,9 +188,7 @@ export class ProductosService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    const dato = await this.getOne(parseInt(dto.producto), false);
-    let galeria = dato.galeria
-
+    // const dato = await this.getOne(parseInt(dto.producto), false);
     if (isEmptyUndefined(dto.index)) {
       let galeriaId;
       let res: GaleriaEntity
@@ -225,17 +228,12 @@ export class ProductosService {
       res = null
     }
 
-    for (let x = 0; x < 9; x++) {
-      if (x == parseInt(dto.index)) {
-        galeria[x] = galeriaId
-      }
-      if (isEmptyUndefined(galeria[x])) {
-        galeria[x] = '0'
-      }
-    }
-    await this.productosRP.update(parseInt(dto.producto), {
-      galeria
+    await this.productosGaleriaRP.save({
+      index: parseInt(dto.index),
+      producto: parseInt(dto.producto),
+      galeria: res.id
     });
+
     return await this.getOne(parseInt(dto.producto));
   }
 
@@ -257,19 +255,15 @@ export class ProductosService {
   }
 
   async deleteGaleria(dto: CreateImageDto) {
-    const data = await this.getOne(parseInt(dto.producto), false);
-    data.galeria[parseInt(dto.index)] = '0'
-    await this.productosRP.update(parseInt(dto.producto), {
-      galeria: data.galeria
-    });
+    await this.productosGaleriaRP.delete(parseInt(dto.file));
     return await this.getOne(parseInt(dto.producto));
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    const data = await this.getOne(dto.producto, false);
-    data.galeria[dto.index] = dto.galeria
-    await this.productosRP.update(dto.producto, {
-      galeria: data.galeria
+    await this.productosGaleriaRP.update(dto.file, {
+      index: dto.index,
+      producto: dto.producto,
+      galeria: dto.galeria
     });
     return await this.getOne(dto.producto);
   }

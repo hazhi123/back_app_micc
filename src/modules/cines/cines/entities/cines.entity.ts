@@ -9,7 +9,11 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../../common/constants';
+import {
+  CComercialesEntity,
+} from '../../../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
+import { CinesCComercialesEntity } from './cines-ccomerciales.entity';
 import { CinesGaleriaEntity } from './cines-galeria.entity';
 import { CinesPeliculasEntity } from './cines-peliculas.entity';
 
@@ -43,22 +47,25 @@ export class CinesEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0', '0', '0', '0'] })
-  galeria: any[];
-
   // Relaciones
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn()
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn()
+  @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
   @OneToMany(() => CinesPeliculasEntity, cinesPeliculas => cinesPeliculas.pelicula)
-  peliculas: CinesPeliculasEntity[];
+  funciones: CinesPeliculasEntity[];
 
   @OneToMany(() => CinesGaleriaEntity, cine_galeria => cine_galeria.cine)
   panoramas: CinesGaleriaEntity[];
+
+  @OneToMany(() => CinesCComercialesEntity, cineCC => cineCC.cine)
+  ccomerciales: CComercialesEntity[];
+
+  @OneToMany(() => CinesGaleriaEntity, cineGal => cineGal.cine)
+  files: CinesGaleriaEntity[];
 
 }

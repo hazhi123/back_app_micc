@@ -48,19 +48,19 @@ export class PeliculasEntity {
   status: boolean;
 
   // Relaciones
-  @OneToMany(() => CinesPeliculasEntity, cinesPelicuas => cinesPelicuas.cine)
+  @OneToMany(() => CinesPeliculasEntity, cinesPeli => cinesPeli.cine)
   cines: CinesPeliculasEntity[];
 
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn()
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn()
+  @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn()
+  @JoinColumn({ name: 'id_galeria_video' })
   trailer: number;
 
 }

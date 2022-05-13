@@ -11,6 +11,9 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
+import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
@@ -87,6 +90,9 @@ export class CComercialesEntity {
 
   @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
   contactos: ContactosEntity[];
+
+  @OneToMany(() => CinesCComercialesEntity, cineCC => cineCC.ccomercial)
+  cines: CinesCComercialesEntity[];
 
   @ManyToOne(() => CiudadesEntity)
   @JoinColumn({ name: 'id_ciudad' })

@@ -14,6 +14,11 @@ export class GetAllDto {
   id: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  cine: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;

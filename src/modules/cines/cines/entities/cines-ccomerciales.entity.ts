@@ -1,5 +1,4 @@
 import {
-  Column,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -7,25 +6,24 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../../common/constants';
-import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
+import {
+  CComercialesEntity,
+} from '../../../ccomerciales/entities/ccomerciales.entity';
 import { CinesEntity } from './cines.entity';
 
-@Entity(CONST.MODULES.CINES.CINES_GALERIA)
-export class CinesGaleriaEntity {
+@Entity(CONST.MODULES.CINES.CINES_CCOMERCIALES)
+export class CinesCComercialesEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({ type: 'integer' })
-  index: number;
 
   //relaciones
   @ManyToOne(() => CinesEntity)
   @JoinColumn({ name: 'id_cine' })
   cine: number;
 
-  @ManyToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'id_galeria' })
-  galeria: number;
+  @ManyToOne(() => CComercialesEntity)
+  @JoinColumn({ name: 'id_ccomercial' })
+  ccomercial: number;
 
 }

@@ -23,6 +23,8 @@ import { URLPAGE } from '../../../config';
 import { UsersEntity } from '../../users/entities/users.entity';
 import { CinesService } from './cines.service';
 import {
+  AsignarCComercialesDto,
+  AsignarPeliculasDto,
   CreateCinesDto,
   GetAllDto,
   UpdateCinesDto,
@@ -50,6 +52,32 @@ export class CinesController {
   }
 
   @Auth()
+  @Post('/asignar/peliculas')
+  async asignarPeliculas(
+    @Body() dto: AsignarPeliculasDto,
+  ) {
+    let data = await this.cinesService.asignarPeliculas(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/asignar/ccomerciales')
+  async asignarCComerciales(
+    @Body() dto: AsignarCComercialesDto,
+  ) {
+    let data = await this.cinesService.asignarCComerciales(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
   @Post('/all')
   async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -60,7 +88,30 @@ export class CinesController {
     const data = await this.cinesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PLANES}`,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Post('/all/publico')
+  async getAllPublico(
+    @Body() dto: GetAllDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.cinesService.getAllPublico(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/all/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,

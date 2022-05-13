@@ -33,6 +33,7 @@ export const MODULES = {
     TIENDAS: 'tiendas',
     TIENDAS_GALERIA: 'tiendas_galeria',
     PUBLICACIONES: 'publicaciones',
+    PUBLICACIONES_GALERIA: 'publicaciones_galeria',
     GUARDADOS: 'guardados',
     COMENTARIOS: 'comentarios',
     LIKES: 'likes',
@@ -42,10 +43,12 @@ export const MODULES = {
     CONTACTOS: 'contactos',
     HORARIOS: 'horarios',
     PRODUCTOS: 'productos',
+    PRODUCTOS_GALERIA: 'productos_galeria',
     CINES: {
         CINES: 'cines',
         CINES_GALERIA: 'cines_galeria',
         CINES_PELICULAS: 'cines_peliculas',
+        CINES_CCOMERCIALES: 'cines_ccomerciales',
         PELICULAS: 'peliculas',
     },
 }

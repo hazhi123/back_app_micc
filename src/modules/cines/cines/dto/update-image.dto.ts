@@ -11,7 +11,7 @@ export class UpdateImageDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  producto: number;
+  cine: number;
 
   @ApiProperty()
   @IsNumber()
@@ -25,7 +25,12 @@ export class UpdateImageDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
+  @IsNotEmpty()
   file: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  isBack: number;
 
 }

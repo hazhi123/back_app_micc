@@ -73,6 +73,29 @@ export class PeliculasController {
   }
 
   @Auth()
+  @Post('/all/publico')
+  async getAllPublico(
+    @Body() dto: GetAllDto,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.peliculasService.getAllPublico(dto, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/all/publico`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
     const data = await this.peliculasService.getOne(id);

@@ -11,17 +11,12 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  entidad: string; //ccomercial - tienda
+  cine: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  entId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  publicacion: string;
+  file: string;
 
   @ApiProperty()
   @IsString()
@@ -31,6 +26,6 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  file: string;
+  isBack: string; // 0 = image 1 = imageBack
 
 }

@@ -38,7 +38,6 @@ export class TiendasService {
     @InjectRepository(TiendasGaleriaEntity)
     private readonly tiendasGaleriaRP: Repository<TiendasGaleriaEntity>,
 
-
     private galeriaService: GaleriaService,
 
   ) { }
@@ -59,7 +58,6 @@ export class TiendasService {
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
     const query = await this.tiendasRP
       .createQueryBuilder("ti")
-    query
       .leftJoinAndSelect("ti.ccomercial", "cc")
       .leftJoinAndSelect("ti.categoria", "cat")
       .leftJoinAndSelect("ti.image", "imgGal")

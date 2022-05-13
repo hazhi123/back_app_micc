@@ -23,4 +23,9 @@ export class UpdateImageDto {
   @IsOptional()
   index: number;
 
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  file: number;
+
 }

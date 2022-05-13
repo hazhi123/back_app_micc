@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -11,6 +12,7 @@ import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import { ProductosGaleriaEntity } from './productos-galeria.entity';
 
 @Entity(CONST.MODULES.PRODUCTOS)
 export class ProductosEntity {
@@ -42,12 +44,9 @@ export class ProductosEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column("text", { array: true, default: ['0', '0', '0', '0', '0', '0'] })
-  galeria: any[];
-
   // Relaciones
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn({ name: 'id_galeria' })
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
   @ManyToOne(() => TiendasEntity)
@@ -57,5 +56,8 @@ export class ProductosEntity {
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'id_categoria' })
   categoria: number;
+
+  @OneToMany(() => ProductosGaleriaEntity, proGal => proGal.producto)
+  files: ProductosGaleriaEntity[];
 
 }
