@@ -23,23 +23,6 @@ export default class PublicacionesSeeder implements Seeder {
       })
       .createMany(269);
 
-    for (let x = 1; x <= 269; x++) {
-      var data = []
-      for (let index = 0; index < 10; index++) {
-        data.push({
-          publicacion: x,
-          index: index,
-          galeria: Math.floor((Math.random() * 900) + 1),
-        });
-      }
-      await connection
-        .createQueryBuilder()
-        .insert()
-        .into(PublicacionesGaleriaEntity)
-        .values(data)
-        .execute()
-    }
-
     await factory(PublicacionesEntity)()
       .map(async (ent) => {
         ent.ccomercial = 1;
@@ -51,7 +34,7 @@ export default class PublicacionesSeeder implements Seeder {
       })
       .createMany(1203);
 
-    for (let x = 1; x <= 1203; x++) {
+    for (let x = 1; x <= 1472; x++) {
       var data = []
       for (let index = 0; index < 9; index++) {
         data.push({

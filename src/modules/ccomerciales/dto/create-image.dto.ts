@@ -26,11 +26,6 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  vieja: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
   isBack: string; // 0 = image 1 = imageBack
 
 }

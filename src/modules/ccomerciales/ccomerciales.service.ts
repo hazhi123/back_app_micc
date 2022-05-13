@@ -200,7 +200,7 @@ export class CComercialesService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    if (!isEmptyUndefined(dto.isBack) && isEmptyUndefined(dto.index)) {
+    if ((parseInt(dto.isBack) == 0 || parseInt(dto.isBack) == 1) && dto.index === undefined) {
       try {
         const data = {
           entidad: 'ccomercial',
@@ -237,33 +237,26 @@ export class CComercialesService {
       }
       const res = await this.galeriaService.create(file, data, userLogin)
 
-      if (isEmptyUndefined(dto.vieja)) {
-        await this.ccomercialesGaleriaRP.save({
-          index: parseInt(dto.index),
-          ccomercial: parseInt(dto.ccomercial),
+      const findOne = await this.ccomercialesGaleriaRP.findOne({
+        where: {
+          ccomercial: dto.ccomercial,
+          index: dto.index,
+        }
+      })
+      if (!isEmptyUndefined(findOne)) {
+        await this.ccomercialesGaleriaRP.update(findOne.id, {
           galeria: res.id
         });
       } else {
-        const findOne = await this.ccomercialesGaleriaRP.findOne({
-          where: {
-            galeria: dto.vieja,
-            ccomercial: dto.ccomercial,
-          }
-        })
-        if (!isEmptyUndefined(findOne)) {
-          await this.ccomercialesGaleriaRP.update(findOne.id, {
-            galeria: res.id
-          });
-        } else {
-          await this.ccomercialesGaleriaRP.save({
-            index: parseInt(dto.index),
-            ccomercial: parseInt(dto.ccomercial),
-            galeria: res.id
-          });
-        }
+        await this.ccomercialesGaleriaRP.save({
+          ccomercial: parseInt(dto.ccomercial),
+          index: parseInt(dto.index),
+          galeria: res.id
+        });
       }
 
       return await this.getOne(parseInt(dto.ccomercial));
+
     } catch (error) {
       throw new HttpException({
         statusCode: HttpStatus.ACCEPTED,
@@ -288,8 +281,8 @@ export class CComercialesService {
   async updateGaleria(dto: UpdateImageDto) {
     const findOne = await this.ccomercialesGaleriaRP.findOne({
       where: {
-        galeria: dto.vieja,
         ccomercial: dto.ccomercial,
+        index: dto.index,
       }
     })
     if (!isEmptyUndefined(findOne)) {
@@ -298,14 +291,12 @@ export class CComercialesService {
       });
     } else {
       await this.ccomercialesGaleriaRP.save({
-        index: dto.index,
         ccomercial: dto.ccomercial,
+        index: dto.index,
         galeria: dto.galeria
       });
     }
     return await this.getOne(dto.ccomercial);
   }
-
-
 
 }

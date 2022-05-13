@@ -15,7 +15,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -277,10 +276,7 @@ export class PublicacionesService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    // const dato = await this.getOne(parseInt(dto.publicacion), false);
-    if (isEmptyUndefined(dto.index)) {
-      let galeriaId;
-      let res: GaleriaEntity
+    if (dto.index === undefined || dto.index === '') {
       try {
         const data = {
           entidad: dto.entidad,
@@ -288,21 +284,19 @@ export class PublicacionesService {
           referencia: 'publicacion',
           refId: parseInt(dto.publicacion),
         }
-        res = await this.galeriaService.create(file, data, userLogin)
-        galeriaId = res.id
+        const res = await this.galeriaService.create(file, data, userLogin)
+        await this.publicacionesRP.update(parseInt(dto.publicacion), {
+          image: res.id
+        });
+        return res;
       } catch (error) {
-        galeriaId = null
-        res = null
+        throw new HttpException({
+          statusCode: HttpStatus.ACCEPTED,
+          message: 'Error al registrar la imagen',
+        }, HttpStatus.ACCEPTED)
       }
-
-      await this.publicacionesRP.update(parseInt(dto.publicacion), {
-        image: galeriaId
-      });
-      return res;
     }
 
-    let galeriaId;
-    let res: GaleriaEntity
     try {
       const data = {
         entidad: dto.entidad,
@@ -310,20 +304,44 @@ export class PublicacionesService {
         referencia: 'publicacion',
         refId: parseInt(dto.publicacion),
       }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
+      const res = await this.galeriaService.create(file, data, userLogin)
+
+      if (isEmptyUndefined(dto.vieja)) {
+        await this.publicacionesGaleriaRP.save({
+          index: parseInt(dto.index),
+          publicacion: parseInt(dto.publicacion),
+          galeria: res.id
+        });
+      } else {
+        const findOne = await this.publicacionesGaleriaRP.findOne({
+          where: {
+            galeria: dto.vieja,
+            publicacion: dto.publicacion,
+          }
+        })
+        if (!isEmptyUndefined(findOne)) {
+          await this.publicacionesGaleriaRP.update(findOne.id, {
+            galeria: res.id
+          });
+        } else {
+          await this.publicacionesGaleriaRP.save({
+            index: parseInt(dto.index),
+            publicacion: parseInt(dto.publicacion),
+            galeria: res.id
+          });
+        }
+
+      }
+
+      return await this.getOne(parseInt(dto.publicacion));
+
     } catch (error) {
-      galeriaId = null
-      res = null
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
 
-    await this.publicacionesGaleriaRP.save({
-      index: parseInt(dto.index),
-      publicacion: parseInt(dto.publicacion),
-      galeria: res.id
-    });
-
-    return await this.getOne(parseInt(dto.publicacion));
   }
 
   async updateImage(dto: UpdateImageDto) {
@@ -340,11 +358,23 @@ export class PublicacionesService {
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    await this.publicacionesGaleriaRP.update(dto.file, {
-      index: dto.index,
-      publicacion: dto.publicacion,
-      galeria: dto.galeria
-    });
+    const findOne = await this.publicacionesGaleriaRP.findOne({
+      where: {
+        galeria: dto.vieja,
+        publicacion: dto.publicacion,
+      }
+    })
+    if (!isEmptyUndefined(findOne)) {
+      await this.publicacionesGaleriaRP.update(findOne.id, {
+        galeria: dto.galeria,
+      });
+    } else {
+      await this.publicacionesGaleriaRP.save({
+        index: dto.index,
+        publicacion: dto.publicacion,
+        galeria: dto.galeria
+      });
+    }
     return await this.getOne(dto.publicacion);
   }
 

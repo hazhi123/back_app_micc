@@ -15,7 +15,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -228,11 +227,7 @@ export class TiendasService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    // const dato = await this.getOne(parseInt(dto.tienda), false);
-
-    if (isEmptyUndefined(dto.index)) {
-      let galeriaId;
-      let res: GaleriaEntity
+    if ((parseInt(dto.isBack) == 0 || parseInt(dto.isBack) == 1) && dto.index === undefined) {
       try {
         const data = {
           entidad: 'tienda',
@@ -240,31 +235,26 @@ export class TiendasService {
           referencia: 'image',
           refId: parseInt(dto.tienda),
         }
-        res = await this.galeriaService.create(file, data, userLogin)
-        galeriaId = res.id
+        const res = await this.galeriaService.create(file, data, userLogin)
+        const galeriaId = res.id
+        if (parseInt(dto.isBack) == 0) {
+          await this.tiendasRP.update(parseInt(dto.tienda), {
+            image: galeriaId
+          });
+        } else {
+          await this.tiendasRP.update(parseInt(dto.tienda), {
+            imageBack: galeriaId
+          });
+        }
+        return res;
       } catch (error) {
-        galeriaId = null
-        res = null
+        throw new HttpException({
+          statusCode: HttpStatus.ACCEPTED,
+          message: 'Error al registrar la imagen',
+        }, HttpStatus.ACCEPTED)
       }
-
-      if (parseInt(dto.isBack) == 0) {
-        await this.tiendasRP.update(parseInt(dto.tienda), {
-          image: galeriaId
-        });
-      } else {
-        await this.tiendasRP.update(parseInt(dto.tienda), {
-          imageBack: galeriaId
-        });
-      }
-
-      await this.tiendasRP.update(parseInt(dto.tienda), {
-        image: galeriaId
-      });
-      return res;
     }
 
-    let galeriaId;
-    let res: GaleriaEntity
     try {
       const data = {
         entidad: 'tienda',
@@ -272,26 +262,40 @@ export class TiendasService {
         referencia: 'galeria',
         refId: parseInt(dto.tienda),
       }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
+      const res = await this.galeriaService.create(file, data, userLogin)
+
+      const findOne = await this.tiendasGaleriaRP.findOne({
+        where: {
+          tienda: dto.tienda,
+          index: dto.index,
+        }
+      })
+      if (!isEmptyUndefined(findOne)) {
+        await this.tiendasGaleriaRP.update(findOne.id, {
+          galeria: res.id
+        });
+      } else {
+        await this.tiendasGaleriaRP.save({
+          tienda: parseInt(dto.tienda),
+          index: parseInt(dto.index),
+          galeria: res.id
+        });
+      }
+
+      return await this.getOne(parseInt(dto.tienda));
+
     } catch (error) {
-      galeriaId = null
-      res = null
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
-
-    await this.tiendasGaleriaRP.save({
-      index: parseInt(dto.index),
-      ccomercial: parseInt(dto.tienda),
-      galeria: res.id
-    });
-
-    return await this.getOne(parseInt(dto.tienda));
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.tiendasRP.update(dto.tienda, {
-      image: dto.galeria
-    });
+    await this.tiendasRP.update(dto.tienda,
+      dto.isBack ? { imageBack: dto.galeria } : { image: dto.galeria }
+    );
     const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
     return getOneGaleria;
   }
@@ -302,11 +306,23 @@ export class TiendasService {
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    await this.tiendasGaleriaRP.update(dto.file, {
-      index: dto.index,
-      tienda: dto.tienda,
-      galeria: dto.galeria
-    });
+    const findOne = await this.tiendasGaleriaRP.findOne({
+      where: {
+        tienda: dto.tienda,
+        index: dto.index,
+      }
+    })
+    if (!isEmptyUndefined(findOne)) {
+      await this.tiendasGaleriaRP.update(findOne.id, {
+        galeria: dto.galeria,
+      });
+    } else {
+      await this.tiendasGaleriaRP.save({
+        tienda: dto.tienda,
+        index: dto.index,
+        galeria: dto.galeria
+      });
+    }
     return await this.getOne(dto.tienda);
   }
 

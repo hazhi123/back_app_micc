@@ -27,11 +27,6 @@ export class UpdateImageDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  vieja: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
   index: number;
 
   @ApiProperty()

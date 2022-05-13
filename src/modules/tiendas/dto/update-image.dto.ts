@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -15,6 +16,11 @@ export class UpdateImageDto {
 
   @ApiProperty()
   @IsNumber()
+  @IsOptional()
+  file: number;
+
+  @ApiProperty()
+  @IsNumber()
   @IsNotEmpty()
   galeria: number;
 
@@ -24,13 +30,8 @@ export class UpdateImageDto {
   index: number;
 
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  file: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  isBack: number;
+  @IsBoolean()
+  @IsOptional()
+  isBack: boolean;
 
 }

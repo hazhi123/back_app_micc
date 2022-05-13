@@ -15,6 +15,11 @@ export class UpdateImageDto {
 
   @ApiProperty()
   @IsNumber()
+  @IsOptional()
+  vieja: number;
+
+  @ApiProperty()
+  @IsNumber()
   @IsNotEmpty()
   galeria: number;
 

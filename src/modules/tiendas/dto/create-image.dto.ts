@@ -15,7 +15,7 @@ export class CreateImageDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   file: string;
 
   @ApiProperty()
