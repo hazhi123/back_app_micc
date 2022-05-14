@@ -205,18 +205,17 @@ export class CComercialesService {
         const data = {
           entidad: 'ccomercial',
           entId: parseInt(dto.ccomercial),
-          referencia: 'image',
+          referencia: parseInt(dto.isBack) == 0 ? 'image' : 'imageBack',
           refId: parseInt(dto.ccomercial),
         }
         const res = await this.galeriaService.create(file, data, userLogin)
-        const galeriaId = res.id
         if (parseInt(dto.isBack) == 0) {
           await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-            image: galeriaId
+            image: res.id
           });
         } else {
           await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
-            imageBack: galeriaId
+            imageBack: res.id
           });
         }
         return res;

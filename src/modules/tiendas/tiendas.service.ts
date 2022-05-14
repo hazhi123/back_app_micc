@@ -67,7 +67,6 @@ export class TiendasService {
         'ti.correo',
         'ti.telPrimero',
         'ti.ubicacion',
-        'ti.likes',
         'ti.isGastro',
         'ti.status',
         'ti.abierto',
@@ -152,7 +151,6 @@ export class TiendasService {
         'ti.telPrimero',
         'ti.telSegundo',
         'ti.ubicacion',
-        'ti.likes',
         'ti.desc',
         'ti.createdBy',
         'ti.createdAt',
@@ -232,18 +230,17 @@ export class TiendasService {
         const data = {
           entidad: 'tienda',
           entId: parseInt(dto.tienda),
-          referencia: 'image',
+          referencia: parseInt(dto.isBack) == 0 ? 'image' : 'imageBack',
           refId: parseInt(dto.tienda),
         }
         const res = await this.galeriaService.create(file, data, userLogin)
-        const galeriaId = res.id
         if (parseInt(dto.isBack) == 0) {
           await this.tiendasRP.update(parseInt(dto.tienda), {
-            image: galeriaId
+            image: res.id
           });
         } else {
           await this.tiendasRP.update(parseInt(dto.tienda), {
-            imageBack: galeriaId
+            imageBack: res.id
           });
         }
         return res;

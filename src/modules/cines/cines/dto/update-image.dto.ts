@@ -1,7 +1,7 @@
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -19,18 +19,8 @@ export class UpdateImageDto {
   galeria: number;
 
   @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  index: number;
-
-  @ApiProperty()
-  @IsNumber()
+  @IsBoolean()
   @IsNotEmpty()
-  file: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  isBack: number;
+  isBack: boolean;
 
 }

@@ -32,7 +32,7 @@ export default class CComercialesSeeder implements Seeder {
         cc.imageBack = Math.floor((Math.random() * 900) + 1);
         return cc;
       })
-      .createMany(1);
+      .createMany(15);
 
     var data = []
 

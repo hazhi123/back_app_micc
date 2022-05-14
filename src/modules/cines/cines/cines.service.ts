@@ -17,7 +17,6 @@ import { isEmptyUndefined } from '../../../common/helpers';
 import {
   CComercialesCinesEntity,
 } from '../../ccomerciales/entities/ccomerciales-cines.entity';
-import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { GaleriaService } from '../../galeria/galeria.service';
 import { UsersEntity } from '../../users/entities/users.entity';
 import {
@@ -47,7 +46,7 @@ export class CinesService {
     private readonly cinesPeliculasRP: Repository<CinesPeliculasEntity>,
 
     @InjectRepository(CComercialesCinesEntity)
-    private readonly cinesCComercialesRP: Repository<CComercialesCinesEntity>,
+    private readonly ccomercialesCinesRP: Repository<CComercialesCinesEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -86,12 +85,15 @@ export class CinesService {
         cine: dto.cine,
         ccomercial: dto.ccomerciales[i]
       };
-      const findOne = await this.cinesCComercialesRP.findOne({ where: data })
+      const findOne = await this.ccomercialesCinesRP.findOne({ where: data })
       if (isEmptyUndefined(findOne)) {
-        await this.cinesCComercialesRP.save(data);
+        await this.ccomercialesCinesRP.save(data);
+        // return await this.ccomercialesCinesRP.findOne({ where: { id: save.id } });
+      } else {
+        await this.ccomercialesCinesRP.delete(findOne.id);
       }
     }
-    return await this.getOne(dto.cine);
+    return 1;
   }
 
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<CinesEntity>> {
@@ -143,6 +145,28 @@ export class CinesService {
 
     query.getMany();
     return paginate<CinesEntity>(query, options);
+  }
+
+  async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<CComercialesCinesEntity>> {
+    const query = await this.ccomercialesCinesRP
+      .createQueryBuilder("ccCine")
+      .leftJoinAndSelect("ccCine.ccomercial", "cc")
+      .leftJoinAndSelect("cc.image", "imgGal")
+      .leftJoinAndSelect("cc.imageBack", "imgBackGal")
+      .select([
+        'ccCine.id',
+        'cc.id',
+        'cc.nombre',
+        'cc.direccion',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+      ])
+      .where('ccCine.cine = :id', { id })
+      .orderBy("cc.nombre", "ASC")
+    query.getMany();
+    return paginate<CComercialesCinesEntity>(query, options);
   }
 
   async getOne(id: number): Promise<CinesEntity> {
@@ -215,38 +239,30 @@ export class CinesService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    // const getOne = await this.getOne(parseInt(dto.ccomercial));
-
-    if (isEmptyUndefined(dto.index)) {
-      let galeriaId;
-      let res: GaleriaEntity
-      try {
-        const data = {
-          entidad: 'ccomercial',
-          entId: parseInt(dto.cine),
-          referencia: 'cine',
-          refId: parseInt(dto.cine),
-        }
-        res = await this.galeriaService.create(file, data, userLogin)
-        galeriaId = res.id
-      } catch (error) {
-        galeriaId = null
-        res = null
+    try {
+      const data = {
+        entidad: 'cine',
+        entId: parseInt(dto.cine),
+        referencia: parseInt(dto.isBack) == 0 ? 'image' : 'imageBack',
+        refId: parseInt(dto.cine),
       }
-
+      const res = await this.galeriaService.create(file, data, userLogin)
       if (parseInt(dto.isBack) == 0) {
         await this.cinesRP.update(parseInt(dto.cine), {
-          image: galeriaId
+          image: res.id
         });
       } else {
         await this.cinesRP.update(parseInt(dto.cine), {
-          imageBack: galeriaId
+          imageBack: res.id
         });
       }
-
       return res;
+    } catch (error) {
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
-
   }
 
   async updateImage(dto: UpdateImageDto) {

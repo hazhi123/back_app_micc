@@ -23,6 +23,4 @@ export class GetAllDto {
   @IsOptional()
   status: boolean;
 
-
-
 }

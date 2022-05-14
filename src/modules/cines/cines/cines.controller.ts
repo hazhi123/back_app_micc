@@ -10,7 +10,10 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
 import * as CONST from '../../../common/constants';
@@ -26,8 +29,10 @@ import {
   AsignarCComercialesDto,
   AsignarPeliculasDto,
   CreateCinesDto,
+  CreateImageDto,
   GetAllDto,
   UpdateCinesDto,
+  UpdateImageDto,
 } from './dto';
 
 @ApiTags(CONST.MODULES.CINES.CINES)
@@ -52,7 +57,7 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/asignar/peliculas')
+  @Post('/asignar_peliculas')
   async asignarPeliculas(
     @Body() dto: AsignarPeliculasDto,
   ) {
@@ -65,14 +70,14 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/asignar/ccomerciales')
+  @Post('/asignar_ccomerciales')
   async asignarCComerciales(
     @Body() dto: AsignarCComercialesDto,
   ) {
     let data = await this.cinesService.asignarCComerciales(dto);
     return {
       statusCode: 200,
-      data,
+      data: data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
   }
@@ -101,7 +106,7 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/all/publico')
+  @Post('/all_publico')
   async getAllPublico(
     @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -112,6 +117,29 @@ export class CinesController {
       page,
       limit,
       route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/all/publico`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Get(':id/ccomerciales')
+  async getCComerciales(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.cinesService.getCComerciales(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/${id}/ccomerciales`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -159,6 +187,37 @@ export class CinesController {
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.ERROR.DELETE : CONST.MESSAGES.COMMON.DELETE_DATA
     }
+  }
+
+  @Auth()
+  @Post('/image')
+  @UseInterceptors(
+    FileInterceptor('file'),
+  )
+  async createImage(
+    @UploadedFile() file,
+    @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
+  ) {
+    const data = await this.cinesService.createImage(file, dto, userLogin);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/image_update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.cinesService.updateImage(dto);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
   }
 
 }

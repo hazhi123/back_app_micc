@@ -17,7 +17,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { codigoLincencia } from '../../utils/create-licenses-free';
-import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { LicenciasService } from '../licencias/licencias.service';
 import {
@@ -218,8 +217,8 @@ export class UsersService {
     const getOne = await this.usersRP
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.perfil", "per")
-      .leftJoinAndSelect("user.image", "userGal")
-      .leftJoinAndSelect("user.imageBack", "userGalBack")
+      .leftJoinAndSelect("user.image", "imgGal")
+      .leftJoinAndSelect("user.imageBack", "imgBackGal")
       .leftJoinAndSelect("user.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
       // .leftJoinAndSelect("edo.pais", "pais")
@@ -242,10 +241,10 @@ export class UsersService {
         'user.status',
         'user.isTrabajaTienda',
         'user.isVisitante',
-        'userGal.id',
-        'userGal.file',
-        'userGalBack.id',
-        'userGalBack.file',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
         'per.id',
         'per.nombre',
         'tie.id',
@@ -386,55 +385,38 @@ export class UsersService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-
-    const getOne = await this.usersRP.findOne({
-      where: { id: dto.user },
-    })
-    if (userLogin.isVisitante) {
-      if (parseInt(dto.isBack) == 0) {
-        if (!isEmptyUndefined(getOne.image)) {
-          await this.galeriaService.delete(getOne.image)
-        }
-      } else {
-        if (!isEmptyUndefined(getOne.imageBack)) {
-          await this.galeriaService.delete(getOne.imageBack)
-        }
-      }
-    }
-
-    let galeriaId;
-    let res: GaleriaEntity
     try {
       const data = {
-        entidad: 'user',
+        entidad: 'cine',
         entId: parseInt(dto.user),
-        referencia: 'user',
+        referencia: parseInt(dto.isBack) == 0 ? 'image' : 'imageBack',
         refId: parseInt(dto.user),
       }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
+      const res = await this.galeriaService.create(file, data, userLogin)
+      if (parseInt(dto.isBack) == 0) {
+        await this.usersRP.update(parseInt(dto.user), {
+          image: res.id
+        });
+      } else {
+        await this.usersRP.update(parseInt(dto.user), {
+          imageBack: res.id
+        });
+      }
+      return res;
     } catch (error) {
-      galeriaId = null
-      res = null
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
-
-    if (parseInt(dto.isBack) == 0) {
-      await this.usersRP.update(parseInt(dto.user),
-        { image: galeriaId }
-      );
-    } else {
-      await this.usersRP.update(parseInt(dto.user),
-        { imageBack: galeriaId }
-      );
-    }
-    return res;
   }
 
   async updateImage(dto: UpdateImageDto) {
     await this.usersRP.update(dto.user,
       dto.isBack ? { imageBack: dto.galeria } : { image: dto.galeria }
     );
-    return await this.getOne(dto.user);
+    const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
+    return getOneGaleria;
   }
 
 }

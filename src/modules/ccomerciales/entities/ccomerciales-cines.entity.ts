@@ -1,16 +1,11 @@
 import {
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
-import {
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-import { ApiProperty } from '@nestjs/swagger';
 
 import * as CONST from '../../../common/constants';
 import {
@@ -25,9 +20,7 @@ export class CComercialesCinesEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
+  @Column({ type: 'varchar', default: '' })
   ubicacion: string;
 
   //relaciones
