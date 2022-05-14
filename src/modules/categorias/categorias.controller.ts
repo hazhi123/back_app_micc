@@ -28,7 +28,7 @@ import {
   UpdateImageDto,
 } from './dto';
 
-@ApiTags(CONST.MODULES.CATEGORIAS.toUpperCase())
+@ApiTags(CONST.MODULES.CATEGORIAS)
 @Controller(CONST.MODULES.CATEGORIAS)
 export class CategoriasController {
   constructor(

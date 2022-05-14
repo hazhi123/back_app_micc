@@ -20,7 +20,7 @@ import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { ProductosEntity } from '../../productos/entities/productos.entity';
 import { TiendasGaleriaEntity } from './tiendas-galeria.entity';
 
-@Entity(CONST.MODULES.TIENDAS)
+@Entity(CONST.MODULES.TIENDAS.TIENDAS)
 export class TiendasEntity {
 
   @PrimaryGeneratedColumn()
@@ -40,9 +40,6 @@ export class TiendasEntity {
 
   @Column({ name: 'ubic_latlng', type: 'varchar' })
   ubicacion: string;
-
-  @Column({ type: 'integer', default: 0 })
-  likes: number;
 
   @Column({ type: 'varchar', default: '' })
   desc: string;

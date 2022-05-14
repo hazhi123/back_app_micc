@@ -10,7 +10,7 @@ import * as CONST from '../../../common/constants';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasEntity } from './tiendas.entity';
 
-@Entity(CONST.MODULES.TIENDAS_GALERIA)
+@Entity(CONST.MODULES.TIENDAS.GALERIA)
 export class TiendasGaleriaEntity {
 
   @PrimaryGeneratedColumn()

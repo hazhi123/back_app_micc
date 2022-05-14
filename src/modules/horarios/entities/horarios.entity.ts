@@ -13,7 +13,7 @@ import {
 } from '../../ccomerciales/entities/ccomerciales.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 
-@Entity(CONST.MODULES.HORARIOS)
+@Entity(CONST.MODULES.CCOMERCIALES.HORARIOS)
 export class HorariosEntity {
 
   @PrimaryGeneratedColumn()

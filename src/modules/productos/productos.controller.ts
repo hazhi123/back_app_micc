@@ -33,8 +33,8 @@ import {
 } from './dto';
 import { ProductosService } from './productos.service';
 
-@ApiTags(CONST.MODULES.PRODUCTOS.toUpperCase())
-@Controller(CONST.MODULES.PRODUCTOS)
+@ApiTags(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
+@Controller(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
 export class ProductosController {
   constructor(
     private readonly publicacionesService: ProductosService
@@ -64,7 +64,7 @@ export class ProductosController {
     const data = await this.publicacionesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PRODUCTOS}/all`,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -87,7 +87,7 @@ export class ProductosController {
     const data = await this.publicacionesService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PRODUCTOS}/all/publico`,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS}/all/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,

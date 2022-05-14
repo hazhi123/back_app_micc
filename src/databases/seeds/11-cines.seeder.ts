@@ -5,8 +5,8 @@ import {
 } from 'typeorm-seeding';
 
 import {
-  CinesCComercialesEntity,
-} from '../../modules/cines/cines/entities/cines-ccomerciales.entity';
+  CComercialesCinesEntity,
+} from '../../modules/ccomerciales/entities/ccomerciales-cines.entity';
 import {
   CinesGaleriaEntity,
 } from '../../modules/cines/cines/entities/cines-galeria.entity';
@@ -43,7 +43,7 @@ export default class CinesSeeder implements Seeder {
       await connection
         .createQueryBuilder()
         .insert()
-        .into(CinesCComercialesEntity)
+        .into(CComercialesCinesEntity)
         .values({
           ccomercial: 1,
           cine: x

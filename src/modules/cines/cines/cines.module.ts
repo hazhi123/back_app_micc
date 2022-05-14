@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { GaleriaModule } from '../../../modules/galeria/galeria.module';
+import {
+  CComercialesCinesEntity,
+} from '../../ccomerciales/entities/ccomerciales-cines.entity';
 import { CinesController } from './cines.controller';
 import { CinesService } from './cines.service';
-import { CinesCComercialesEntity } from './entities/cines-ccomerciales.entity';
 import { CinesGaleriaEntity } from './entities/cines-galeria.entity';
 import { CinesPeliculasEntity } from './entities/cines-peliculas.entity';
 import { CinesEntity } from './entities/cines.entity';
@@ -14,7 +16,7 @@ import { CinesEntity } from './entities/cines.entity';
     CinesEntity,
     CinesPeliculasEntity,
     CinesGaleriaEntity,
-    CinesCComercialesEntity,
+    CComercialesCinesEntity,
   ])],
   controllers: [CinesController],
   providers: [CinesService],

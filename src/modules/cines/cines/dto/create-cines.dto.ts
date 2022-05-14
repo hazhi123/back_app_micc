@@ -16,11 +16,6 @@ export class CreateCinesDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  ubicacion: string;
-
-  @ApiProperty()
-  @IsString()
   @IsOptional()
   desc: string;
 

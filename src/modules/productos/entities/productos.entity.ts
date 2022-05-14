@@ -14,7 +14,7 @@ import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { ProductosGaleriaEntity } from './productos-galeria.entity';
 
-@Entity(CONST.MODULES.PRODUCTOS)
+@Entity(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
 export class ProductosEntity {
 
   @PrimaryGeneratedColumn()

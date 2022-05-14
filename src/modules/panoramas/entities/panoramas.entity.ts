@@ -4,21 +4,20 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
 import {
+  CComercialesCinesEntity,
+} from '../../ccomerciales/entities/ccomerciales-cines.entity';
+import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import {
-  PublicacionesEntity,
-} from '../../publicaciones/entities/publicaciones.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 
-@Entity(CONST.MODULES.CATEGORIAS)
+@Entity(CONST.MODULES.PANORAMAS)
 export class CategoriasEntity {
 
   @PrimaryGeneratedColumn()
@@ -46,15 +45,17 @@ export class CategoriasEntity {
   status: boolean;
 
   // Relaciones
-  @ManyToOne(() => CComercialesEntity, cc => cc.categorias)
+  @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @OneToMany(() => TiendasEntity, tiendas => tiendas.categoria)
-  tiendas: TiendasEntity[];
+  @ManyToOne(() => TiendasEntity)
+  @JoinColumn({ name: 'id_tienda' })
+  tienda: number;
 
-  @OneToMany(() => PublicacionesEntity, pub => pub.categoria)
-  publicaciones: PublicacionesEntity[];
+  @ManyToOne(() => CComercialesCinesEntity)
+  @JoinColumn({ name: 'id_cine' })
+  cine: number;
 
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn()

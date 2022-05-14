@@ -33,8 +33,8 @@ import {
 } from './dto';
 import { TiendasService } from './tiendas.service';
 
-@ApiTags(CONST.MODULES.TIENDAS.toUpperCase())
-@Controller(CONST.MODULES.TIENDAS)
+@ApiTags(CONST.MODULES.TIENDAS.TIENDAS)
+@Controller(CONST.MODULES.TIENDAS.TIENDAS)
 export class TiendasController {
   constructor(
     private readonly tiendasService: TiendasService
@@ -65,7 +65,7 @@ export class TiendasController {
     const data = await this.tiendasService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS}/all`,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.TIENDAS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -88,7 +88,7 @@ export class TiendasController {
     const data = await this.tiendasService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS}/all/publico`,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.TIENDAS}/all/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,

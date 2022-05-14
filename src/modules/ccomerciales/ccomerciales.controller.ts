@@ -32,8 +32,8 @@ import {
   UpdateImageDto,
 } from './dto';
 
-@ApiTags(CONST.MODULES.CCOMERCIALES.toUpperCase())
-@Controller(CONST.MODULES.CCOMERCIALES)
+@ApiTags(CONST.MODULES.CCOMERCIALES.CCOMERCIALES)
+@Controller(CONST.MODULES.CCOMERCIALES.CCOMERCIALES)
 export class CComercialesController {
   constructor(
     private readonly ccomercialesService: CComercialesService

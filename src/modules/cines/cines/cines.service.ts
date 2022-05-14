@@ -14,6 +14,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../../common/constants';
 import { isEmptyUndefined } from '../../../common/helpers';
+import {
+  CComercialesCinesEntity,
+} from '../../ccomerciales/entities/ccomerciales-cines.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { GaleriaService } from '../../galeria/galeria.service';
 import { UsersEntity } from '../../users/entities/users.entity';
@@ -26,7 +29,6 @@ import {
   UpdateCinesDto,
   UpdateImageDto,
 } from './dto';
-import { CinesCComercialesEntity } from './entities/cines-ccomerciales.entity';
 import { CinesGaleriaEntity } from './entities/cines-galeria.entity';
 import { CinesPeliculasEntity } from './entities/cines-peliculas.entity';
 import { CinesEntity } from './entities/cines.entity';
@@ -44,14 +46,16 @@ export class CinesService {
     @InjectRepository(CinesPeliculasEntity)
     private readonly cinesPeliculasRP: Repository<CinesPeliculasEntity>,
 
-    @InjectRepository(CinesCComercialesEntity)
-    private readonly cinesCComercialesRP: Repository<CinesCComercialesEntity>,
+    @InjectRepository(CComercialesCinesEntity)
+    private readonly cinesCComercialesRP: Repository<CComercialesCinesEntity>,
 
     private galeriaService: GaleriaService,
 
   ) { }
 
   async create(dto: CreateCinesDto, userLogin: UsersEntity) {
+    await this.findNombre(dto.nombre, false)
+
     const save = await this.cinesRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -99,7 +103,6 @@ export class CinesService {
       .select([
         'cine.id',
         'cine.nombre',
-        'cine.ubicacion',
         'cine.desc',
         'cine.status',
         'imgGal.id',
@@ -127,7 +130,6 @@ export class CinesService {
       .select([
         'cine.id',
         'cine.nombre',
-        'cine.ubicacion',
         'cine.desc',
         'cine.status',
         'imgGal.id',
@@ -152,14 +154,9 @@ export class CinesService {
       .leftJoinAndSelect("cc.ccomercial", "ccCC")
       .leftJoinAndSelect("cine.funciones", "fun")
       .leftJoinAndSelect("fun.pelicula", "funPel")
-      .leftJoinAndSelect("cine.panoramas", "pano")
-      .leftJoinAndSelect("pano.galeria", "panoGal")
-      .leftJoinAndSelect("cine.files", "file")
-      .leftJoinAndSelect("file.galeria", "gal")
       .select([
         'cine.id',
         'cine.nombre',
-        'cine.ubicacion',
         'cine.desc',
         'cine.status',
         'imgGal.id',
@@ -169,16 +166,9 @@ export class CinesService {
         'cc.id',
         'ccCC.id',
         'ccCC.nombre',
-        'file.id',
-        'file.index',
-        'gal.id',
-        'gal.file',
         'fun.id',
         'funPel.id',
         'funPel.nombre',
-        'pano.id',
-        'panoGal.id',
-        'panoGal.file',
       ])
       .where('cine.id = :id', { id })
       .getOne()
@@ -188,6 +178,9 @@ export class CinesService {
   }
 
   async update(dto: UpdateCinesDto, userLogin: UsersEntity) {
+    const findNombre = await this.findNombre(dto.nombre, true)
+    if (!isEmptyUndefined(findNombre)) delete dto.nombre
+
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
@@ -210,6 +203,15 @@ export class CinesService {
     }, HttpStatus.ACCEPTED)
     await this.cinesRP.delete(id);
     return getOne;
+  }
+
+  async findNombre(nombre: string, data: boolean) {
+    const findOne = await this.cinesRP.findOne({ where: { nombre } })
+    if (data) return findOne
+    if (!isEmptyUndefined(findOne)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: CONST.MESSAGES.COMMON.WARNING.NAME_DATA,
+    }, HttpStatus.ACCEPTED)
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
@@ -245,29 +247,6 @@ export class CinesService {
       return res;
     }
 
-    let galeriaId;
-    let res: GaleriaEntity
-    try {
-      const data = {
-        entidad: 'ccomercial',
-        entId: parseInt(dto.cine),
-        referencia: 'cine',
-        refId: parseInt(dto.cine),
-      }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
-    } catch (error) {
-      galeriaId = null
-      res = null
-    }
-
-    await this.cinesGaleriaRP.save({
-      index: parseInt(dto.index),
-      cine: parseInt(dto.cine),
-      galeria: res.id
-    });
-
-    return await this.getOne(parseInt(dto.cine));
   }
 
   async updateImage(dto: UpdateImageDto) {
@@ -276,20 +255,6 @@ export class CinesService {
     );
     const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
     return getOneGaleria;
-  }
-
-  async deleteGaleria(dto: CreateImageDto) {
-    await this.cinesGaleriaRP.delete(parseInt(dto.file));
-    return await this.getOne(parseInt(dto.cine));
-  }
-
-  async updateGaleria(dto: UpdateImageDto) {
-    await this.cinesGaleriaRP.update(dto.file, {
-      index: dto.index,
-      cine: dto.cine,
-      galeria: dto.galeria
-    });
-    return await this.getOne(dto.cine);
   }
 
 }

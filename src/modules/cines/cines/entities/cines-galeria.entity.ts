@@ -7,8 +7,10 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../../common/constants';
+import {
+  CComercialesCinesEntity,
+} from '../../../ccomerciales/entities/ccomerciales-cines.entity';
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
-import { CinesEntity } from './cines.entity';
 
 @Entity(CONST.MODULES.CINES.CINES_GALERIA)
 export class CinesGaleriaEntity {
@@ -20,7 +22,7 @@ export class CinesGaleriaEntity {
   index: number;
 
   //relaciones
-  @ManyToOne(() => CinesEntity)
+  @ManyToOne(() => CComercialesCinesEntity)
   @JoinColumn({ name: 'id_cine' })
   cine: number;
 

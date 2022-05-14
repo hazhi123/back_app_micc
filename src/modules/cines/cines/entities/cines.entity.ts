@@ -10,10 +10,12 @@ import {
 
 import * as CONST from '../../../../common/constants';
 import {
+  CComercialesCinesEntity,
+} from '../../../ccomerciales/entities/ccomerciales-cines.entity';
+import {
   CComercialesEntity,
 } from '../../../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
-import { CinesCComercialesEntity } from './cines-ccomerciales.entity';
 import { CinesGaleriaEntity } from './cines-galeria.entity';
 import { CinesPeliculasEntity } from './cines-peliculas.entity';
 
@@ -25,9 +27,6 @@ export class CinesEntity {
 
   @Column({ type: 'varchar' })
   nombre: string;
-
-  @Column({ type: 'varchar' })
-  ubicacion: string;
 
   @Column({ type: 'varchar', default: '' })
   desc: string;
@@ -62,10 +61,7 @@ export class CinesEntity {
   @OneToMany(() => CinesGaleriaEntity, cine_galeria => cine_galeria.cine)
   panoramas: CinesGaleriaEntity[];
 
-  @OneToMany(() => CinesCComercialesEntity, cineCC => cineCC.cine)
+  @OneToMany(() => CComercialesCinesEntity, cineCC => cineCC.cine)
   ccomerciales: CComercialesEntity[];
-
-  @OneToMany(() => CinesGaleriaEntity, cineGal => cineGal.cine)
-  files: CinesGaleriaEntity[];
 
 }

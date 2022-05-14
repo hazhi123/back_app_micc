@@ -3,3 +3,4 @@ export * from './update-ccomerciales.dto';
 export * from './get-all.dto';
 export * from './create-image.dto';
 export * from './update-image.dto';
+export * from './asignar-cines.dto';

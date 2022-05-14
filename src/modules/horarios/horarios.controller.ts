@@ -1,10 +1,8 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
-  Patch,
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,13 +14,11 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
-import {
-  CreateHorariosDto,
-} from './dto';
+import { CreateHorariosDto } from './dto';
 import { HorariosService } from './horarios.service';
 
-@ApiTags(CONST.MODULES.HORARIOS.toUpperCase())
-@Controller(CONST.MODULES.HORARIOS)
+@ApiTags(CONST.MODULES.CCOMERCIALES.HORARIOS)
+@Controller(CONST.MODULES.CCOMERCIALES.HORARIOS)
 export class HorariosController {
   constructor(
     private readonly horariosService: HorariosService
