@@ -306,31 +306,22 @@ export class PublicacionesService {
       }
       const res = await this.galeriaService.create(file, data, userLogin)
 
-      if (isEmptyUndefined(dto.vieja)) {
-        await this.publicacionesGaleriaRP.save({
-          index: parseInt(dto.index),
-          publicacion: parseInt(dto.publicacion),
+      const findOne = await this.publicacionesGaleriaRP.findOne({
+        where: {
+          publicacion: dto.publicacion,
+          index: dto.index,
+        }
+      })
+      if (!isEmptyUndefined(findOne)) {
+        await this.publicacionesGaleriaRP.update(findOne.id, {
           galeria: res.id
         });
       } else {
-        const findOne = await this.publicacionesGaleriaRP.findOne({
-          where: {
-            galeria: dto.vieja,
-            publicacion: dto.publicacion,
-          }
-        })
-        if (!isEmptyUndefined(findOne)) {
-          await this.publicacionesGaleriaRP.update(findOne.id, {
-            galeria: res.id
-          });
-        } else {
-          await this.publicacionesGaleriaRP.save({
-            index: parseInt(dto.index),
-            publicacion: parseInt(dto.publicacion),
-            galeria: res.id
-          });
-        }
-
+        await this.publicacionesGaleriaRP.save({
+          publicacion: parseInt(dto.publicacion),
+          index: parseInt(dto.index),
+          galeria: res.id
+        });
       }
 
       return await this.getOne(parseInt(dto.publicacion));
@@ -360,8 +351,8 @@ export class PublicacionesService {
   async updateGaleria(dto: UpdateImageDto) {
     const findOne = await this.publicacionesGaleriaRP.findOne({
       where: {
-        galeria: dto.vieja,
         publicacion: dto.publicacion,
+        index: dto.index,
       }
     })
     if (!isEmptyUndefined(findOne)) {
@@ -370,8 +361,8 @@ export class PublicacionesService {
       });
     } else {
       await this.publicacionesGaleriaRP.save({
-        index: dto.index,
         publicacion: dto.publicacion,
+        index: dto.index,
         galeria: dto.galeria
       });
     }

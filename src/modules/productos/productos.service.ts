@@ -15,7 +15,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -35,7 +34,7 @@ export class ProductosService {
     @InjectRepository(ProductosEntity)
     private readonly productosRP: Repository<ProductosEntity>,
 
-    @InjectRepository(ProductosEntity)
+    @InjectRepository(ProductosGaleriaEntity)
     private readonly productosGaleriaRP: Repository<ProductosGaleriaEntity>,
 
     private galeriaService: GaleriaService,
@@ -188,10 +187,7 @@ export class ProductosService {
   }
 
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
-    // const dato = await this.getOne(parseInt(dto.producto), false);
-    if (isEmptyUndefined(dto.index)) {
-      let galeriaId;
-      let res: GaleriaEntity
+    if (dto.index === undefined || dto.index === '') {
       try {
         const data = {
           entidad: 'tienda',
@@ -199,21 +195,19 @@ export class ProductosService {
           referencia: 'producto',
           refId: parseInt(dto.producto),
         }
-        res = await this.galeriaService.create(file, data, userLogin)
-        galeriaId = res.id
+        const res = await this.galeriaService.create(file, data, userLogin)
+        await this.productosRP.update(parseInt(dto.producto), {
+          image: res.id
+        });
+        return res;
       } catch (error) {
-        galeriaId = null
-        res = null
+        throw new HttpException({
+          statusCode: HttpStatus.ACCEPTED,
+          message: 'Error al registrar la imagen',
+        }, HttpStatus.ACCEPTED)
       }
-
-      await this.productosRP.update(parseInt(dto.producto), {
-        image: galeriaId
-      });
-      return res;
     }
 
-    let galeriaId;
-    let res: GaleriaEntity
     try {
       const data = {
         entidad: 'tienda',
@@ -221,32 +215,35 @@ export class ProductosService {
         referencia: 'producto',
         refId: parseInt(dto.producto),
       }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
+      const res = await this.galeriaService.create(file, data, userLogin)
+
+      const findOne = await this.productosGaleriaRP.findOne({
+        where: {
+          producto: dto.producto,
+          index: dto.index,
+        }
+      })
+      if (!isEmptyUndefined(findOne)) {
+        await this.productosGaleriaRP.update(findOne.id, {
+          galeria: res.id
+        });
+      } else {
+        await this.productosGaleriaRP.save({
+          producto: parseInt(dto.producto),
+          index: parseInt(dto.index),
+          galeria: res.id
+        });
+      }
+      return await this.getOne(parseInt(dto.producto));
     } catch (error) {
-      galeriaId = null
-      res = null
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
-
-    await this.productosGaleriaRP.save({
-      index: parseInt(dto.index),
-      producto: parseInt(dto.producto),
-      galeria: res.id
-    });
-
-    return await this.getOne(parseInt(dto.producto));
   }
 
   async updateImage(dto: UpdateImageDto) {
-    const getOne = await this.productosRP.findOne({
-      where: { image: dto.galeria },
-    });
-
-    if (!isEmptyUndefined(getOne)) throw new HttpException({
-      statusCode: HttpStatus.ACCEPTED,
-      message: 'Esta imagén se encuentra en uso',
-    }, HttpStatus.ACCEPTED)
-
     await this.productosRP.update(dto.producto, {
       image: dto.galeria
     });
@@ -260,11 +257,23 @@ export class ProductosService {
   }
 
   async updateGaleria(dto: UpdateImageDto) {
-    await this.productosGaleriaRP.update(dto.file, {
-      index: dto.index,
-      producto: dto.producto,
-      galeria: dto.galeria
-    });
+    const findOne = await this.productosGaleriaRP.findOne({
+      where: {
+        producto: dto.producto,
+        index: dto.index,
+      }
+    })
+    if (!isEmptyUndefined(findOne)) {
+      await this.productosGaleriaRP.update(findOne.id, {
+        galeria: dto.galeria,
+      });
+    } else {
+      await this.productosGaleriaRP.save({
+        producto: dto.producto,
+        index: dto.index,
+        galeria: dto.galeria
+      });
+    }
     return await this.getOne(dto.producto);
   }
 

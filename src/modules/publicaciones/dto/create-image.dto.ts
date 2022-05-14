@@ -33,9 +33,4 @@ export class CreateImageDto {
   @IsOptional()
   file: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  vieja: string;
-
 }
