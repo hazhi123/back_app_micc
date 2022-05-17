@@ -10,7 +10,10 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
 import * as CONST from '../../../common/constants';
@@ -22,14 +25,17 @@ import { isEmptyUndefined } from '../../../common/helpers';
 import { URLPAGE } from '../../../config';
 import { UsersEntity } from '../../users/entities/users.entity';
 import {
+  AsignarCinesDto,
+  CreateImageDto,
   CreatePeliculasDto,
   GetAllDto,
+  UpdateImageDto,
   UpdatePeliculasDto,
 } from './dto';
 import { PeliculasService } from './peliculas.service';
 
-@ApiTags(CONST.MODULES.CINES.PELICULAS)
-@Controller(CONST.MODULES.CINES.PELICULAS)
+@ApiTags(CONST.MODULES.CINES.PELICULAS.PELICULAS)
+@Controller(CONST.MODULES.CINES.PELICULAS.PELICULAS)
 export class PeliculasController {
   constructor(
     private readonly peliculasService: PeliculasService
@@ -43,7 +49,7 @@ export class PeliculasController {
   ) {
     let data = await this.peliculasService.create(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -73,7 +79,7 @@ export class PeliculasController {
   }
 
   @Auth()
-  @Post('/all/publico')
+  @Post('/publico')
   async getAllPublico(
     @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -83,7 +89,7 @@ export class PeliculasController {
     const data = await this.peliculasService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/all/publico`,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -100,7 +106,7 @@ export class PeliculasController {
   async getOne(@Param('id') id: number) {
     const data = await this.peliculasService.getOne(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
     }
@@ -114,7 +120,7 @@ export class PeliculasController {
   ) {
     const data = await this.peliculasService.update(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.UPDATE_DATA
     }
@@ -127,10 +133,79 @@ export class PeliculasController {
   ) {
     const data = await this.peliculasService.delete(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.ERROR.DELETE : CONST.MESSAGES.COMMON.DELETE_DATA
     }
   }
+
+  @Auth()
+  @Post('/image')
+  @UseInterceptors(
+    FileInterceptor('file'),
+  )
+  async createImage(
+    @UploadedFile() file,
+    @Body() dto: CreateImageDto,
+    @UserLogin() userLogin: UsersEntity
+  ) {
+    const data = await this.peliculasService.createImage(file, dto, userLogin);
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/image/update')
+  async createImageUpdate(
+    @Body() dto: UpdateImageDto,
+  ) {
+    const data = await this.peliculasService.updateImage(dto);
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/asignar/cines')
+  async asignarCComerciales(
+    @Body() dto: AsignarCinesDto,
+  ) {
+    let data = await this.peliculasService.asignarCines(dto);
+    return {
+      statusCode: HttpStatus.OK,
+      data: data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+
+  @Auth()
+  @Get(':id/cines')
+  async getCines(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.peliculasService.getCines(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.PELICULAS.PELICULAS}/${id}/cines`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
 
 }

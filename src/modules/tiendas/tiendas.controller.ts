@@ -78,7 +78,7 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/all/publico')
+  @Post('/publico')
   async getAllPublico(
     @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -88,7 +88,7 @@ export class TiendasController {
     const data = await this.tiendasService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.TIENDAS}/all/publico`,
+      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.TIENDAS}/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,

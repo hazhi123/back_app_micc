@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -47,7 +48,7 @@ export class CComercialesController {
   ) {
     let data = await this.ccomercialesService.create(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -67,7 +68,7 @@ export class CComercialesController {
       route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES}/all`,
     });
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data.items,
       meta: data.meta,
       links: data.links,
@@ -83,7 +84,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.actualizarApertura(dto);
     let res = {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data,
       message: 'Se ha actualizado la apertura del Centro Comercial'
     }
@@ -97,7 +98,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.getOne(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
     }
@@ -111,7 +112,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.update(dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.UPDATE_DATA
     }
@@ -122,7 +123,7 @@ export class CComercialesController {
   async delete(@Param('id') id: number) {
     const data = await this.ccomercialesService.delete(id);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.DELETE_DATA
     }
@@ -140,7 +141,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.createImage(file, dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -153,7 +154,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.updateImage(dto);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -171,7 +172,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.createImage(file, dto, userLogin);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
@@ -184,7 +185,7 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.deleteGaleria(dto);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: 'Se ha eliminado la imagen correctamente'
     };
@@ -197,10 +198,33 @@ export class CComercialesController {
   ) {
     const data = await this.ccomercialesService.updateGaleria(dto);
     return {
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data,
       message: 'La imagén se ha actualizado correctamente'
     };
+  }
+
+  @Auth()
+  @Get(':id/cines')
+  async getCines(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.ccomercialesService.getCines(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES.CCOMERCIALES}/${id}/cines`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
   }
 
 }

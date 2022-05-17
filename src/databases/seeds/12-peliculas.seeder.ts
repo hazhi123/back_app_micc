@@ -5,8 +5,8 @@ import {
 } from 'typeorm-seeding';
 
 import {
-  CinesPeliculasEntity,
-} from '../../modules/cines/cines/entities/cines-peliculas.entity';
+  PeliculasCinesEntity,
+} from '../../modules/cines/peliculas/entities/peliculas-cines.entity';
 import {
   PeliculasEntity,
 } from '../../modules/cines/peliculas/entities/peliculas.entity';
@@ -33,7 +33,7 @@ export default class PeliculasSeeder implements Seeder {
       await connection
         .createQueryBuilder()
         .insert()
-        .into(CinesPeliculasEntity)
+        .into(PeliculasCinesEntity)
         .values(data)
         .execute()
     }

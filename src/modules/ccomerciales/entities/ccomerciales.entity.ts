@@ -11,6 +11,9 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
+import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
@@ -20,7 +23,6 @@ import {
   ParroquiasEntity,
 } from '../../ubigeo/parroquias/entities/parroquias.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
-import { CComercialesCinesEntity } from './ccomerciales-cines.entity';
 import { CComercialesGaleriaEntity } from './ccomerciales-galeria.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES.CCOMERCIALES)
@@ -89,9 +91,6 @@ export class CComercialesEntity {
   @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
   contactos: ContactosEntity[];
 
-  @OneToMany(() => CComercialesCinesEntity, cineCC => cineCC.ccomercial)
-  cines: CComercialesCinesEntity[];
-
   @ManyToOne(() => CiudadesEntity)
   @JoinColumn({ name: 'id_ciudad' })
   ciudad: number;
@@ -106,4 +105,6 @@ export class CComercialesEntity {
   @OneToMany(() => CComercialesGaleriaEntity, ccGal => ccGal.ccomercial)
   files: CComercialesGaleriaEntity[];
 
+  @OneToMany(() => CinesCComercialesEntity, ccC => ccC.ccomercial)
+  cines: CinesCComercialesEntity[];
 }

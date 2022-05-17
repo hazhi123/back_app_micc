@@ -11,17 +11,17 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  cine: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  file: string;
+  pelicula: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
   index: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  isTrailer: string; // 0 = no 1 = si
 
   @ApiProperty()
   @IsString()

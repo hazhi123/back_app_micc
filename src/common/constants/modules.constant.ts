@@ -28,9 +28,7 @@ export const MODULES = {
     PLANES: 'planes',
     CCOMERCIALES: {
         CCOMERCIALES: 'ccomerciales',
-        CINES: 'ccomerciales_cines',
         GALERIA: 'ccomerciales_galeria',
-        TIENDAS: 'ccomerciales_tiendas',
         HORARIOS: 'horarios',
     },
     GALERIA: 'galeria',
@@ -38,6 +36,7 @@ export const MODULES = {
     TIENDAS: {
         TIENDAS: 'tiendas',
         GALERIA: 'tiendas_galeria',
+        CCOMERCIALES: 'tiendas_ccomerciales',
         PRODUCTOS: {
             PRODUCTOS: 'productos',
             GALERIA: 'productos_galeria',
@@ -54,8 +53,11 @@ export const MODULES = {
     PANORAMAS: 'panoramas',
     CINES: {
         CINES: 'cines',
-        CINES_GALERIA: 'cines_galeria',
-        CINES_PELICULAS: 'cines_peliculas',
-        PELICULAS: 'peliculas',
+        GALERIA: 'cines_galeria',
+        CCOMERCIALES: 'cines_ccomerciales',
+        PELICULAS: {
+            PELICULAS: 'peliculas',
+            CINES: 'peliculas_cines',
+        },
     },
 }

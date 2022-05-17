@@ -14,16 +14,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../../common/constants';
 import { isEmptyUndefined } from '../../../common/helpers';
-import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { GaleriaService } from '../../galeria/galeria.service';
 import { UsersEntity } from '../../users/entities/users.entity';
 import {
+  AsignarCinesDto,
   CreateImageDto,
   CreatePeliculasDto,
   GetAllDto,
   UpdateImageDto,
   UpdatePeliculasDto,
 } from './dto';
+import { PeliculasCinesEntity } from './entities/peliculas-cines.entity';
 import { PeliculasEntity } from './entities/peliculas.entity';
 
 @Injectable()
@@ -35,11 +36,15 @@ export class PeliculasService {
     @InjectRepository(PeliculasEntity)
     private readonly peliculasRP: Repository<PeliculasEntity>,
 
+    @InjectRepository(PeliculasCinesEntity)
+    private readonly peliculasCinesRP: Repository<PeliculasCinesEntity>,
+
     private galeriaService: GaleriaService,
 
   ) { }
 
   async create(dto: CreatePeliculasDto, userLogin: UsersEntity) {
+    await this.findNombre(dto.nombre, false)
     const save = await this.peliculasRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -61,6 +66,7 @@ export class PeliculasService {
         'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
+        'peli.status',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
@@ -80,7 +86,7 @@ export class PeliculasService {
       .createQueryBuilder("peli")
       .leftJoinAndSelect("peli.image", "imgGal")
       .leftJoinAndSelect("peli.imageBack", "imgBackGal")
-      .leftJoinAndSelect("peli.cines", "cine")
+      .leftJoinAndSelect("peli.peliculas", "cine")
       .select([
         'peli.id',
         'peli.nombre',
@@ -105,13 +111,13 @@ export class PeliculasService {
       .leftJoinAndSelect("peli.image", "imgGal")
       .leftJoinAndSelect("peli.imageBack", "imgBackGal")
       .leftJoinAndSelect("peli.trailer", "trai")
-      .leftJoinAndSelect("peli.cines", "cine")
       .select([
         'peli.id',
         'peli.nombre',
         'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
+        'peli.status',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
@@ -127,7 +133,9 @@ export class PeliculasService {
   }
 
   async update(dto: UpdatePeliculasDto, userLogin: UsersEntity) {
-    const getOne = await this.getOne(dto.id);
+    const getOne = await this.getOne(dto.id); const findNombre = await this.findNombre(dto.nombre, true)
+    if (!isEmptyUndefined(findNombre)) delete dto.nombre
+
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
@@ -151,43 +159,109 @@ export class PeliculasService {
     return getOne;
   }
 
-  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+  async findNombre(nombre: string, data: boolean) {
+    const findOne = await this.peliculasRP.findOne({ where: { nombre } })
+    if (data) return findOne
+    if (!isEmptyUndefined(findOne)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: CONST.MESSAGES.COMMON.WARNING.NAME_DATA,
+    }, HttpStatus.ACCEPTED)
+  }
 
-    let galeriaId;
-    let res: GaleriaEntity
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
     try {
       const data = {
-        entidad: 'cine',
-        entId: parseInt(dto.cine),
-        referencia: 'pelicula',
-        refId: parseInt(dto.cine),
+        entidad: 'pelicula',
+        entId: parseInt(dto.pelicula),
+        referencia: parseInt(dto.isTrailer) == 1 ? 'trailer' : parseInt(dto.isBack) == 0 ? 'image' : 'imageBack',
+        refId: parseInt(dto.pelicula),
       }
-      res = await this.galeriaService.create(file, data, userLogin)
-      galeriaId = res.id
+      const res = await this.galeriaService.create(file, data, userLogin)
+
+      if (parseInt(dto.isTrailer) == 0) {
+        if (parseInt(dto.isBack) == 0) {
+          await this.peliculasRP.update(parseInt(dto.pelicula), {
+            image: res.id
+          });
+        } else {
+          await this.peliculasRP.update(parseInt(dto.pelicula), {
+            imageBack: res.id
+          });
+        }
+      } else {
+        await this.peliculasRP.update(parseInt(dto.pelicula), {
+          trailer: res.id
+        });
+      }
+      return res;
     } catch (error) {
-      galeriaId = null
-      res = null
+      throw new HttpException({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Error al registrar la imagen',
+      }, HttpStatus.ACCEPTED)
     }
-
-    if (parseInt(dto.isBack) == 0) {
-      await this.peliculasRP.update(parseInt(dto.cine), {
-        image: galeriaId
-      });
-    } else {
-      await this.peliculasRP.update(parseInt(dto.cine), {
-        imageBack: galeriaId
-      });
-    }
-
-    return res;
   }
 
   async updateImage(dto: UpdateImageDto) {
-    await this.peliculasRP.update(dto.cine,
-      dto.isBack ? { imageBack: dto.galeria } : { image: dto.galeria }
-    );
+    if (dto.isTrailer) {
+      await this.peliculasRP.update(dto.pelicula,
+        { trailer: dto.galeria }
+      );
+    } else {
+      await this.peliculasRP.update(dto.pelicula,
+        dto.isBack ? { imageBack: dto.galeria } : { image: dto.galeria }
+      );
+
+    }
     const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
     return getOneGaleria;
+  }
+
+  async asignarCines(dto: AsignarCinesDto) {
+    for (let i = 0; i < dto.cines.length; i++) {
+      const data = {
+        pelicula: dto.pelicula,
+        cineCC: dto.cines[i]
+      };
+      const findOne = await this.peliculasCinesRP.findOne({ where: data })
+      if (isEmptyUndefined(findOne)) {
+        await this.peliculasCinesRP.save(data);
+      } else {
+        await this.peliculasCinesRP.delete(findOne.id);
+      }
+    }
+    return 1;
+  }
+
+  async getCines(id: Number, options: IPaginationOptions): Promise<Pagination<PeliculasCinesEntity>> {
+    const query = await this.peliculasCinesRP
+      .createQueryBuilder("pCine")
+      .leftJoinAndSelect("pCine.cineCC", "cCC")
+      .leftJoinAndSelect("cCC.cine", "cine")
+      .leftJoinAndSelect("cine.image", "imgGal")
+      .leftJoinAndSelect("cine.imageBack", "imgBackGal")
+      .leftJoinAndSelect("cCC.ccomercial", "cc")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .select([
+        'pCine.id',
+        'cCC.id',
+        'cCC.ubicacion',
+        'cine.id',
+        'cine.nombre',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'cc.id',
+        'cc.nombre',
+        'ciu.id',
+        'ciu.ciudad',
+      ])
+      .where('pCine.pelicula = :id', { id })
+      .orderBy("cc.nombre", "ASC")
+      .addOrderBy("cine.nombre", "ASC")
+    query.getMany();
+    return paginate<PeliculasCinesEntity>(query, options);
   }
 
 }

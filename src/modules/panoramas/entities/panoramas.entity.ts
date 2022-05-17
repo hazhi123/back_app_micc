@@ -9,16 +9,16 @@ import {
 
 import * as CONST from '../../../common/constants';
 import {
-  CComercialesCinesEntity,
-} from '../../ccomerciales/entities/ccomerciales-cines.entity';
-import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 
 @Entity(CONST.MODULES.PANORAMAS)
-export class CategoriasEntity {
+export class PanoramasEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -53,9 +53,9 @@ export class CategoriasEntity {
   @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
-  @ManyToOne(() => CComercialesCinesEntity)
-  @JoinColumn({ name: 'id_cine' })
-  cine: number;
+  @ManyToOne(() => CinesCComercialesEntity)
+  @JoinColumn({ name: 'id_cine_cc' })
+  cineCC: number;
 
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn()

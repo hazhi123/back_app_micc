@@ -27,7 +27,6 @@ import { UsersEntity } from '../../users/entities/users.entity';
 import { CinesService } from './cines.service';
 import {
   AsignarCComercialesDto,
-  AsignarPeliculasDto,
   CreateCinesDto,
   CreateImageDto,
   GetAllDto,
@@ -57,20 +56,7 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/asignar_peliculas')
-  async asignarPeliculas(
-    @Body() dto: AsignarPeliculasDto,
-  ) {
-    let data = await this.cinesService.asignarPeliculas(dto);
-    return {
-      statusCode: 200,
-      data,
-      message: CONST.MESSAGES.COMMON.CREATE_DATA
-    };
-  }
-
-  @Auth()
-  @Post('/asignar_ccomerciales')
+  @Post('/asignar/ccomerciales')
   async asignarCComerciales(
     @Body() dto: AsignarCComercialesDto,
   ) {
@@ -106,7 +92,7 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/all_publico')
+  @Post('/publico')
   async getAllPublico(
     @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -117,29 +103,6 @@ export class CinesController {
       page,
       limit,
       route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/all/publico`,
-    });
-    let res = {
-      statusCode: HttpStatus.OK,
-      data: data.items,
-      meta: data.meta,
-      links: data.links,
-      message: ''
-    }
-    return res
-  }
-
-  @Auth()
-  @Get(':id/ccomerciales')
-  async getCComerciales(
-    @Param('id') id: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
-  ) {
-    limit = limit > 50 ? 50 : limit;
-    const data = await this.cinesService.getCComerciales(id, {
-      page,
-      limit,
-      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/${id}/ccomerciales`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -208,7 +171,7 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/image_update')
+  @Post('/image/update')
   async createImageUpdate(
     @Body() dto: UpdateImageDto,
   ) {
@@ -218,6 +181,52 @@ export class CinesController {
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
+  }
+
+  @Auth()
+  @Get(':id/ccomerciales')
+  async getCComerciales(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.cinesService.getCComerciales(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/${id}/ccomerciales`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
+  @Auth()
+  @Get(':id/peliculas')
+  async getPeliculas(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.cinesService.getPeliculas(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/${id}/peliculas`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
   }
 
 }

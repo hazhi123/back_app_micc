@@ -15,6 +15,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
+import {
+  CinesCComercialesEntity,
+} from '../cines/cines/entities/cines-ccomerciales.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
@@ -38,6 +41,9 @@ export class CComercialesService {
 
     @InjectRepository(CComercialesGaleriaEntity)
     private readonly ccomercialesGaleriaRP: Repository<CComercialesGaleriaEntity>,
+
+    @InjectRepository(CinesCComercialesEntity)
+    private readonly cinesCComercialesRP: Repository<CinesCComercialesEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -296,6 +302,43 @@ export class CComercialesService {
       });
     }
     return await this.getOne(dto.ccomercial);
+  }
+
+  async getCines(id: Number, options: IPaginationOptions): Promise<Pagination<CinesCComercialesEntity>> {
+    const query = await this.cinesCComercialesRP
+      .createQueryBuilder("ccCine")
+      .leftJoinAndSelect("ccCine.cine", "cine")
+      .leftJoinAndSelect("ccCine.files", "ficiGal")
+      .leftJoinAndSelect("ccCine.panoramas", "panGal")
+      .leftJoinAndSelect("cine.image", "imgGal")
+      .leftJoinAndSelect("cine.imageBack", "imgBackGal")
+      .leftJoinAndSelect("ficiGal.galeria", "ciGal")
+      .leftJoinAndSelect("panGal.image", "panImgGal")
+      .select([
+        'ccCine.id',
+        'ccCine.ubicacion',
+        'cine.id',
+        'cine.nombre',
+        'cine.desc',
+        'cine.status',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'ficiGal.id',
+        'ciGal.id',
+        'ciGal.file',
+        'panGal.id',
+        'panGal.nombre',
+        'panGal.desc',
+        'panImgGal.id',
+        'panImgGal.file',
+      ])
+      .loadRelationCountAndMap('ccCine.totalPeliculas', 'ccCine.peliculas')
+      .where('ccCine.ccomercial = :id', { id })
+      .orderBy("cine.nombre", "ASC")
+    query.getMany();
+    return paginate<CinesCComercialesEntity>(query, options);
   }
 
 }

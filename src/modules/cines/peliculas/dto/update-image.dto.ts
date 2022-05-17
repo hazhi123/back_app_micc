@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -11,7 +12,7 @@ export class UpdateImageDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  cine: number;
+  pelicula: number;
 
   @ApiProperty()
   @IsNumber()
@@ -19,18 +20,13 @@ export class UpdateImageDto {
   galeria: number;
 
   @ApiProperty()
-  @IsNumber()
+  @IsBoolean()
   @IsOptional()
-  index: number;
+  isTrailer: boolean;
 
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  file: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  isBack: number;
+  @IsBoolean()
+  @IsOptional()
+  isBack: boolean;
 
 }

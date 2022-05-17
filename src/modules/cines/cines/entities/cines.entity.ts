@@ -9,15 +9,8 @@ import {
 } from 'typeorm';
 
 import * as CONST from '../../../../common/constants';
-import {
-  CComercialesCinesEntity,
-} from '../../../ccomerciales/entities/ccomerciales-cines.entity';
-import {
-  CComercialesEntity,
-} from '../../../ccomerciales/entities/ccomerciales.entity';
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
-import { CinesGaleriaEntity } from './cines-galeria.entity';
-import { CinesPeliculasEntity } from './cines-peliculas.entity';
+import { CinesCComercialesEntity } from './cines-ccomerciales.entity';
 
 @Entity(CONST.MODULES.CINES.CINES)
 export class CinesEntity {
@@ -55,13 +48,7 @@ export class CinesEntity {
   @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
-  @OneToMany(() => CinesPeliculasEntity, cinesPeliculas => cinesPeliculas.pelicula)
-  funciones: CinesPeliculasEntity[];
-
-  @OneToMany(() => CinesGaleriaEntity, cine_galeria => cine_galeria.cine)
-  panoramas: CinesGaleriaEntity[];
-
-  @OneToMany(() => CComercialesCinesEntity, cineCC => cineCC.cine)
-  ccomerciales: CComercialesEntity[];
+  @OneToMany(() => CinesCComercialesEntity, cCC => cCC.cine)
+  ccomerciales: CinesCComercialesEntity[];
 
 }

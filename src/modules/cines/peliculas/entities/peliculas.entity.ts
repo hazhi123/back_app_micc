@@ -10,11 +10,9 @@ import {
 
 import * as CONST from '../../../../common/constants';
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
-import {
-  CinesPeliculasEntity,
-} from '../../cines/entities/cines-peliculas.entity';
+import { PeliculasCinesEntity } from './peliculas-cines.entity';
 
-@Entity(CONST.MODULES.CINES.PELICULAS)
+@Entity(CONST.MODULES.CINES.PELICULAS.PELICULAS)
 export class PeliculasEntity {
 
   @PrimaryGeneratedColumn()
@@ -48,9 +46,6 @@ export class PeliculasEntity {
   status: boolean;
 
   // Relaciones
-  @OneToMany(() => CinesPeliculasEntity, cinesPeli => cinesPeli.cine)
-  cines: CinesPeliculasEntity[];
-
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria_image' })
   image: number;
@@ -62,5 +57,8 @@ export class PeliculasEntity {
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria_video' })
   trailer: number;
+
+  @OneToMany(() => PeliculasCinesEntity, cp => cp.pelicula)
+  cines: PeliculasCinesEntity[];
 
 }

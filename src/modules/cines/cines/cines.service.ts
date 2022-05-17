@@ -14,22 +14,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../../common/constants';
 import { isEmptyUndefined } from '../../../common/helpers';
-import {
-  CComercialesCinesEntity,
-} from '../../ccomerciales/entities/ccomerciales-cines.entity';
 import { GaleriaService } from '../../galeria/galeria.service';
 import { UsersEntity } from '../../users/entities/users.entity';
 import {
+  PeliculasCinesEntity,
+} from '../peliculas/entities/peliculas-cines.entity';
+import {
   AsignarCComercialesDto,
-  AsignarPeliculasDto,
   CreateCinesDto,
   CreateImageDto,
   GetAllDto,
   UpdateCinesDto,
   UpdateImageDto,
 } from './dto';
-import { CinesGaleriaEntity } from './entities/cines-galeria.entity';
-import { CinesPeliculasEntity } from './entities/cines-peliculas.entity';
+import { CinesCComercialesEntity } from './entities/cines-ccomerciales.entity';
 import { CinesEntity } from './entities/cines.entity';
 
 @Injectable()
@@ -39,14 +37,11 @@ export class CinesService {
     @InjectRepository(CinesEntity)
     private readonly cinesRP: Repository<CinesEntity>,
 
-    @InjectRepository(CinesGaleriaEntity)
-    private readonly cinesGaleriaRP: Repository<CinesGaleriaEntity>,
+    @InjectRepository(CinesCComercialesEntity)
+    private readonly cinesCComercialesRP: Repository<CinesCComercialesEntity>,
 
-    @InjectRepository(CinesPeliculasEntity)
-    private readonly cinesPeliculasRP: Repository<CinesPeliculasEntity>,
-
-    @InjectRepository(CComercialesCinesEntity)
-    private readonly ccomercialesCinesRP: Repository<CComercialesCinesEntity>,
+    @InjectRepository(PeliculasCinesEntity)
+    private readonly peliculasCinesRP: Repository<PeliculasCinesEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -63,37 +58,6 @@ export class CinesService {
       updatedAt: new Date(),
     });
     return await this.getOne(save.id);
-  }
-
-  async asignarPeliculas(dto: AsignarPeliculasDto) {
-    for (let i = 0; i < dto.peliculas.length; i++) {
-      const data = {
-        cine: dto.cine,
-        pelicula: dto.peliculas[i]
-      };
-      const findOne = await this.cinesPeliculasRP.findOne({ where: data })
-      if (isEmptyUndefined(findOne)) {
-        await this.cinesPeliculasRP.save(data);
-      }
-    }
-    return await this.getOne(dto.cine);
-  }
-
-  async asignarCComerciales(dto: AsignarCComercialesDto) {
-    for (let i = 0; i < dto.ccomerciales.length; i++) {
-      const data = {
-        cine: dto.cine,
-        ccomercial: dto.ccomerciales[i]
-      };
-      const findOne = await this.ccomercialesCinesRP.findOne({ where: data })
-      if (isEmptyUndefined(findOne)) {
-        await this.ccomercialesCinesRP.save(data);
-        // return await this.ccomercialesCinesRP.findOne({ where: { id: save.id } });
-      } else {
-        await this.ccomercialesCinesRP.delete(findOne.id);
-      }
-    }
-    return 1;
   }
 
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<CinesEntity>> {
@@ -147,37 +111,11 @@ export class CinesService {
     return paginate<CinesEntity>(query, options);
   }
 
-  async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<CComercialesCinesEntity>> {
-    const query = await this.ccomercialesCinesRP
-      .createQueryBuilder("ccCine")
-      .leftJoinAndSelect("ccCine.ccomercial", "cc")
-      .leftJoinAndSelect("cc.image", "imgGal")
-      .leftJoinAndSelect("cc.imageBack", "imgBackGal")
-      .select([
-        'ccCine.id',
-        'cc.id',
-        'cc.nombre',
-        'cc.direccion',
-        'imgGal.id',
-        'imgGal.file',
-        'imgBackGal.id',
-        'imgBackGal.file',
-      ])
-      .where('ccCine.cine = :id', { id })
-      .orderBy("cc.nombre", "ASC")
-    query.getMany();
-    return paginate<CComercialesCinesEntity>(query, options);
-  }
-
   async getOne(id: number): Promise<CinesEntity> {
     const getOne = await this.cinesRP
       .createQueryBuilder("cine")
       .leftJoinAndSelect("cine.image", "imgGal")
       .leftJoinAndSelect("cine.imageBack", "imgBackGal")
-      .leftJoinAndSelect("cine.ccomerciales", "cc")
-      .leftJoinAndSelect("cc.ccomercial", "ccCC")
-      .leftJoinAndSelect("cine.funciones", "fun")
-      .leftJoinAndSelect("fun.pelicula", "funPel")
       .select([
         'cine.id',
         'cine.nombre',
@@ -187,12 +125,6 @@ export class CinesService {
         'imgGal.file',
         'imgBackGal.id',
         'imgBackGal.file',
-        'cc.id',
-        'ccCC.id',
-        'ccCC.nombre',
-        'fun.id',
-        'funPel.id',
-        'funPel.nombre',
       ])
       .where('cine.id = :id', { id })
       .getOne()
@@ -271,6 +203,74 @@ export class CinesService {
     );
     const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
     return getOneGaleria;
+  }
+
+  async asignarCComerciales(dto: AsignarCComercialesDto) {
+    for (let i = 0; i < dto.ccomerciales.length; i++) {
+      const data = {
+        cine: dto.cine,
+        ccomercial: dto.ccomerciales[i]
+      };
+      const findOne = await this.cinesCComercialesRP.findOne({ where: data })
+      if (isEmptyUndefined(findOne)) {
+        await this.cinesCComercialesRP.save(data);
+      } else {
+        await this.cinesCComercialesRP.delete(findOne.id);
+      }
+    }
+    return 1;
+  }
+
+  async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<CinesCComercialesEntity>> {
+    const query = await this.cinesCComercialesRP
+      .createQueryBuilder("ccCine")
+      .leftJoinAndSelect("ccCine.ccomercial", "cc")
+      .leftJoinAndSelect("cc.image", "imgGal")
+      .leftJoinAndSelect("cc.imageBack", "imgBackGal")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .select([
+        'ccCine.id',
+        'cc.id',
+        'cc.nombre',
+        'cc.direccion',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'ciu.id',
+        'ciu.ciudad',
+      ])
+      .where('ccCine.cine = :id', { id })
+      .orderBy("cc.nombre", "ASC")
+    query.getMany();
+    return paginate<CinesCComercialesEntity>(query, options);
+  }
+
+  async getPeliculas(id: Number, options: IPaginationOptions): Promise<Pagination<PeliculasCinesEntity>> {
+    const query = await this.peliculasCinesRP
+      .createQueryBuilder("pelCine")
+      .leftJoinAndSelect("pelCine.pelicula", "peli")
+      .leftJoinAndSelect("peli.image", "imgGal")
+      .leftJoinAndSelect("peli.imageBack", "imgBackGal")
+      .leftJoinAndSelect("peli.trailer", "trai")
+      .select([
+        'pelCine.id',
+        'peli.id',
+        'peli.nombre',
+        'peli.genero',
+        'peli.duracion',
+        'peli.sinopsis',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'trai.id',
+        'trai.file',
+      ])
+      .where('pelCine.cineCC = :id', { id })
+      .orderBy("peli.nombre", "ASC")
+    query.getMany();
+    return paginate<PeliculasCinesEntity>(query, options);
   }
 
 }
