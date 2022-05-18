@@ -11,7 +11,9 @@ import {
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import { ProductosGaleriaEntity } from './productos-galeria.entity';
 
 @Entity(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
@@ -49,9 +51,9 @@ export class ProductosEntity {
   @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 
-  @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @ManyToOne(() => TiendasCComercialesEntity)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
 
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'id_categoria' })

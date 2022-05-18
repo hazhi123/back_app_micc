@@ -24,6 +24,9 @@ import {
   UpdateImageDto,
   UpdateTiendasDto,
 } from './dto';
+import {
+  TiendasCComercialesEntity,
+} from './entities/tiendas-ccomerciales.entity';
 import { TiendasGaleriaEntity } from './entities/tiendas-galeria.entity';
 import { TiendasEntity } from './entities/tiendas.entity';
 
@@ -33,6 +36,9 @@ export class TiendasService {
   constructor(
     @InjectRepository(TiendasEntity)
     private readonly tiendasRP: Repository<TiendasEntity>,
+
+    @InjectRepository(TiendasCComercialesEntity)
+    private readonly tiendasCComercialesRP: Repository<TiendasCComercialesEntity>,
 
     @InjectRepository(TiendasGaleriaEntity)
     private readonly tiendasGaleriaRP: Repository<TiendasGaleriaEntity>,
@@ -323,11 +329,11 @@ export class TiendasService {
     return await this.getOne(dto.tienda);
   }
 
-  async actualizarApertura(dto: GetAllDto): Promise<TiendasEntity> {
-    await this.tiendasRP.update(dto.id, {
+  async actualizarApertura(dto: GetAllDto): Promise<TiendasCComercialesEntity> {
+    await this.tiendasCComercialesRP.update(dto.id, {
       abierto: dto.abierto
     });
-    return await this.getOne(dto.id);
+    return await this.tiendasCComercialesRP.findOne({ where: { id: dto.id } });
   }
 
 }

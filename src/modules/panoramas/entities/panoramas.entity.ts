@@ -15,7 +15,9 @@ import {
   CinesCComercialesEntity,
 } from '../../cines/cines/entities/cines-ccomerciales.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 
 @Entity(CONST.MODULES.PANORAMAS)
 export class PanoramasEntity {
@@ -49,9 +51,9 @@ export class PanoramasEntity {
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @ManyToOne(() => TiendasCComercialesEntity)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
 
   @ManyToOne(() => CinesCComercialesEntity)
   @JoinColumn({ name: 'id_cine_cc' })

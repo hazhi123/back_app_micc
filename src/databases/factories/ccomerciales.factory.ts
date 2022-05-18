@@ -12,7 +12,7 @@ define(CComercialesEntity, (faker: typeof Faker) => {
   ent.correo = faker.internet.email();
   ent.telPrimero = faker.phone.phoneNumber();
   ent.abierto = faker.random.boolean();
-  ent.direccion = faker.random.address.city();
+  ent.direccion = faker.address.city();
   ent.createdBy = 1;
   ent.updatedBy = 1;
   return ent;

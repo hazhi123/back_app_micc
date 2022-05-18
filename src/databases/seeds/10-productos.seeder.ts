@@ -15,8 +15,8 @@ export default class ProductosSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     await factory(ProductosEntity)()
       .map(async (ent) => {
-        ent.tienda = Math.floor((Math.random() * 59) + 1);
-        ent.categoria = Math.floor((Math.random() * 29) + 1);
+        ent.tiendaCC = Math.floor((Math.random() * 620) + 1);
+        ent.categoria = Math.floor((Math.random() * 30) + 1);
         ent.image = Math.floor((Math.random() * 900) + 1);
         return ent;
       })

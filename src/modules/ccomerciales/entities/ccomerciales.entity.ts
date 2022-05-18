@@ -17,7 +17,9 @@ import {
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
 import {
   ParroquiasEntity,
@@ -82,8 +84,8 @@ export class CComercialesEntity {
   @OneToMany(() => UsersEntity, users => users.ccomercial)
   users: UsersEntity[];
 
-  @OneToMany(() => TiendasEntity, tiendas => tiendas.ccomercial)
-  tiendas: TiendasEntity[];
+  @OneToMany(() => TiendasCComercialesEntity, tieCC => tieCC.ccomercial)
+  tiendas: TiendasCComercialesEntity[];
 
   @OneToMany(() => CategoriasEntity, categoria => categoria.ccomercial)
   categorias: CategoriasEntity[];

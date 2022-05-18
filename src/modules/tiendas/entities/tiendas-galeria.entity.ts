@@ -8,7 +8,7 @@ import {
 
 import * as CONST from '../../../common/constants';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import { TiendasEntity } from './tiendas.entity';
+import { TiendasCComercialesEntity } from './tiendas-ccomerciales.entity';
 
 @Entity(CONST.MODULES.TIENDAS.GALERIA)
 export class TiendasGaleriaEntity {
@@ -20,9 +20,9 @@ export class TiendasGaleriaEntity {
   index: number;
 
   //relaciones
-  @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @ManyToOne(() => TiendasCComercialesEntity)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
 
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria' })
