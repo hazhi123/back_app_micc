@@ -67,12 +67,12 @@ export class CComercialesService {
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .leftJoinAndSelect("cc.image", "imgGal")
       .leftJoinAndSelect("cc.imageBack", "imgBackGal")
-      .leftJoinAndSelect("cc.tiendas", "tie")
       .leftJoinAndSelect("ciu.estado", "edo")
       .select([
         'cc.id',
         'cc.nombre',
         'cc.telPrimero',
+        'cc.correo',
         'cc.direccion',
         'cc.abierto',
         'cc.status',
@@ -99,8 +99,7 @@ export class CComercialesService {
     if (!isEmptyUndefined(dto.abierto)) {
       query.andWhere('cc.abierto = :abierto', { abierto: dto.abierto })
     }
-    query.addOrderBy("cc.nombre", "ASC")
-
+    query.orderBy("cc.nombre", "ASC")
     query.getMany();
     return paginate<CComercialesEntity>(query, options);
   }

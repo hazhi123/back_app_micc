@@ -6,13 +6,14 @@ import {
 } from '../../modules/ccomerciales/entities/ccomerciales.entity';
 
 define(CComercialesEntity, (faker: typeof Faker) => {
-  const cc = new CComercialesEntity();
-  cc.nombre = faker.company.companyName()
-  cc.desc = faker.lorem.paragraph(8);
-  cc.correo = faker.internet.email();
-  cc.telPrimero = faker.phone.phoneNumber();
-  cc.abierto = faker.random.boolean();
-  cc.createdBy = 1;
-  cc.updatedBy = 1;
-  return cc;
+  const ent = new CComercialesEntity();
+  ent.nombre = faker.company.companyName()
+  ent.desc = faker.lorem.paragraph(8);
+  ent.correo = faker.internet.email();
+  ent.telPrimero = faker.phone.phoneNumber();
+  ent.abierto = faker.random.boolean();
+  ent.direccion = faker.random.address.city();
+  ent.createdBy = 1;
+  ent.updatedBy = 1;
+  return ent;
 });

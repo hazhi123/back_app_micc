@@ -65,7 +65,7 @@ export class CComercialesController {
     const data = await this.ccomercialesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES}/all`,
+      route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES.CCOMERCIALES}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
