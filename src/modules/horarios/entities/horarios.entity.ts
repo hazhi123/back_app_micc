@@ -11,7 +11,9 @@ import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 
 @Entity(CONST.MODULES.CCOMERCIALES.HORARIOS)
 export class HorariosEntity {
@@ -63,8 +65,8 @@ export class HorariosEntity {
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @OneToOne(() => TiendasEntity, tienda => tienda.horarios, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @OneToOne(() => TiendasCComercialesEntity, tienda => tienda.horarios, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
 
 }

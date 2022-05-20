@@ -49,7 +49,6 @@ export class CinesService {
 
   async create(dto: CreateCinesDto, userLogin: UsersEntity) {
     await this.findNombre(dto.nombre, false)
-
     const save = await this.cinesRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -157,7 +156,7 @@ export class CinesService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-    await this.cinesRP.delete(id);
+    // await this.cinesRP.delete(id);
     return getOne;
   }
 
@@ -223,13 +222,13 @@ export class CinesService {
 
   async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<CinesCComercialesEntity>> {
     const query = await this.cinesCComercialesRP
-      .createQueryBuilder("ccCine")
-      .leftJoinAndSelect("ccCine.ccomercial", "cc")
+      .createQueryBuilder("ciCC")
+      .leftJoinAndSelect("ciCC.ccomercial", "cc")
       .leftJoinAndSelect("cc.image", "imgGal")
       .leftJoinAndSelect("cc.imageBack", "imgBackGal")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .select([
-        'ccCine.id',
+        'ciCC.id',
         'cc.id',
         'cc.nombre',
         'cc.direccion',
@@ -240,7 +239,7 @@ export class CinesService {
         'ciu.id',
         'ciu.ciudad',
       ])
-      .where('ccCine.cine = :id', { id })
+      .where('ciCC.cine = :id', { id })
       .orderBy("cc.nombre", "ASC")
     query.getMany();
     return paginate<CinesCComercialesEntity>(query, options);

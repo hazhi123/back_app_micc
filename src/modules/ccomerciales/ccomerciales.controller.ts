@@ -227,4 +227,28 @@ export class CComercialesController {
     return res
   }
 
+  @Auth()
+  @Get(':id/tiendas')
+  async getTiendas(
+    @Param('id') id: number,
+    @Query('gastronomico') isGastro,
+    @Query('categoria') idCategoria,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const route = `${URLPAGE}/${CONST.MODULES.CCOMERCIALES.CCOMERCIALES}/${id}/tiendas`;
+    const data = isGastro !== undefined && isGastro === 'true' ?
+      await this.ccomercialesService.getGastro(id, isGastro, { page, limit, route })
+      : await this.ccomercialesService.getTiendas(id, idCategoria, { page, limit, route });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
 }

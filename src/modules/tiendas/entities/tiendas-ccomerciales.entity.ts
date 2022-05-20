@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -11,8 +12,11 @@ import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import { ContactosEntity } from '../../contactos/entities/contactos.entity';
+import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { PanoramasEntity } from '../../panoramas/entities/panoramas.entity';
 import { ProductosEntity } from '../../productos/entities/productos.entity';
+import { TiendasGaleriaEntity } from './tiendas-galeria.entity';
 import { TiendasEntity } from './tiendas.entity';
 
 @Entity(CONST.MODULES.TIENDAS.CCOMERCIALES)
@@ -37,18 +41,27 @@ export class TiendasCComercialesEntity {
   abierto: boolean;
 
   //relaciones
+  @ManyToOne(() => TiendasEntity)
+  @JoinColumn({ name: 'id_tienda' })
+  tienda: number;
+
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @OneToMany(() => TiendasGaleriaEntity, cg => cg.tiendaCC)
+  files: TiendasGaleriaEntity[];
 
   @OneToMany(() => PanoramasEntity, pano => pano.tiendaCC)
   panoramas: PanoramasEntity[];
 
   @OneToMany(() => ProductosEntity, pro => pro.tiendaCC)
   productos: ProductosEntity[];
+
+  @OneToMany(() => ContactosEntity, categoria => categoria.tiendaCC)
+  contactos: ContactosEntity[];
+
+  @OneToOne(() => HorariosEntity, horarios => horarios.tiendaCC, { eager: true })
+  horarios: number;
 
 }

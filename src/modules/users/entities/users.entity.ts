@@ -31,9 +31,7 @@ import {
 } from '../../publicaciones/entities/publicaciones.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
-import {
-  UsersCComercialesEntity,
-} from '../../users-ccomerciales/entities/users-ccomerciales.entity';
+import { UsersCComercialesEntity } from './users-ccomerciales.entity';
 import { UsersInformacionEntity } from './users-informacion.entity';
 
 @Entity(CONST.MODULES.USERS.USERS)

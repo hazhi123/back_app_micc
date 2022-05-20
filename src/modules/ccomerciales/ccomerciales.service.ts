@@ -19,6 +19,9 @@ import {
   CinesCComercialesEntity,
 } from '../cines/cines/entities/cines-ccomerciales.entity';
 import { GaleriaService } from '../galeria/galeria.service';
+import {
+  TiendasCComercialesEntity,
+} from '../tiendas/entities/tiendas-ccomerciales.entity';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
   CreateCComercialesDto,
@@ -44,6 +47,9 @@ export class CComercialesService {
 
     @InjectRepository(CinesCComercialesEntity)
     private readonly cinesCComercialesRP: Repository<CinesCComercialesEntity>,
+
+    @InjectRepository(TiendasCComercialesEntity)
+    private readonly tiendasCComercialesRP: Repository<TiendasCComercialesEntity>,
 
     private galeriaService: GaleriaService,
 
@@ -99,7 +105,7 @@ export class CComercialesService {
     if (!isEmptyUndefined(dto.abierto)) {
       query.andWhere('cc.abierto = :abierto', { abierto: dto.abierto })
     }
-    query.orderBy("cc.nombre", "ASC")
+    query.orderBy("cc.id", "DESC")
     query.getMany();
     return paginate<CComercialesEntity>(query, options);
   }
@@ -305,17 +311,17 @@ export class CComercialesService {
 
   async getCines(id: Number, options: IPaginationOptions): Promise<Pagination<CinesCComercialesEntity>> {
     const query = await this.cinesCComercialesRP
-      .createQueryBuilder("ccCine")
-      .leftJoinAndSelect("ccCine.cine", "cine")
-      .leftJoinAndSelect("ccCine.files", "ficiGal")
-      .leftJoinAndSelect("ccCine.panoramas", "panGal")
+      .createQueryBuilder("ciCC")
+      .leftJoinAndSelect("ciCC.cine", "cine")
+      .leftJoinAndSelect("ciCC.files", "ficiGal")
+      .leftJoinAndSelect("ciCC.panoramas", "panGal")
       .leftJoinAndSelect("cine.image", "imgGal")
       .leftJoinAndSelect("cine.imageBack", "imgBackGal")
       .leftJoinAndSelect("ficiGal.galeria", "ciGal")
       .leftJoinAndSelect("panGal.image", "panImgGal")
       .select([
-        'ccCine.id',
-        'ccCine.ubicacion',
+        'ciCC.id',
+        'ciCC.ubicacion',
         'cine.id',
         'cine.nombre',
         'cine.desc',
@@ -333,11 +339,89 @@ export class CComercialesService {
         'panImgGal.id',
         'panImgGal.file',
       ])
-      .loadRelationCountAndMap('ccCine.totalPeliculas', 'ccCine.peliculas')
-      .where('ccCine.ccomercial = :id', { id })
+      .loadRelationCountAndMap('ciCC.totalPeliculas', 'ciCC.peliculas')
+      .where('ciCC.ccomercial = :id', { id })
       .orderBy("cine.nombre", "ASC")
     query.getMany();
     return paginate<CinesCComercialesEntity>(query, options);
+  }
+
+  async getTiendas(id: Number, idCategoria, options: IPaginationOptions): Promise<Pagination<TiendasCComercialesEntity>> {
+    const query = await this.tiendasCComercialesRP
+      .createQueryBuilder("tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("tie.categoria", "cat")
+      .leftJoinAndSelect("tie.image", "imgGal")
+      .leftJoinAndSelect("tie.imageBack", "imgBackGal")
+      .leftJoinAndSelect("tieCC.files", "tieFiGal")
+      .leftJoinAndSelect("tieFiGal.galeria", "tieGal")
+      .leftJoinAndSelect("tieCC.panoramas", "panGal")
+      .leftJoinAndSelect("panGal.image", "panImgGal")
+      .select([
+        'tieCC.id',
+        'tieCC.correo',
+        'tieCC.telPrimero',
+        'tieCC.telSegundo',
+        'tieCC.ubicacion',
+        'tieCC.abierto',
+        'tie.id',
+        'tie.nombre',
+        'tie.desc',
+        'tie.isGastro',
+        'tie.status',
+        'cat.id',
+        'cat.nombre',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'tieFiGal.id',
+        'tieGal.id',
+        'tieGal.file',
+        'panGal.id',
+        'panGal.nombre',
+        'panGal.desc',
+        'panImgGal.id',
+        'panImgGal.file',
+      ])
+      .where('tieCC.ccomercial = :id', { id })
+    if (!isEmptyUndefined(idCategoria)) {
+      query.andWhere('cat.id = :categoria', { categoria: idCategoria })
+    }
+    query.orderBy("tie.nombre", "ASC")
+    query.getMany();
+    return paginate<TiendasCComercialesEntity>(query, options);
+  }
+
+  async getGastro(id: Number, isGastro: Boolean, options: IPaginationOptions): Promise<Pagination<TiendasCComercialesEntity>> {
+    const query = await this.tiendasCComercialesRP
+      .createQueryBuilder("tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("tie.image", "imgGal")
+      .leftJoinAndSelect("tie.imageBack", "imgBackGal")
+      .select([
+        'tieCC.id',
+        'tieCC.correo',
+        'tieCC.telPrimero',
+        'tieCC.telSegundo',
+        'tieCC.ubicacion',
+        'tieCC.abierto',
+        'tie.id',
+        'tie.nombre',
+        'tie.desc',
+        'tie.isGastro',
+        'tie.status',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+      ])
+      .where('tieCC.ccomercial = :id', { id })
+      .andWhere('tie.isGastro = :isGastro', { isGastro })
+      .andWhere('tie.status = :status', { status: true })
+      .orderBy("tie.nombre", "ASC")
+    query.getMany();
+    return paginate<TiendasCComercialesEntity>(query, options);
   }
 
 }

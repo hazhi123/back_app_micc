@@ -5,15 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
-import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { TiendasCComercialesEntity } from './tiendas-ccomerciales.entity';
 
 @Entity(CONST.MODULES.TIENDAS.TIENDAS)
@@ -58,12 +55,6 @@ export class TiendasEntity {
   @ManyToOne(() => CategoriasEntity)
   @JoinColumn({ name: 'id_categoria' })
   categoria: number;
-
-  @OneToMany(() => ContactosEntity, categoria => categoria.tienda)
-  contactos: ContactosEntity[];
-
-  @OneToOne(() => HorariosEntity, horarios => horarios.tienda, { eager: true })
-  horarios: number;
 
   @OneToMany(() => TiendasCComercialesEntity, tieCC => tieCC.tienda)
   ccomerciales: TiendasCComercialesEntity[];

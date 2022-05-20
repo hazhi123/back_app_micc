@@ -13,7 +13,9 @@ import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
 import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import { UsersEntity } from '../../users/entities/users.entity';
 
 @Entity(CONST.MODULES.CONTACTOS)
@@ -49,9 +51,9 @@ export class ContactosEntity {
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @ManyToOne(() => TiendasEntity, users => users.contactos)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @ManyToOne(() => TiendasCComercialesEntity, users => users.contactos)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
 
   @OneToMany(() => MensajesEntity, mensajes => mensajes.contacto)
   mensajes: MensajesEntity[];

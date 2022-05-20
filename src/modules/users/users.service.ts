@@ -10,7 +10,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -20,12 +19,14 @@ import { codigoLincencia } from '../../utils/create-licenses-free';
 import { GaleriaService } from '../galeria/galeria.service';
 import { LicenciasService } from '../licencias/licencias.service';
 import {
+  AsignarCComercialesDto,
   CreateImageDto,
   createUsersDto,
   GetAllDto,
   updatedUsersDto,
   UpdateImageDto,
 } from './dto';
+import { UsersCComercialesEntity } from './entities/users-ccomerciales.entity';
 import { UsersInformacionEntity } from './entities/users-informacion.entity';
 import { UsersEntity } from './entities/users.entity';
 
@@ -39,11 +40,14 @@ export class UsersService {
     @InjectRepository(UsersInformacionEntity)
     private readonly informacionRP: Repository<UsersInformacionEntity>,
 
+    @InjectRepository(UsersCComercialesEntity)
+    private readonly usersCComercialesRP: Repository<UsersCComercialesEntity>,
+
     private galeriaService: GaleriaService,
     private licenciasService: LicenciasService
   ) { }
 
-  async create(isRegister, dto: createUsersDto, userLogin: UsersEntity) {
+  async create(dto: createUsersDto, userLogin: UsersEntity) {
     // Valida el usuario si existe
     const userExist = await this.findUser(dto.user);
     if (!isEmptyUndefined(userExist)) throw new HttpException({
@@ -51,74 +55,18 @@ export class UsersService {
       message: 'Este usuario ya se encuentra registrado',
     }, HttpStatus.ACCEPTED)
 
-    const {
-      nombre, apellido, user, isVisitante, ciudad, password, ccomercial, tienda, perfil, status, dni, direccion, celular, telefono, isTrabajaTienda,
-    } = dto
-
-    // Es cuando el usuario se registra.
-    if (isRegister && !userLogin) {
-      if (dto.password !== dto.passwordConfirm) throw new HttpException({
-        statusCode: HttpStatus.ACCEPTED,
-        message: CONST.MESSAGES.AUTH.RECOVERY_PASSWORD.ERROR.MATCH,
-      }, HttpStatus.ACCEPTED)
-      let data = {
-        nombre,
-        apellido,
-        user,
-        ciudad,
-        isVisitante: true,
-        perfil: 4,
-        password,
-        createdBy: 0,
-        createdAt: new Date(),
-        updatedBy: 0,
-        updatedAt: new Date(),
-      };
-      const create = await this.usersRP.create(data);
-      const save = await this.usersRP.save(create);
-      await this.informacionRP.save({
-        correo: dto.user,
-        user: save.id
-      });
-      delete save.password;
-
-      const dataLic = {
-        licencia: await codigoLincencia(),
-        fechaInicio: moment().format('YYYY-MM-DD').toString(),
-        fechaFinal: moment().add(20, 'days').format('YYYY-MM-DD').toString(),
-        user: save.id,
-        status: true
-      }
-
-      await this.licenciasService.create(dataLic, null)
-
-      return save;
-    }
-
-    // // Valida el numero de celular
-    // await this.findCelular(dto.celular);
-
-    // // Valida el dni si existe
-    // await this.findDni(dto.dni);
-
     const create = await this.usersRP.create({
-      nombre,
-      apellido,
-      user,
-      password,
-      ccomercial,
-      tienda,
-      isVisitante,
-      isTrabajaTienda,
-      ciudad,
-      perfil,
+      ...dto,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
       updatedAt: new Date(),
-      status,
     });
     const save = await this.usersRP.save(create);
+
+    const {
+      dni, direccion, celular, telefono
+    } = dto
 
     await this.informacionRP.save({
       dni,
@@ -138,9 +86,7 @@ export class UsersService {
       tienda: null,
       status: true
     }
-
     await this.licenciasService.create(dataLicencia, userLogin)
-
     return await this.getOne(save.id);
   }
 
@@ -204,15 +150,6 @@ export class UsersService {
     return paginate<UsersEntity>(query, options);
   }
 
-  async getLogin(id: number, userLogin?: UsersEntity) {
-    const findOne = await this.usersRP.findOne({
-      where: { id },
-    })
-      .then(u => !userLogin ? u : !!u && userLogin.id === u.id ? u : null)
-    if (!findOne) throw new NotFoundException('Usuario no existe');
-    return findOne;
-  }
-
   async getOne(id: number) {
     const getOne = await this.usersRP
       .createQueryBuilder("user")
@@ -225,8 +162,6 @@ export class UsersService {
       .leftJoinAndSelect("user.informacion", "inf")
       .leftJoinAndSelect("user.ccomercial", "cc")
       .leftJoinAndSelect("user.tienda", "tie")
-      .leftJoinAndSelect("user.ccomerciales", "usCcs")
-      .leftJoinAndSelect("usCcs.ccomercial", "ucc")
       .leftJoinAndSelect("user.licencia", "lic")
       .leftJoinAndSelect("lic.plan", "plan")
       .select([
@@ -262,9 +197,6 @@ export class UsersService {
         'inf.celular',
         'inf.direccion',
         'inf.telefono',
-        'usCcs.id',
-        'ucc.id',
-        'ucc.nombre',
         'lic.id',
         'lic.licencia',
         'lic.fechaInicio',
@@ -387,7 +319,7 @@ export class UsersService {
   async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
     try {
       const data = {
-        entidad: 'cine',
+        entidad: 'user',
         entId: parseInt(dto.user),
         referencia: parseInt(dto.isBack) == 0 ? 'image' : 'imageBack',
         refId: parseInt(dto.user),
@@ -417,6 +349,47 @@ export class UsersService {
     );
     const getOneGaleria = await this.galeriaService.getOne(dto.galeria)
     return getOneGaleria;
+  }
+
+  async asignarCComerciales(dto: AsignarCComercialesDto) {
+    for (let i = 0; i < dto.ccomerciales.length; i++) {
+      const data = {
+        user: dto.user,
+        ccomercial: dto.ccomerciales[i]
+      };
+      const findOne = await this.usersCComercialesRP.findOne({ where: data })
+      if (isEmptyUndefined(findOne)) {
+        await this.usersCComercialesRP.save(data);
+      } else {
+        await this.usersCComercialesRP.delete(findOne.id);
+      }
+    }
+    return 1;
+  }
+
+  async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<UsersCComercialesEntity>> {
+    const query = await this.usersCComercialesRP
+      .createQueryBuilder("userCine")
+      .leftJoinAndSelect("userCine.ccomercial", "cc")
+      .leftJoinAndSelect("cc.image", "imgGal")
+      .leftJoinAndSelect("cc.imageBack", "imgBackGal")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .select([
+        'userCine.id',
+        'cc.id',
+        'cc.nombre',
+        'cc.direccion',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'ciu.id',
+        'ciu.ciudad',
+      ])
+      .where('userCine.user = :id', { id })
+      .orderBy("cc.nombre", "ASC")
+    query.getMany();
+    return paginate<UsersCComercialesEntity>(query, options);
   }
 
 }

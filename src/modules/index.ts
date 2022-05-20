@@ -18,7 +18,6 @@ export * from './ccomerciales/ccomerciales.module';
 export * from './horarios/horarios.module';
 
 export * from './categorias/categorias.module';
-export * from './users-ccomerciales/users-ccomerciales.module';
 export * from './tiendas/tiendas.module';
 
 export * from './tipos-publicacion/tipos-publicacion.module';

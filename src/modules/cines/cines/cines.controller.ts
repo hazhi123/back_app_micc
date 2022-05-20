@@ -56,19 +56,6 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/asignar/ccomerciales')
-  async asignarCComerciales(
-    @Body() dto: AsignarCComercialesDto,
-  ) {
-    let data = await this.cinesService.asignarCComerciales(dto);
-    return {
-      statusCode: 200,
-      data: data,
-      message: CONST.MESSAGES.COMMON.CREATE_DATA
-    };
-  }
-
-  @Auth()
   @Post('/all')
   async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -179,6 +166,19 @@ export class CinesController {
     return {
       statusCode: 200,
       data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/asignar/ccomerciales')
+  async asignarCComerciales(
+    @Body() dto: AsignarCComercialesDto,
+  ) {
+    let data = await this.cinesService.asignarCComerciales(dto);
+    return {
+      statusCode: HttpStatus.OK,
+      data: data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
   }

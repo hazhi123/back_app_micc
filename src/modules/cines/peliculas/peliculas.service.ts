@@ -155,7 +155,7 @@ export class PeliculasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-    await this.peliculasRP.delete(id);
+    // await this.peliculasRP.delete(id);
     return getOne;
   }
 

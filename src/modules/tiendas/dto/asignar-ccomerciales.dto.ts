@@ -6,17 +6,16 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUsersCComercialesDto {
+export class AsignarCComercialesDto {
 
-  // relaciones
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  user: number;
+  tienda: number;
 
   @ApiProperty()
   @IsArray()
   @IsNotEmpty()
-  ccomerciales: any;
+  ccomerciales: number[];
 
 }

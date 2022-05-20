@@ -9,7 +9,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -18,6 +17,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsersEntity } from '../users/entities/users.entity';
 import {
+  AsignarCComercialesDto,
   CreateImageDto,
   CreateTiendasDto,
   GetAllDto,
@@ -48,6 +48,7 @@ export class TiendasService {
   ) { }
 
   async create(dto: CreateTiendasDto, userLogin: UsersEntity) {
+    await this.findNombre(dto.nombre, false)
     const save = await this.tiendasRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -56,28 +57,21 @@ export class TiendasService {
       updatedAt: new Date(),
       status: true
     });
-
     return await this.getOne(save.id);
   }
 
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
     const query = await this.tiendasRP
       .createQueryBuilder("ti")
-      .leftJoinAndSelect("ti.ccomercial", "cc")
       .leftJoinAndSelect("ti.categoria", "cat")
       .leftJoinAndSelect("ti.image", "imgGal")
       .leftJoinAndSelect("ti.imageBack", "imgBackGal")
       .select([
         'ti.id',
         'ti.nombre',
-        'ti.correo',
-        'ti.telPrimero',
-        'ti.ubicacion',
+        'ti.desc',
         'ti.isGastro',
         'ti.status',
-        'ti.abierto',
-        'cc.id',
-        'cc.nombre',
         'cat.id',
         'cat.nombre',
         'imgGal.id',
@@ -85,12 +79,8 @@ export class TiendasService {
         'imgBackGal.id',
         'imgBackGal.file',
       ])
-
-    if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
-    }
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
+      query.andWhere('ti.categoria = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.isGastro)) {
       query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
@@ -98,8 +88,7 @@ export class TiendasService {
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('ti.status = :status', { status: dto.status })
     }
-    query.addOrderBy("ti.nombre", "ASC")
-
+    query.orderBy("ti.id", "DESC")
     query.getMany();
     return paginate<TiendasEntity>(query, options);
   }
@@ -117,7 +106,6 @@ export class TiendasService {
         'ti.nombre',
         'ti.ubicacion',
         'ti.isGastro',
-        'ti.abierto',
         'cat.id',
         'cat.nombre',
         'imgGal.id',
@@ -144,58 +132,84 @@ export class TiendasService {
   async getOne(id: number): Promise<TiendasEntity> {
     const getOne = await this.tiendasRP
       .createQueryBuilder("ti")
-      .leftJoinAndSelect("ti.horarios", "hor")
       .leftJoinAndSelect("ti.categoria", "cat")
       .leftJoinAndSelect("ti.image", "imgGal")
       .leftJoinAndSelect("ti.imageBack", "imgBackGal")
-      .leftJoinAndSelect("ti.files", "file")
-      .leftJoinAndSelect("file.galeria", "gal")
       .select([
         'ti.id',
         'ti.nombre',
-        'ti.correo',
-        'ti.telPrimero',
-        'ti.telSegundo',
-        'ti.ubicacion',
         'ti.desc',
         'ti.createdBy',
         'ti.createdAt',
         'ti.updatedBy',
         'ti.updatedAt',
         'ti.status',
-        'ti.ubicacion',
-        'ti.abierto',
         'ti.isGastro',
-        'hor.id',
-        'hor.lunes',
-        'hor.martes',
-        'hor.miercoles',
-        'hor.jueves',
-        'hor.viernes',
-        'hor.sabado',
-        'hor.domingo',
-        'hor.feriados',
         'cat.id',
         'cat.nombre',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
         'imgBackGal.file',
-        'file.id',
-        'file.index',
-        'gal.id',
-        'gal.file',
       ])
       .where('ti.id = :id', { id })
       .getOne()
+    // const getOne = await this.tiendasRP
+    //   .createQueryBuilder("ti")
+    //   .leftJoinAndSelect("ti.horarios", "hor")
+    //   .leftJoinAndSelect("ti.categoria", "cat")
+    //   .leftJoinAndSelect("ti.image", "imgGal")
+    //   .leftJoinAndSelect("ti.imageBack", "imgBackGal")
+    //   .leftJoinAndSelect("ti.files", "file")
+    //   .leftJoinAndSelect("file.galeria", "gal")
+    //   .select([
+    //     'ti.id',
+    //     'ti.nombre',
+    //     'ti.correo',
+    //     'ti.telPrimero',
+    //     'ti.telSegundo',
+    //     'ti.ubicacion',
+    //     'ti.desc',
+    //     'ti.createdBy',
+    //     'ti.createdAt',
+    //     'ti.updatedBy',
+    //     'ti.updatedAt',
+    //     'ti.status',
+    //     'ti.ubicacion',
+    //     'ti.abierto',
+    //     'ti.isGastro',
+    //     'hor.id',
+    //     'hor.lunes',
+    //     'hor.martes',
+    //     'hor.miercoles',
+    //     'hor.jueves',
+    //     'hor.viernes',
+    //     'hor.sabado',
+    //     'hor.domingo',
+    //     'hor.feriados',
+    //     'cat.id',
+    //     'cat.nombre',
+    //     'imgGal.id',
+    //     'imgGal.file',
+    //     'imgBackGal.id',
+    //     'imgBackGal.file',
+    //     'file.id',
+    //     'file.index',
+    //     'gal.id',
+    //     'gal.file',
+    //   ])
+    //   .where('ti.id = :id', { id })
+    //   .getOne()
 
     if (isEmptyUndefined(getOne)) return null
     return getOne;
   }
 
   async update(dto: UpdateTiendasDto, userLogin: UsersEntity) {
-    if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
-    const getOne = await this.getOne(dto.id);
+    const findNombre = await this.findNombre(dto.nombre, true)
+    if (!isEmptyUndefined(findNombre)) delete dto.nombre
+
+    const getOne = await this.tiendasRP.findOne({ where: { id: dto.id } });
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
@@ -216,7 +230,6 @@ export class TiendasService {
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.DELETE,
     }, HttpStatus.ACCEPTED)
-
     // await this.tiendasRP.delete(id);
     return getOne;
   }
@@ -334,6 +347,47 @@ export class TiendasService {
       abierto: dto.abierto
     });
     return await this.tiendasCComercialesRP.findOne({ where: { id: dto.id } });
+  }
+
+  async asignarCComerciales(dto: AsignarCComercialesDto) {
+    for (let i = 0; i < dto.ccomerciales.length; i++) {
+      const data = {
+        tienda: dto.tienda,
+        ccomercial: dto.ccomerciales[i]
+      };
+      const findOne = await this.tiendasCComercialesRP.findOne({ where: data })
+      if (isEmptyUndefined(findOne)) {
+        await this.tiendasCComercialesRP.save(data);
+      } else {
+        await this.tiendasCComercialesRP.delete(findOne.id);
+      }
+    }
+    return 1;
+  }
+
+  async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<TiendasCComercialesEntity>> {
+    const query = await this.tiendasCComercialesRP
+      .createQueryBuilder("tieCC")
+      .leftJoinAndSelect("tieCC.ccomercial", "cc")
+      .leftJoinAndSelect("cc.image", "imgGal")
+      .leftJoinAndSelect("cc.imageBack", "imgBackGal")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .select([
+        'tieCC.id',
+        'cc.id',
+        'cc.nombre',
+        'cc.direccion',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+        'ciu.id',
+        'ciu.ciudad',
+      ])
+      .where('tieCC.tienda = :id', { id })
+      .orderBy("cc.nombre", "ASC")
+    query.getMany();
+    return paginate<TiendasCComercialesEntity>(query, options);
   }
 
 }

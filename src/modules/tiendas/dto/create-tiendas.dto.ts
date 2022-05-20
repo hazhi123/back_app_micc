@@ -15,25 +15,25 @@ export class CreateTiendasDto {
   @IsNotEmpty()
   nombre: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  correo: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsOptional()
+  // correo: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  telPrimero: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsNotEmpty()
+  // telPrimero: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  telSegundo: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsOptional()
+  // telSegundo: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  ubicacion: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsOptional()
+  // ubicacion: string;
 
   @ApiProperty()
   @IsString()
@@ -46,19 +46,19 @@ export class CreateTiendasDto {
   categoria: number;
 
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  ccomercial: number;
-
-  @ApiProperty()
   @IsOptional()
   @IsBoolean()
   status: boolean;
 
-  @ApiProperty()
-  @IsBoolean()
-  @IsOptional()
-  abierto: boolean;
+  // @ApiProperty()
+  // @IsNumber()
+  // @IsNotEmpty()
+  // ccomercial: number;
+
+  // @ApiProperty()
+  // @IsBoolean()
+  // @IsOptional()
+  // abierto: boolean;
 
   @ApiProperty()
   @IsOptional()

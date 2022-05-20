@@ -1,17 +1,22 @@
-import { Repository } from 'typeorm';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import * as CONST from '../../common/constants';
-import { PerfilesService } from '../perfiles/perfiles.service';
+import { isEmptyUndefined } from '../../common/helpers';
 import { UsersEntity } from '../users/entities/users.entity';
 import { CreateContactosDto } from './dto';
 import { ContactosEntity } from './entities/contactos.entity';
-import { isEmptyUndefined } from '../../common/helpers';
 
 @Injectable()
 export class ContactosService {
@@ -53,18 +58,42 @@ export class ContactosService {
   }
 
   async getAll(dto, options: IPaginationOptions): Promise<Pagination<ContactosEntity>> {
-    let search = {}
-    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
-    if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
-    if (!isEmptyUndefined(dto.user)) search['user'] = dto.user
-    if (!isEmptyUndefined(dto.status)) search['status'] = dto.status
-
-    return paginate<ContactosEntity>(this.contactosRP, options, {
-      where: search,
-      relations: this.relations,
-      order: { 'id': 'DESC' },
-    });
-
+    const query = await this.contactosRP.createQueryBuilder('con')
+      .leftJoinAndSelect("con.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("con.user", "user")
+      .leftJoinAndSelect("user.image", "img")
+      .leftJoinAndSelect("con.ccomercial", "cc")
+      .select([
+        'con.id',
+        'con.ultimoMensaje',
+        'con.status',
+        'tieCC.id',
+        'tie.id',
+        'tie.nombre',
+        'user.id',
+        'user.nombre',
+        'user.apellido',
+        'img.id',
+        'img.file',
+        'cc.id',
+        'cc.nombre',
+      ])
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('con.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.tienda)) {
+      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.user)) {
+      query.andWhere('con.user = :user', { user: dto.user })
+    }
+    if (!isEmptyUndefined(dto.status)) {
+      query.andWhere('con.status = :status', { status: dto.status })
+    }
+    query.orderBy('con.id', 'DESC')
+    query.getMany();
+    return paginate<ContactosEntity>(query, options);
   }
 
   async delete(id: number) {

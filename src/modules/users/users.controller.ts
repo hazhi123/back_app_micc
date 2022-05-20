@@ -24,6 +24,7 @@ import {
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
 import {
+  AsignarCComercialesDto,
   CreateImageDto,
   createUsersDto,
   GetAllDto,
@@ -47,7 +48,7 @@ export class UsersController {
     @Body() UserDto: createUsersDto,
     @UserLogin() userLogin: UsersEntity
   ) {
-    const data = await this.usersService.create(false, UserDto, userLogin);
+    const data = await this.usersService.create(UserDto, userLogin);
     return {
       statusCode: HttpStatus.OK,
       data,
@@ -146,6 +147,42 @@ export class UsersController {
       data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
     };
+  }
+
+  @Auth()
+  @Post('/asignar/ccomerciales')
+  async asignarCComerciales(
+    @Body() dto: AsignarCComercialesDto,
+  ) {
+    let data = await this.usersService.asignarCComerciales(dto);
+    return {
+      statusCode: HttpStatus.OK,
+      data: data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Get(':id/ccomerciales')
+  async getCComerciales(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.usersService.getCComerciales(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CONST.MODULES.USERS.USERS}/${id}/ccomerciales`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
   }
 
 }

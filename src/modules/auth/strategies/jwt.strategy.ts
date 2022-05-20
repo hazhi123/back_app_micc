@@ -8,12 +8,12 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { SECRET } from '../../../config';
-import { UsersService } from '../../../modules/users/users.service';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(
-		private userService: UsersService,
+		private authService: AuthService,
 		private config: ConfigService
 	) {
 		super({
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	async validate(payload: any) {
 		const { sub: id } = payload;
-		const res = await this.userService.getLogin(id)
+		const res = await this.authService.getLogin(id)
 		return res
 	}
 
