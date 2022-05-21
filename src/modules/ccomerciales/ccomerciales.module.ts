@@ -9,8 +9,8 @@ import {
   TiendasCComercialesEntity,
 } from '../tiendas/entities/tiendas-ccomerciales.entity';
 import {
-  UsersCComercialesEntity,
-} from '../users/entities/users-ccomerciales.entity';
+  UsuariosCComercialesEntity,
+} from '../usuarios/entities/usuarios-ccomerciales.entity';
 import { CComercialesController } from './ccomerciales.controller';
 import { CComercialesService } from './ccomerciales.service';
 import {
@@ -22,7 +22,7 @@ import { CComercialesEntity } from './entities/ccomerciales.entity';
   imports: [GaleriaModule, TypeOrmModule.forFeature([
     CComercialesEntity,
     CComercialesGaleriaEntity,
-    UsersCComercialesEntity,
+    UsuariosCComercialesEntity,
     CinesCComercialesEntity,
     TiendasCComercialesEntity,
   ])],

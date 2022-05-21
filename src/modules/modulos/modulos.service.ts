@@ -12,7 +12,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import {
   PerfilesModulosEntity,
 } from '../perfiles-modulos/entities/perfiles-modulos.entity';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateModulosDto,
   UpdateModulosDto,
@@ -33,7 +33,7 @@ export class ModulosService {
     private readonly profilesModulosRP: Repository<PerfilesModulosEntity>
   ) { }
 
-  async create(dto: CreateModulosDto, userLogin: UsersEntity) {
+  async create(dto: CreateModulosDto, userLogin: UsuariosEntity) {
     await this.findName(dto.nombre, false);
     const save = await this.modulosRP.save({
       ...dto,
@@ -61,7 +61,7 @@ export class ModulosService {
     });
   }
 
-  async update(dto: UpdateModulosDto, userLogin: UsersEntity) {
+  async update(dto: UpdateModulosDto, userLogin: UsuariosEntity) {
     let findName = await this.findName(dto.nombre, true);
     if (!isEmptyUndefined(findName)) delete dto.nombre
 

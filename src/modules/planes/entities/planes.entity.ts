@@ -6,10 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { LicenciasEntity } from '../../licencias/entities/licencias.entity';
 
-@Entity(CONST.MODULES.PLANES)
+@Entity('plan_planes')
 export class PlanesEntity {
 
   @PrimaryGeneratedColumn()

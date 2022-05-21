@@ -11,7 +11,7 @@ import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateCategoriasDto,
   CreateImageDto,
@@ -32,7 +32,7 @@ export class CategoriasService {
 
   ) { }
 
-  async create(dto: CreateCategoriasDto, userLogin: UsersEntity) {
+  async create(dto: CreateCategoriasDto, userLogin: UsuariosEntity) {
     await this.findNombre(dto.ccomercial, dto.nombre, false)
     const save = await this.categoriasRP.save({
       ...dto,
@@ -80,7 +80,7 @@ export class CategoriasService {
     });
   }
 
-  async update(dto: UpdateCategoriasDto, userLogin: UsersEntity) {
+  async update(dto: UpdateCategoriasDto, userLogin: UsuariosEntity) {
     const findNombre = await this.findNombre(dto.ccomercial, dto.nombre, true)
     if (!isEmptyUndefined(findNombre)) delete dto.nombre
 
@@ -118,7 +118,7 @@ export class CategoriasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsuariosEntity) {
 
     let galeriaId;
     let res: GaleriaEntity

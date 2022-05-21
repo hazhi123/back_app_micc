@@ -7,13 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.GUARDADOS)
+@Entity('gua_guardados')
 export class GuardadosEntity {
 
   @PrimaryGeneratedColumn()
@@ -32,9 +31,9 @@ export class GuardadosEntity {
   updatedAt: Date;
 
   // Relaciones
-  @ManyToOne(() => UsersEntity, users => users.guardados)
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @ManyToOne(() => UsuariosEntity, usu => usu.guardados)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
   @ManyToOne(() => PublicacionesEntity, publicacion => publicacion.guardados)
   @JoinColumn({ name: 'id_publicacion' })

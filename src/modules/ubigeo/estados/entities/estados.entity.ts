@@ -7,12 +7,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../../common/constants';
 import { CiudadesEntity } from '../../ciudades/entities/ciudades.entity';
 import { MunicipiosEntity } from '../../municipios/entities/municipios.entity';
 import { PaisesEntity } from '../../paises/entities/paises.entity';
 
-@Entity(`${CONST.MODULES.UBIGEO.UBIGEO}_${CONST.MODULES.UBIGEO.EDO}`)
+@Entity('ubigeo_estados')
 export class EstadosEntity {
 
   @PrimaryGeneratedColumn({ name: 'id_estado' })

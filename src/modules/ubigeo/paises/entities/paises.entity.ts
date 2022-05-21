@@ -5,9 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../../common/constants';
-
-@Entity(`${CONST.MODULES.UBIGEO.UBIGEO}_${CONST.MODULES.UBIGEO.PAISES}`)
+@Entity('ubigeo_paises')
 export class PaisesEntity {
 
   @PrimaryGeneratedColumn()

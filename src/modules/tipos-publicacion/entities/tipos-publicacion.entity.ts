@@ -6,12 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
 
-@Entity(CONST.MODULES.TIPOS_PUBLICACION)
+@Entity('pub_tipos_publicacion')
 export class TiposPublicacionEntity {
 
   @PrimaryGeneratedColumn()
@@ -39,6 +38,6 @@ export class TiposPublicacionEntity {
   status: boolean;
 
   // Relaciones
-  @OneToMany(() => PublicacionesEntity, tp => tp.tipoPub)
+  @OneToMany(() => PublicacionesEntity, pub => pub.tipoPub)
   publicaciones: PublicacionesEntity[];
 }

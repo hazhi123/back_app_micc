@@ -23,7 +23,7 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateImageDto,
   CreatePublicacionesDto,
@@ -33,8 +33,10 @@ import {
 } from './dto';
 import { PublicacionesService } from './publicaciones.service';
 
-@ApiTags(CONST.MODULES.PUBLICACIONES.toUpperCase())
-@Controller(CONST.MODULES.PUBLICACIONES)
+const PUBLICACIONES = 'publicaciones'
+
+@ApiTags('Publicaciones de Centros Comercial, Tiendas y Cine')
+@Controller(PUBLICACIONES)
 export class PublicacionesController {
   constructor(
     private readonly publicacionesService: PublicacionesService
@@ -44,7 +46,7 @@ export class PublicacionesController {
   @Post()
   async create(
     @Body() dto: CreatePublicacionesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.publicacionesService.create(dto, userLogin);
     return {
@@ -64,7 +66,7 @@ export class PublicacionesController {
     const data = await this.publicacionesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all`,
+      route: `${URLPAGE}/${PUBLICACIONES}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -87,7 +89,7 @@ export class PublicacionesController {
     const data = await this.publicacionesService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PUBLICACIONES}/all/publico`,
+      route: `${URLPAGE}/${PUBLICACIONES}/all/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -116,7 +118,7 @@ export class PublicacionesController {
   @Patch()
   async update(
     @Body() dto: UpdatePublicacionesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.publicacionesService.update(dto, userLogin);
     return {
@@ -145,7 +147,7 @@ export class PublicacionesController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.publicacionesService.createImage(file, dto, userLogin);
     return {
@@ -176,7 +178,7 @@ export class PublicacionesController {
   async createGaleria(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.publicacionesService.createImage(file, dto, userLogin);
     return {

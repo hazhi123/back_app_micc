@@ -8,7 +8,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCategoriasDto {
+export class CreatePanoramasDto {
 
   @ApiProperty()
   @IsString()

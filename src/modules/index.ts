@@ -1,6 +1,6 @@
 export * from './auth/auth.module';
 
-export * from './users/users.module';
+export * from './usuarios/usuarios.module';
 export * from './perfiles/perfiles.module';
 // export * from './modulos/modulos.module';
 // export * from './perfiles-modulos/perfiles-modulos.module';
@@ -33,3 +33,4 @@ export * from './productos/productos.module';
 
 export * from './cines/cines/cines.module';
 export * from './cines/peliculas/peliculas.module';
+export * from './dashboard/dashboard.module';

@@ -15,15 +15,15 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateModulosDto,
   UpdateModulosDto,
 } from './dto';
 import { ModulosService } from './modulos.service';
 
-@ApiTags(CONST.MODULES.MODULOS.toUpperCase())
-@Controller(CONST.MODULES.MODULOS)
+@ApiTags('Modulos del sistema')
+@Controller('sistema/modulos')
 export class ModulosController {
   constructor(
     private readonly ModulosService: ModulosService
@@ -33,7 +33,7 @@ export class ModulosController {
   @Post()
   async create(
     @Body() dto: CreateModulosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.ModulosService.create(dto, userLogin);
     return {
@@ -70,7 +70,7 @@ export class ModulosController {
   @Patch()
   async update(
     @Body() dto: UpdateModulosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.ModulosService.update(dto, userLogin);
     return {

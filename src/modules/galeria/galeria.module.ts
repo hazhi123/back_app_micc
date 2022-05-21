@@ -5,7 +5,7 @@ import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
 import {
   PublicacionesEntity,
 } from '../publicaciones/entities/publicaciones.entity';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { GaleriaEntity } from './entities/galeria.entity';
 import { GaleriaController } from './galeria.controller';
 import { GaleriaService } from './galeria.service';
@@ -13,7 +13,7 @@ import { GaleriaService } from './galeria.service';
 @Module({
   imports: [
     CloudinaryModule,
-    TypeOrmModule.forFeature([UsersEntity, GaleriaEntity, PublicacionesEntity])
+    TypeOrmModule.forFeature([UsuariosEntity, GaleriaEntity, PublicacionesEntity])
   ],
   controllers: [GaleriaController],
   providers: [GaleriaService],

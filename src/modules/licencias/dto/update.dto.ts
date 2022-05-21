@@ -8,13 +8,13 @@ import {
   PartialType,
 } from '@nestjs/swagger';
 
-import { CreateCComercialesDto } from './create-ccomerciales.dto';
+import { CreateLicenciasDto } from './create.dto';
 
-export class UpdateCComercialesDto extends PartialType(CreateCComercialesDto) {
+export class UpdateLicenciasDto extends PartialType(CreateLicenciasDto) {
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  id: any;
+  id: number;
 
 }

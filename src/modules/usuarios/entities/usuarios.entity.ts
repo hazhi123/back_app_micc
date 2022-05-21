@@ -12,10 +12,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
+import { CinesEntity } from '../../cines/cines/entities/cines.entity';
 import {
   ComentariosEntity,
 } from '../../comentarios/entities/comentarios.entity';
@@ -31,11 +31,11 @@ import {
 } from '../../publicaciones/entities/publicaciones.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
-import { UsersCComercialesEntity } from './users-ccomerciales.entity';
-import { UsersInformacionEntity } from './users-informacion.entity';
+import { UsuariosCComercialesEntity } from './usuarios-ccomerciales.entity';
+import { UsuariosInformacionEntity } from './usuarios-informacion.entity';
 
-@Entity(CONST.MODULES.USERS.USERS)
-export class UsersEntity {
+@Entity('usu_usuarios')
+export class UsuariosEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -47,10 +47,10 @@ export class UsersEntity {
   apellido: string;
 
   @Column({ type: 'varchar', nullable: false, unique: true })
-  user: string;
+  usuario: string;
 
   @Column({ type: 'varchar', nullable: false, select: false })
-  password: string;
+  contrasena: string;
 
   @Column({ name: 'created_by' })
   createdBy: number;
@@ -67,8 +67,8 @@ export class UsersEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column({ name: 'is_trabaja_tienda', type: 'bool', default: false })
-  isTrabajaTienda: boolean;
+  @Column({ name: 'is_trabajor', type: 'bool', default: false })
+  isTrabajador: boolean;
 
   @Column({ name: 'is_visitante', type: 'bool', default: true })
   isVisitante: boolean;
@@ -76,8 +76,8 @@ export class UsersEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    if (!this.password) return
-    this.password = await bcrypt.hash(this.password, 10)
+    if (!this.contrasena) return
+    this.contrasena = await bcrypt.hash(this.contrasena, 10)
   }
 
   // Relaciones 
@@ -93,35 +93,39 @@ export class UsersEntity {
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
+  @ManyToOne(() => CinesEntity)
+  @JoinColumn({ name: 'id_cine' })
+  cine: number;
+
   @ManyToOne(() => CiudadesEntity)
   @JoinColumn({ name: 'id_ciudad' })
   ciudad: number;
 
-  @OneToOne(() => UsersInformacionEntity, informacion => informacion.user, { eager: true })
-  informacion: UsersInformacionEntity;
+  @OneToOne(() => UsuariosInformacionEntity, informacion => informacion.usuario, { eager: true })
+  informacion: UsuariosInformacionEntity;
 
-  @OneToOne(() => LicenciasEntity, licencias => licencias.user, { eager: true })
+  @OneToOne(() => LicenciasEntity, licencias => licencias.usuario, { eager: true })
   licencia: LicenciasEntity;
 
-  @OneToMany(() => PublicacionesEntity, pub => pub.userEditor)
+  @OneToMany(() => PublicacionesEntity, pub => pub.usuarioEditor)
   publicaciones: PublicacionesEntity[];
 
-  @OneToMany(() => ComentariosEntity, comentarios => comentarios.user)
+  @OneToMany(() => ComentariosEntity, comentarios => comentarios.usuario)
   comentarios: ComentariosEntity[];
 
-  @OneToMany(() => GuardadosEntity, guardado => guardado.user)
+  @OneToMany(() => GuardadosEntity, guardado => guardado.usuario)
   guardados: GuardadosEntity[];
 
-  @OneToMany(() => LikesEntity, likes => likes.user)
+  @OneToMany(() => LikesEntity, likes => likes.usuario)
   likes: LikesEntity[];
 
-  @OneToMany(() => UsersCComercialesEntity, likes => likes.user)
-  ccomerciales: UsersCComercialesEntity[];
+  @OneToMany(() => UsuariosCComercialesEntity, likes => likes.usuario)
+  ccomerciales: UsuariosCComercialesEntity[];
 
-  @OneToMany(() => ContactosEntity, contactos => contactos.user)
+  @OneToMany(() => ContactosEntity, contactos => contactos.usuario)
   contactos: ContactosEntity[];
 
-  @OneToMany(() => MensajesEntity, mensajes => mensajes.user)
+  @OneToMany(() => MensajesEntity, mensajes => mensajes.usuario)
   mensajes: MensajesEntity[];
 
   @ManyToOne(() => GaleriaEntity, { onDelete: "CASCADE" })

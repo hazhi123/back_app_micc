@@ -20,7 +20,7 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreatePlanesDto,
   GetAllDto,
@@ -28,8 +28,8 @@ import {
 } from './dto';
 import { PlanesService } from './planes.service';
 
-@ApiTags(CONST.MODULES.PLANES)
-@Controller(CONST.MODULES.PLANES)
+@ApiTags('Planes')
+@Controller('planes')
 export class PlanesController {
   constructor(
     private readonly planesService: PlanesService
@@ -39,7 +39,7 @@ export class PlanesController {
   @Post()
   async create(
     @Body() dto: CreatePlanesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.planesService.create(dto, userLogin);
     return {
@@ -60,7 +60,7 @@ export class PlanesController {
     const data = await this.planesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PLANES}`,
+      route: `${URLPAGE}/planes/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -87,7 +87,7 @@ export class PlanesController {
   @Patch()
   async update(
     @Body() dto: UpdatePlanesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.planesService.update(dto, userLogin);
     return {

@@ -15,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as CONST from '../../../common/constants';
 import { isEmptyUndefined } from '../../../common/helpers';
 import { GaleriaService } from '../../galeria/galeria.service';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import {
   AsignarCinesDto,
   CreateImageDto,
@@ -43,7 +43,7 @@ export class PeliculasService {
 
   ) { }
 
-  async create(dto: CreatePeliculasDto, userLogin: UsersEntity) {
+  async create(dto: CreatePeliculasDto, userLogin: UsuariosEntity) {
     await this.findNombre(dto.nombre, false)
     const save = await this.peliculasRP.save({
       ...dto,
@@ -132,7 +132,7 @@ export class PeliculasService {
     return getOne;
   }
 
-  async update(dto: UpdatePeliculasDto, userLogin: UsersEntity) {
+  async update(dto: UpdatePeliculasDto, userLogin: UsuariosEntity) {
     const getOne = await this.getOne(dto.id); const findNombre = await this.findNombre(dto.nombre, true)
     if (!isEmptyUndefined(findNombre)) delete dto.nombre
 
@@ -168,7 +168,7 @@ export class PeliculasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsuariosEntity) {
     try {
       const data = {
         entidad: 'pelicula',

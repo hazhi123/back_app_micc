@@ -10,12 +10,12 @@ import {
   Auth,
   UserLogin,
 } from '../../common/decorators';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CreatePerfilesModulosDto } from './dto';
 import { PerfilesModulosService } from './perfiles-modulos.service';
 
-@ApiTags(CONST.MODULES.USERS.PERFILES_MODULOS.toUpperCase())
-@Controller(CONST.MODULES.USERS.PERFILES_MODULOS)
+@ApiTags('Modulos de perfil')
+@Controller('modulos/perfiles')
 export class PerfilesModulosController {
   constructor(
     private readonly profilesModulosService: PerfilesModulosService
@@ -25,7 +25,7 @@ export class PerfilesModulosController {
   @Post()
   async create(
     @Body() dto: CreatePerfilesModulosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.profilesModulosService.create(dto, userLogin);
     return {

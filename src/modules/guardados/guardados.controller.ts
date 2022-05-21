@@ -9,19 +9,19 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { URLPAGE } from '../../config';
 
 import * as CONST from '../../common/constants';
 import {
   Auth,
   UserLogin,
 } from '../../common/decorators';
-import { UsersEntity } from '../users/entities/users.entity';
+import { URLPAGE } from '../../config';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CreateGuardadosDto } from './dto';
 import { GuardadosService } from './guardados.service';
 
-@ApiTags(CONST.MODULES.GUARDADOS.toUpperCase())
-@Controller(CONST.MODULES.GUARDADOS)
+@ApiTags('Guardados')
+@Controller('guardados')
 export class GuardadosController {
   constructor(
     private readonly guardadosService: GuardadosService
@@ -31,7 +31,7 @@ export class GuardadosController {
   @Post()
   async create(
     @Body() dto: CreateGuardadosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.guardadosService.create(dto, userLogin);
     return {
@@ -46,13 +46,13 @@ export class GuardadosController {
   async getAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     limit = limit > 50 ? 50 : limit;
     const data = await this.guardadosService.getAll(userLogin.id, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.GUARDADOS}`,
+      route: `${URLPAGE}/guardados`,
     });
     let res = {
       statusCode: HttpStatus.OK,

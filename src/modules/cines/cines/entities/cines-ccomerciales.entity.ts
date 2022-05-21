@@ -4,13 +4,15 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../../ccomerciales/entities/ccomerciales.entity';
+import { HorariosEntity } from '../../../horarios/entities/horarios.entity';
+import { LikesEntity } from '../../../likes/entities/likes.entity';
 import { PanoramasEntity } from '../../../panoramas/entities/panoramas.entity';
 import {
   PeliculasCinesEntity,
@@ -18,7 +20,7 @@ import {
 import { CinesGaleriaEntity } from './cines-galeria.entity';
 import { CinesEntity } from './cines.entity';
 
-@Entity(CONST.MODULES.CINES.CCOMERCIALES)
+@Entity('cin_ccomerciales')
 export class CinesCComercialesEntity {
 
   @PrimaryGeneratedColumn()
@@ -45,4 +47,9 @@ export class CinesCComercialesEntity {
   @OneToMany(() => PeliculasCinesEntity, cp => cp.cineCC)
   peliculas: PeliculasCinesEntity[];
 
+  @OneToOne(() => HorariosEntity, hor => hor.cineCC, { eager: true })
+  horarios: HorariosEntity[];
+
+  @OneToMany(() => LikesEntity, likes => likes.cineCC)
+  likes: LikesEntity[];
 }

@@ -16,7 +16,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CambioPlanDto,
   CreateLicenciasDto,
@@ -33,13 +33,13 @@ export class LicenciasService {
     private readonly licenciasRP: Repository<LicenciasEntity>
   ) { }
 
-  async create(dto: CreateLicenciasDto, userLogin: UsersEntity) {
+  async create(dto: CreateLicenciasDto, userLogin: UsuariosEntity) {
     await this.findLicencia(dto.licencia);
     const save = await this.licenciasRP.save({
       ...dto,
-      createdBy: isEmptyUndefined(userLogin) ? dto.user : userLogin.id,
+      createdBy: isEmptyUndefined(userLogin) ? dto.usuario : userLogin.id,
       createdAt: new Date(),
-      updatedBy: isEmptyUndefined(userLogin) ? dto.user : userLogin.id,
+      updatedBy: isEmptyUndefined(userLogin) ? dto.usuario : userLogin.id,
       updatedAt: new Date(),
       status: true
     });
@@ -49,7 +49,7 @@ export class LicenciasService {
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<LicenciasEntity>> {
     const query = await this.licenciasRP
       .createQueryBuilder("lic")
-    query.leftJoinAndSelect("lic.user", "user")
+    query.leftJoinAndSelect("lic.usuario", "usu")
       .leftJoinAndSelect("lic.plan", "plan")
       .select([
         'lic.id',
@@ -58,10 +58,10 @@ export class LicenciasService {
         'lic.fechaFinal',
         'lic.isPrueba',
         'lic.isCancelado',
-        'user.id',
-        'user.nombre',
-        'user.apellido',
-        'user.user',
+        'usu.id',
+        'usu.nombre',
+        'usu.apellido',
+        'usu.usuario',
         'plan.id',
         'plan.nombre',
       ])
@@ -76,8 +76,8 @@ export class LicenciasService {
   async getOne(id: number): Promise<LicenciasEntity> {
     const find = await this.licenciasRP
       .createQueryBuilder("lic")
-      .leftJoinAndSelect("lic.user", "user")
-      .leftJoinAndSelect("user.perfil", "per")
+      .leftJoinAndSelect("lic.usuario", "usu")
+      .leftJoinAndSelect("usu.perfil", "per")
       .leftJoinAndSelect("lic.plan", "plan")
       .select([
         'lic.id',
@@ -90,10 +90,10 @@ export class LicenciasService {
         'lic.createdAt',
         'lic.updatedBy',
         'lic.updatedAt',
-        'user.id',
-        'user.nombre',
-        'user.apellido',
-        'user.user',
+        'usu.id',
+        'usu.nombre',
+        'usu.apellido',
+        'usu.usuario',
         'per.id',
         'per.nombre',
         'plan.id',
@@ -110,14 +110,14 @@ export class LicenciasService {
     return find;
   }
 
-  async update(dto: UpdateLicenciasDto, userLogin: UsersEntity) {
+  async update(dto: UpdateLicenciasDto, userLogin: UsuariosEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
     }, HttpStatus.ACCEPTED)
-    if (dto.user !== getOne.user.id) throw new HttpException({
+    if (dto.usuario !== getOne.usuario.id) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: 'Esta licencia no esta registrada con el usuario correcto',
     }, HttpStatus.ACCEPTED)
@@ -133,7 +133,7 @@ export class LicenciasService {
   }
 
 
-  async cambioPlan(dto: CambioPlanDto, userLogin: UsersEntity) {
+  async cambioPlan(dto: CambioPlanDto, userLogin: UsuariosEntity) {
     await this.licenciasRP.update(dto.licencia, {
       plan: dto.plan == 0 ? null : dto.plan,
       isPrueba: dto.plan == 0,

@@ -22,7 +22,7 @@ import { GaleriaService } from '../galeria/galeria.service';
 import {
   TiendasCComercialesEntity,
 } from '../tiendas/entities/tiendas-ccomerciales.entity';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateCComercialesDto,
   CreateImageDto,
@@ -55,7 +55,7 @@ export class CComercialesService {
 
   ) { }
 
-  async create(dto: CreateCComercialesDto, userLogin: UsersEntity) {
+  async create(dto: CreateCComercialesDto, userLogin: UsuariosEntity) {
     const save = await this.ccomercialesRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -174,7 +174,7 @@ export class CComercialesService {
     return await this.getOne(dto.id);
   }
 
-  async update(dto: UpdateCComercialesDto, userLogin: UsersEntity) {
+  async update(dto: UpdateCComercialesDto, userLogin: UsuariosEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({
@@ -210,7 +210,7 @@ export class CComercialesService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsuariosEntity) {
     if ((parseInt(dto.isBack) == 0 || parseInt(dto.isBack) == 1) && dto.index === undefined) {
       try {
         const data = {

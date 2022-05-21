@@ -20,7 +20,7 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CambioPlanDto,
   CreateLicenciasDto,
@@ -29,8 +29,8 @@ import {
 } from './dto';
 import { LicenciasService } from './licencias.service';
 
-@ApiTags(CONST.MODULES.LICENCIAS.toUpperCase())
-@Controller(CONST.MODULES.LICENCIAS)
+@ApiTags('Licencias')
+@Controller('licencias')
 export class LicenciasController {
   constructor(
     private readonly licenciasService: LicenciasService
@@ -40,7 +40,7 @@ export class LicenciasController {
   @Post()
   async create(
     @Body() dto: CreateLicenciasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.licenciasService.create(dto, userLogin);
     return {
@@ -61,7 +61,7 @@ export class LicenciasController {
     const data = await this.licenciasService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.LICENCIAS}/all`,
+      route: `${URLPAGE}/licencias/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -88,7 +88,7 @@ export class LicenciasController {
   @Patch()
   async update(
     @Body() dto: UpdateLicenciasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.licenciasService.update(dto, userLogin);
     return {
@@ -102,7 +102,7 @@ export class LicenciasController {
   @Post('/plan')
   async cambioPlan(
     @Body() dto: CambioPlanDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.licenciasService.cambioPlan(dto, userLogin);
     return {

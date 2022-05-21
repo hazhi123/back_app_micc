@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreatePerfilesDto,
   GetAllDto,
@@ -25,7 +25,7 @@ export class PerfilesService {
     private readonly perfilesRP: Repository<PerfilesEntity>
   ) { }
 
-  async create(dto: CreatePerfilesDto, userLogin: UsersEntity) {
+  async create(dto: CreatePerfilesDto, userLogin: UsuariosEntity) {
     await this.findNombre(dto.nombre, false)
     const save = await this.perfilesRP.save({
       ...dto,
@@ -54,7 +54,7 @@ export class PerfilesService {
     });
   }
 
-  async update(dto: UpdatePerfilesDto, userLogin: UsersEntity) {
+  async update(dto: UpdatePerfilesDto, userLogin: UsuariosEntity) {
     const findNombre = await this.findNombre(dto.nombre, true)
     if (!isEmptyUndefined(findNombre)) delete dto.nombre
 
@@ -65,12 +65,12 @@ export class PerfilesService {
     }, HttpStatus.ACCEPTED)
 
     delete getOne.modulos
-    const assingUsers = Object.assign(getOne, {
+    const assingUsuarios = Object.assign(getOne, {
       ...dto,
       updatedBy: userLogin.id,
       updatedAt: Date(),
     })
-    await this.perfilesRP.update(getOne.id, assingUsers);
+    await this.perfilesRP.update(getOne.id, assingUsuarios);
     return await this.getOne(dto.id);
   }
 

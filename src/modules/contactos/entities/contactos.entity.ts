@@ -8,17 +8,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
-import {
-  CComercialesEntity,
-} from '../../ccomerciales/entities/ccomerciales.entity';
 import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
 import {
   TiendasCComercialesEntity,
 } from '../../tiendas/entities/tiendas-ccomerciales.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.CONTACTOS)
+@Entity('chat_contactos')
 export class ContactosEntity {
 
   @PrimaryGeneratedColumn()
@@ -43,15 +39,11 @@ export class ContactosEntity {
   ultimoMensaje: string;
 
   // Relaciones
-  @ManyToOne(() => UsersEntity, users => users.contactos)
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @ManyToOne(() => UsuariosEntity, usu => usu.contactos)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
-  @ManyToOne(() => CComercialesEntity, users => users.contactos)
-  @JoinColumn({ name: 'id_ccomercial' })
-  ccomercial: number;
-
-  @ManyToOne(() => TiendasCComercialesEntity, users => users.contactos)
+  @ManyToOne(() => TiendasCComercialesEntity, tieCC => tieCC.contactos)
   @JoinColumn({ name: 'id_tienda_cc' })
   tiendaCC: number;
 

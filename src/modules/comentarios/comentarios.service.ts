@@ -15,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateComentariosDto,
   UpdateComentariosDto,
@@ -35,7 +35,7 @@ export class ComentariosService {
 
   ) { }
 
-  async create(dto: CreateComentariosDto, userLogin: UsersEntity) {
+  async create(dto: CreateComentariosDto, userLogin: UsuariosEntity) {
     const save = await this.comentariosRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -87,7 +87,7 @@ export class ComentariosService {
     return getOne;
   }
 
-  async update(dto: UpdateComentariosDto, userLogin: UsersEntity) {
+  async update(dto: UpdateComentariosDto, userLogin: UsuariosEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({

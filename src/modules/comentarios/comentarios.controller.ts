@@ -19,15 +19,15 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { ComentariosService } from './comentarios.service';
 import {
   CreateComentariosDto,
   UpdateComentariosDto,
 } from './dto';
 
-@ApiTags(CONST.MODULES.COMENTARIOS.toUpperCase())
-@Controller(CONST.MODULES.COMENTARIOS)
+@ApiTags('Comentarios')
+@Controller('comentarios')
 export class ComentariosController {
   constructor(
     private readonly comentariosService: ComentariosService
@@ -37,7 +37,7 @@ export class ComentariosController {
   @Post()
   async create(
     @Body() dto: CreateComentariosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.comentariosService.create(dto, userLogin);
     return {
@@ -58,7 +58,7 @@ export class ComentariosController {
     const data = await this.comentariosService.getAll(id, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.COMENTARIOS}/publicacion/${id}`,
+      route: `${URLPAGE}/comentarios/publicacion/${id}`,
     });
     let res = {
       statusCode: 200,
@@ -85,7 +85,7 @@ export class ComentariosController {
   @Patch()
   async update(
     @Body() dto: UpdateComentariosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.comentariosService.update(dto, userLogin);
     return {

@@ -7,15 +7,17 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
 import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
+import {
   TiendasCComercialesEntity,
 } from '../../tiendas/entities/tiendas-ccomerciales.entity';
 
-@Entity(CONST.MODULES.CCOMERCIALES.HORARIOS)
+@Entity('hor_horarios')
 export class HorariosEntity {
 
   @PrimaryGeneratedColumn()
@@ -68,5 +70,9 @@ export class HorariosEntity {
   @OneToOne(() => TiendasCComercialesEntity, tienda => tienda.horarios, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_tienda_cc' })
   tiendaCC: number;
+
+  @OneToOne(() => CinesCComercialesEntity, cineCC => cineCC.horarios, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_cine_cc' })
+  cineCC: number;
 
 }

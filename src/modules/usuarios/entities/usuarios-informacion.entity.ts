@@ -6,14 +6,13 @@ import {
   OneToOne,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   ParroquiasEntity,
 } from '../../ubigeo/parroquias/entities/parroquias.entity';
-import { UsersEntity } from './users.entity';
+import { UsuariosEntity } from './usuarios.entity';
 
-@Entity(CONST.MODULES.USERS.USERS_INFORMACION)
-export class UsersInformacionEntity {
+@Entity('usu_informacion')
+export class UsuariosInformacionEntity {
 
   @Column({ type: 'varchar', default: '' })
   dni: string;
@@ -31,9 +30,9 @@ export class UsersInformacionEntity {
   telefono: string;
 
   //relaciones
-  @OneToOne(() => UsersEntity, users => users.informacion, { primary: true, onDelete: "CASCADE" })
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @OneToOne(() => UsuariosEntity, usu => usu.informacion, { primary: true, onDelete: "CASCADE" })
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
   @ManyToOne(() => ParroquiasEntity)
   @JoinColumn({ name: 'id_parroquia' })

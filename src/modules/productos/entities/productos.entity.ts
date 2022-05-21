@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
@@ -16,7 +15,7 @@ import {
 } from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import { ProductosGaleriaEntity } from './productos-galeria.entity';
 
-@Entity(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
+@Entity('pro_productos')
 export class ProductosEntity {
 
   @PrimaryGeneratedColumn()

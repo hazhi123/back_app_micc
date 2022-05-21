@@ -8,7 +8,7 @@ import {
   PartialType,
 } from '@nestjs/swagger';
 
-import { CreateTiposPublicacionDto } from './create-tipos-publicacion.dto';
+import { CreateTiposPublicacionDto } from './create.dto';
 
 export class UpdateTiposPublicacionDto extends PartialType(CreateTiposPublicacionDto) {
 

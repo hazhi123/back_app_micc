@@ -11,20 +11,23 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { URLPAGE } from '../../config';
 
 import * as CONST from '../../common/constants';
 import {
   Auth,
   UserLogin,
 } from '../../common/decorators';
-import { UsersEntity } from '../users/entities/users.entity';
-import { CreateContactosDto, GetAllxAtributoDto } from './dto';
-import { ContactosService } from './contactos.service';
 import { isEmptyUndefined } from '../../common/helpers';
+import { URLPAGE } from '../../config';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { ContactosService } from './contactos.service';
+import {
+  CreateContactosDto,
+  GetAllxAtributoDto,
+} from './dto';
 
-@ApiTags(CONST.MODULES.CONTACTOS.toUpperCase())
-@Controller(CONST.MODULES.CONTACTOS)
+@ApiTags('Contactos')
+@Controller('contactos')
 export class ContactosController {
   constructor(
     private readonly contactosService: ContactosService
@@ -34,7 +37,7 @@ export class ContactosController {
   @Post()
   async create(
     @Body() dto: CreateContactosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.contactosService.create(dto, userLogin);
     return {
@@ -56,7 +59,7 @@ export class ContactosController {
     const data = await this.contactosService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CONTACTOS}`,
+      route: `${URLPAGE}/contactos/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,

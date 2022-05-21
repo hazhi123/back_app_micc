@@ -8,18 +8,18 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
+import { LikesEntity } from '../../likes/entities/likes.entity';
 import { PanoramasEntity } from '../../panoramas/entities/panoramas.entity';
 import { ProductosEntity } from '../../productos/entities/productos.entity';
 import { TiendasGaleriaEntity } from './tiendas-galeria.entity';
 import { TiendasEntity } from './tiendas.entity';
 
-@Entity(CONST.MODULES.TIENDAS.CCOMERCIALES)
+@Entity('tie_ccomerciales')
 export class TiendasCComercialesEntity {
 
   @PrimaryGeneratedColumn()
@@ -63,5 +63,8 @@ export class TiendasCComercialesEntity {
 
   @OneToOne(() => HorariosEntity, horarios => horarios.tiendaCC, { eager: true })
   horarios: number;
+
+  @OneToMany(() => LikesEntity, likes => likes.tiendaCC)
+  likes: LikesEntity[];
 
 }

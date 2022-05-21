@@ -13,12 +13,12 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CreateHorariosDto } from './dto';
 import { HorariosService } from './horarios.service';
 
-@ApiTags(CONST.MODULES.CCOMERCIALES.HORARIOS)
-@Controller(CONST.MODULES.CCOMERCIALES.HORARIOS)
+@ApiTags('Horario de Ccomercial, Tiendas y Cines')
+@Controller('horarios')
 export class HorariosController {
   constructor(
     private readonly horariosService: HorariosService
@@ -28,7 +28,7 @@ export class HorariosController {
   @Post()
   async create(
     @Body() dto: CreateHorariosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.horariosService.create(dto, userLogin);
     return {

@@ -15,7 +15,7 @@ import {
   UserLogin,
 } from '../../../common/decorators';
 import { isEmptyUndefined } from '../../../common/helpers';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import {
   CreateMunicipiosDto,
   GetAllDto,
@@ -23,8 +23,8 @@ import {
 } from './dto';
 import { MunicipiosService } from './municipios.service';
 
-@ApiTags(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.MCPIO}`)
-@Controller(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.MCPIO}`)
+@ApiTags('Ubicacion geografica de Municipios')
+@Controller('ubigeo/municipios')
 export class MunicipiosController {
   constructor(
     private readonly estadosService: MunicipiosService
@@ -34,7 +34,7 @@ export class MunicipiosController {
   @Post()
   async create(
     @Body() dto: CreateMunicipiosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.estadosService.create(dto, userLogin);
     return {
@@ -72,7 +72,7 @@ export class MunicipiosController {
   @Patch()
   async update(
     @Body() dto: UpdateMunicipiosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.estadosService.update(dto, userLogin);
     return {

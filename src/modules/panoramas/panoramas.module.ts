@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { GaleriaModule } from '../galeria/galeria.module';
-import { CategoriasEntity } from './entities/panoramas.entity';
-import { CategoriasController } from './panoramas.controller';
-import { CategoriasService } from './panoramas.service';
+import { PanoramasEntity } from './entities/panoramas.entity';
+import { PanoramasController } from './panoramas.controller';
+import { PanoramasService } from './panoramas.service';
 
 @Module({
-  imports: [GaleriaModule, TypeOrmModule.forFeature([CategoriasEntity])],
-  controllers: [CategoriasController],
-  providers: [CategoriasService],
-  exports: [CategoriasService]
+  imports: [GaleriaModule, TypeOrmModule.forFeature([PanoramasEntity])],
+  controllers: [PanoramasController],
+  providers: [PanoramasService],
+  exports: [PanoramasService]
 })
-export class CategoriasModule { }
+export class PanoramasModule { }

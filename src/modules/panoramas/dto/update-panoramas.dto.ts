@@ -8,9 +8,9 @@ import {
   PartialType,
 } from '@nestjs/swagger';
 
-import { CreateCategoriasDto } from './create-panoramas.dto';
+import { CreatePanoramasDto } from './create-panoramas.dto';
 
-export class UpdateCategoriasDto extends PartialType(CreateCategoriasDto) {
+export class UpdatePanoramasDto extends PartialType(CreatePanoramasDto) {
 
   @ApiProperty()
   @IsNumber()

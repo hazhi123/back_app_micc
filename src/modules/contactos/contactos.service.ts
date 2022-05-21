@@ -14,36 +14,53 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../tiendas/entities/tiendas-ccomerciales.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CreateContactosDto } from './dto';
 import { ContactosEntity } from './entities/contactos.entity';
 
 @Injectable()
 export class ContactosService {
 
-  relations = [
-    'user',
-    'ccomercial',
-    'tienda',
-  ]
-
   constructor(
 
     @InjectRepository(ContactosEntity)
     private readonly contactosRP: Repository<ContactosEntity>,
 
+    @InjectRepository(TiendasCComercialesEntity)
+    private readonly tiendasCcomercialesRP: Repository<TiendasCComercialesEntity>,
+
   ) { }
 
-  async create(dto: CreateContactosDto, userLogin: UsersEntity) {
-    await this.findContacto(dto)
+  async create(dto: CreateContactosDto, userLogin: UsuariosEntity) {
+    const one = await this.tiendasCcomercialesRP.findOne({
+      where: {
+        ccomercial: dto.ccomercial,
+        tienda: dto.tienda,
+      }
+    })
+
+    const findOne = await this.contactosRP.findOne({
+      where: {
+        user: dto.user,
+        tiendaCC: one.id,
+      }
+    })
+
+    if (!isEmptyUndefined(findOne)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: 'Esta tienda ya se encuentra en la lista de contactos',
+    }, HttpStatus.ACCEPTED)
 
     const save = await this.contactosRP.save({
-      ...dto,
+      user: dto.user,
+      tiendaCC: one.id,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
       updatedAt: new Date(),
-      status: true
     });
 
     const getOne = await this.getOne(save.id)
@@ -51,37 +68,59 @@ export class ContactosService {
   }
 
   async getOne(id: number): Promise<ContactosEntity> {
-    return await this.contactosRP.findOne({
-      where: { id },
-      relations: this.relations
-    });
+    const getOne = await this.contactosRP
+      .createQueryBuilder("con")
+      .leftJoinAndSelect("con.tienda", "ti")
+      .leftJoinAndSelect("ti.image", "imgGal")
+      .leftJoinAndSelect("ti.imageBack", "imgBackGal")
+      .select([
+        'ti.id',
+        'ti.nombre',
+        'ti.desc',
+        'ti.status',
+        'ti.isGastro',
+        'imgGal.id',
+        'imgGal.file',
+        'imgBackGal.id',
+        'imgBackGal.file',
+      ])
+      .where('con.id = :id', { id })
+      .getOne()
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
   }
 
   async getAll(dto, options: IPaginationOptions): Promise<Pagination<ContactosEntity>> {
     const query = await this.contactosRP.createQueryBuilder('con')
       .leftJoinAndSelect("con.tiendaCC", "tieCC")
       .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("tie.image", "tiImgGal")
+      .leftJoinAndSelect("tie.imageBack", "tiImgBackGal")
       .leftJoinAndSelect("con.user", "user")
-      .leftJoinAndSelect("user.image", "img")
-      .leftJoinAndSelect("con.ccomercial", "cc")
+      .leftJoinAndSelect("user.image", "usimgGal")
+      .leftJoinAndSelect("user.image", "usimgBackGal")
       .select([
         'con.id',
         'con.ultimoMensaje',
         'con.status',
         'tieCC.id',
+        'tieCC.ubicacion',
+        'tieCC.correo',
+        'tieCC.telPrimero',
         'tie.id',
         'tie.nombre',
         'user.id',
         'user.nombre',
         'user.apellido',
-        'img.id',
-        'img.file',
-        'cc.id',
-        'cc.nombre',
+        'usimgGal.id',
+        'usimgGal.file',
+        'usimgBackGal.id',
+        'usimgBackGal.file',
+        'tiImgGal.id',
+        'tiImgGal.file',
+        'tiImgBackGal.id',
+        'tiImgBackGal.file',
       ])
-    if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('con.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
-    }
     if (!isEmptyUndefined(dto.tienda)) {
       query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
     }
@@ -104,25 +143,6 @@ export class ContactosService {
     }, HttpStatus.ACCEPTED)
     await this.contactosRP.delete(id);
     return getOne;
-  }
-
-  async findContacto(dto: CreateContactosDto) {
-    let search = {}
-
-    if (!isEmptyUndefined(dto.ccomercial)) search['ccomercial'] = dto.ccomercial
-    if (!isEmptyUndefined(dto.tienda)) search['tienda'] = dto.tienda
-
-    const findOne = await this.contactosRP.findOne({
-      where: {
-        ...search,
-        user: dto.user
-      }
-    })
-
-    if (!isEmptyUndefined(findOne)) throw new HttpException({
-      statusCode: HttpStatus.ACCEPTED,
-      message: 'Este contactos ya se encuentra en la lista',
-    }, HttpStatus.ACCEPTED)
   }
 
 }

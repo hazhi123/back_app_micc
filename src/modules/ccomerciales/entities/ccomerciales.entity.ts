@@ -9,12 +9,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   CinesCComercialesEntity,
 } from '../../cines/cines/entities/cines-ccomerciales.entity';
-import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import {
@@ -24,10 +22,10 @@ import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
 import {
   ParroquiasEntity,
 } from '../../ubigeo/parroquias/entities/parroquias.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import { CComercialesGaleriaEntity } from './ccomerciales-galeria.entity';
 
-@Entity(CONST.MODULES.CCOMERCIALES.CCOMERCIALES)
+@Entity('cco_ccomerciales')
 export class CComercialesEntity {
 
   @PrimaryGeneratedColumn()
@@ -81,17 +79,14 @@ export class CComercialesEntity {
   @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
-  @OneToMany(() => UsersEntity, users => users.ccomercial)
-  users: UsersEntity[];
+  @OneToMany(() => UsuariosEntity, users => users.ccomercial)
+  users: UsuariosEntity[];
 
   @OneToMany(() => TiendasCComercialesEntity, tieCC => tieCC.ccomercial)
   tiendas: TiendasCComercialesEntity[];
 
   @OneToMany(() => CategoriasEntity, categoria => categoria.ccomercial)
   categorias: CategoriasEntity[];
-
-  @OneToMany(() => ContactosEntity, categoria => categoria.ccomercial)
-  contactos: ContactosEntity[];
 
   @ManyToOne(() => CiudadesEntity)
   @JoinColumn({ name: 'id_ciudad' })

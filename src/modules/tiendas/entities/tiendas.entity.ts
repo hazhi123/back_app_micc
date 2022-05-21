@@ -8,12 +8,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasCComercialesEntity } from './tiendas-ccomerciales.entity';
 
-@Entity(CONST.MODULES.TIENDAS.TIENDAS)
+@Entity('tie_tiendas')
 export class TiendasEntity {
 
   @PrimaryGeneratedColumn()

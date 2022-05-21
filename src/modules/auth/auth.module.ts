@@ -10,10 +10,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SECRET } from '../../config';
 import { LicenciasModule } from '../licencias/licencias.module';
 import {
-  UsersInformacionEntity,
-} from '../users/entities/users-informacion.entity';
-import { UsersEntity } from '../users/entities/users.entity';
-import { UsersModule } from '../users/users.module';
+  UsuariosInformacionEntity,
+} from '../usuarios/entities/usuarios-informacion.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { UsuariosModule } from '../usuarios/usuarios.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import {
@@ -25,7 +25,7 @@ import {
   imports: [
     ConfigModule.forRoot(),
     PassportModule,
-    UsersModule,
+    UsuariosModule,
     LicenciasModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -37,8 +37,8 @@ import {
       })
     }),
     TypeOrmModule.forFeature([
-      UsersEntity,
-      UsersInformacionEntity,
+      UsuariosEntity,
+      UsuariosInformacionEntity,
     ])
   ],
   controllers: [AuthController],

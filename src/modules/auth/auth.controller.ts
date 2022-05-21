@@ -9,17 +9,17 @@ import {
 
 import * as CONST from '../../common/constants';
 import { UserLogin } from '../../common/decorators';
-import { createUsersDto } from '../users/dto';
-import { UsersEntity } from '../users/entities/users.entity';
+import { createUsuariosDto } from '../usuarios/dto';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { AuthService } from './auth.service';
 import {
   ChangePasswwordDto,
-  RecoveryPasswordDto,
+  RecoveryDto,
 } from './dto';
 import { LocalAuthGuard } from './guards';
 
-// @ApiTags(CONST.MODULES.AUTH.AUTH.toUpperCase())
-@Controller(CONST.MODULES.AUTH.AUTH)
+// @ApiTags('Authenticación')
+@Controller('auth')
 export class AuthController {
 
   constructor(
@@ -27,9 +27,9 @@ export class AuthController {
   ) { }
 
   @UseGuards(LocalAuthGuard)
-  @Post(CONST.MODULES.AUTH.LOGIN)
+  @Post('login')
   async login(
-    @UserLogin() user: UsersEntity
+    @UserLogin() user: UsuariosEntity
   ) {
     const data = await this.authService.login(user)
     return {
@@ -38,8 +38,8 @@ export class AuthController {
     }
   }
 
-  @Post(CONST.MODULES.AUTH.REGISTER)
-  async register(@Body() userDto: createUsersDto) {
+  @Post('register')
+  async register(@Body() userDto: createUsuariosDto) {
     const data = await this.authService.register(userDto)
     return {
       statusCode: HttpStatus.OK,
@@ -48,8 +48,8 @@ export class AuthController {
   }
 
 
-  @Post(CONST.MODULES.AUTH.RECOVERY_PASSWORD)
-  async recoveryPassword(@Body() recoveryPasswordDto: RecoveryPasswordDto) {
+  @Post('recover')
+  async recoveryPassword(@Body() recoveryPasswordDto: RecoveryDto) {
     const data = await this.authService.recovery(recoveryPasswordDto)
     return {
       statusCode: HttpStatus.OK,
@@ -57,7 +57,7 @@ export class AuthController {
     }
   }
 
-  @Post(CONST.MODULES.AUTH.CHANGE_PASSWORD)
+  @Post('changedPassword')
   async changePassword(@Body() change: ChangePasswwordDto) {
 
     if (change.password !== change.passwordConfirm) throw new NotFoundException(CONST.MESSAGES.AUTH.RECOVERY_PASSWORD.ERROR.MATCH);

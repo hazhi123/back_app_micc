@@ -11,7 +11,7 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  user: string;
+  usuario: string;
 
   @ApiProperty()
   @IsString()

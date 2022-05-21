@@ -26,27 +26,29 @@ import { URLPAGE } from '../../config';
 import {
   AsignarCComercialesDto,
   CreateImageDto,
-  createUsersDto,
+  createUsuariosDto,
   GetAllDto,
-  updatedUsersDto,
+  updatedUsuariosDto,
   UpdateImageDto,
 } from './dto';
-import { UsersEntity } from './entities/users.entity';
-import { UsersService } from './users.service';
+import { UsuariosEntity } from './entities/usuarios.entity';
+import { UsuariosService } from './usuarios.service';
 
-@ApiTags(CONST.MODULES.USERS.USERS.toUpperCase())
-@Controller(CONST.MODULES.USERS.USERS)
-export class UsersController {
+const USUARIOS = 'usuarios'
+
+@ApiTags('Usuarios')
+@Controller(USUARIOS)
+export class UsuariosController {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UsuariosService,
 
   ) { }
 
   @Auth()
   @Post()
   async create(
-    @Body() UserDto: createUsersDto,
-    @UserLogin() userLogin: UsersEntity
+    @Body() UserDto: createUsuariosDto,
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.usersService.create(UserDto, userLogin);
     return {
@@ -66,7 +68,7 @@ export class UsersController {
     const data = await this.usersService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.USERS.USERS}/all`,
+      route: `${URLPAGE}/${USUARIOS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -87,15 +89,15 @@ export class UsersController {
     return {
       statusCode: HttpStatus.OK,
       data,
-      message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
+      message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : ''
     }
   }
 
   @Auth()
   @Patch()
   async update(
-    @Body() userDto: updatedUsersDto,
-    @UserLogin() userLogin: UsersEntity
+    @Body() userDto: updatedUsuariosDto,
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.usersService.update(userDto, userLogin);;
     return {
@@ -126,7 +128,7 @@ export class UsersController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.usersService.createImage(file, dto, userLogin);
     return {
@@ -173,7 +175,7 @@ export class UsersController {
     const data = await this.usersService.getCComerciales(id, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.USERS.USERS}/${id}/ccomerciales`,
+      route: `${URLPAGE}/${USUARIOS}/${id}/ccomerciales`,
     });
     let res = {
       statusCode: HttpStatus.OK,

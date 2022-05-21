@@ -23,7 +23,7 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateImageDto,
   CreateProductosDto,
@@ -33,8 +33,9 @@ import {
 } from './dto';
 import { ProductosService } from './productos.service';
 
-@ApiTags(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
-@Controller(CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS)
+const PRODUCTOS = 'productos'
+@ApiTags('Productos')
+@Controller(PRODUCTOS)
 export class ProductosController {
   constructor(
     private readonly publicacionesService: ProductosService
@@ -44,7 +45,7 @@ export class ProductosController {
   @Post()
   async create(
     @Body() dto: CreateProductosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.publicacionesService.create(dto, userLogin);
     return {
@@ -64,7 +65,7 @@ export class ProductosController {
     const data = await this.publicacionesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS}/all`,
+      route: `${URLPAGE}/${PRODUCTOS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -77,7 +78,7 @@ export class ProductosController {
   }
 
   @Auth()
-  @Post('/all/publico')
+  @Post('/publico')
   async getAllPublico(
     @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -87,7 +88,7 @@ export class ProductosController {
     const data = await this.publicacionesService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.PRODUCTOS.PRODUCTOS}/all/publico`,
+      route: `${URLPAGE}/${PRODUCTOS}/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -114,7 +115,7 @@ export class ProductosController {
   @Patch()
   async update(
     @Body() dto: UpdateProductosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.publicacionesService.update(dto, userLogin);
     return {
@@ -143,7 +144,7 @@ export class ProductosController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.publicacionesService.createImage(file, dto, userLogin);
     return {
@@ -174,7 +175,7 @@ export class ProductosController {
   async createGaleria(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.publicacionesService.createImage(file, dto, userLogin);
     return {

@@ -1,18 +1,11 @@
 import { Repository } from 'typeorm';
 
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
-import {
-  CreateHorariosDto,
-} from './dto';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { CreateHorariosDto } from './dto';
 import { HorariosEntity } from './entities/horarios.entity';
 
 @Injectable()
@@ -28,7 +21,7 @@ export class HorariosService {
     private readonly horariosRP: Repository<HorariosEntity>
   ) { }
 
-  async create(dto: CreateHorariosDto, userLogin: UsersEntity) {
+  async create(dto: CreateHorariosDto, userLogin: UsuariosEntity) {
 
     let getOne
     if (!isEmptyUndefined(dto.ccomercial)) {

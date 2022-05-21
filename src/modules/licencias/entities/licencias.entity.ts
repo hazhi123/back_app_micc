@@ -8,11 +8,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { PlanesEntity } from '../../planes/entities/planes.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.LICENCIAS)
+@Entity('lic_licencias')
 export class LicenciasEntity {
 
   @PrimaryGeneratedColumn()
@@ -46,9 +45,9 @@ export class LicenciasEntity {
   isCancelado: boolean;
 
   //relaciones
-  @OneToOne(() => UsersEntity, users => users.licencia, { onDelete: "CASCADE" })
-  @JoinColumn({ name: 'id_user' })
-  user: any;
+  @OneToOne(() => UsuariosEntity, usu => usu.licencia, { onDelete: "CASCADE" })
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: any;
 
   @ManyToOne(() => PlanesEntity, planes => planes.licencias)
   @JoinColumn({ name: 'id_plan' })

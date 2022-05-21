@@ -5,13 +5,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../../common/constants';
 import {
   CinesCComercialesEntity,
 } from '../../cines/entities/cines-ccomerciales.entity';
 import { PeliculasEntity } from './peliculas.entity';
 
-@Entity(CONST.MODULES.CINES.PELICULAS.CINES)
+@Entity('pel_cines')
 export class PeliculasCinesEntity {
 
   @PrimaryGeneratedColumn()

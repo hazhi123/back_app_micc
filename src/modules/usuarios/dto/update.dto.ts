@@ -8,9 +8,10 @@ import {
   PartialType,
 } from '@nestjs/swagger';
 
-import { CreateLicenciasDto } from './create-licencias.dto';
+import { createUsuariosDto } from './create.dto';
 
-export class UpdateLicenciasDto extends PartialType(CreateLicenciasDto) {
+/* eslint-disable prettier/prettier */
+export class updatedUsuariosDto extends PartialType(createUsuariosDto) {
 
   @ApiProperty()
   @IsNumber()

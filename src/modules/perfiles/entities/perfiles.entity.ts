@@ -6,13 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   PerfilesModulosEntity,
 } from '../../perfiles-modulos/entities/perfiles-modulos.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.USERS.PERFILES)
+@Entity('usu_perfiles')
 export class PerfilesEntity {
 
   @PrimaryGeneratedColumn()
@@ -43,8 +42,8 @@ export class PerfilesEntity {
   @OneToMany(() => PerfilesModulosEntity, perfilesModulos => perfilesModulos.perfil, { eager: true })
   modulos: PerfilesModulosEntity[];
 
-  @OneToMany(() => UsersEntity, users => users.perfil)
-  users: UsersEntity[];
+  @OneToMany(() => UsuariosEntity, usu => usu.perfil)
+  usuarios: UsuariosEntity[];
 
 
 }

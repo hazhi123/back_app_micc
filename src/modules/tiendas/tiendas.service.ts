@@ -15,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaService } from '../galeria/galeria.service';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   AsignarCComercialesDto,
   CreateImageDto,
@@ -47,7 +47,7 @@ export class TiendasService {
 
   ) { }
 
-  async create(dto: CreateTiendasDto, userLogin: UsersEntity) {
+  async create(dto: CreateTiendasDto, userLogin: UsuariosEntity) {
     await this.findNombre(dto.nombre, false)
     const save = await this.tiendasRP.save({
       ...dto,
@@ -205,7 +205,7 @@ export class TiendasService {
     return getOne;
   }
 
-  async update(dto: UpdateTiendasDto, userLogin: UsersEntity) {
+  async update(dto: UpdateTiendasDto, userLogin: UsuariosEntity) {
     const findNombre = await this.findNombre(dto.nombre, true)
     if (!isEmptyUndefined(findNombre)) delete dto.nombre
 
@@ -243,7 +243,7 @@ export class TiendasService {
     }, HttpStatus.ACCEPTED)
   }
 
-  async createImage(file: any, dto: CreateImageDto, userLogin: UsersEntity) {
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsuariosEntity) {
     if ((parseInt(dto.isBack) == 0 || parseInt(dto.isBack) == 1) && dto.index === undefined) {
       try {
         const data = {

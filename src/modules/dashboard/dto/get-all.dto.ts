@@ -1,33 +1,26 @@
 import {
   IsBoolean,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateLicenciasDto {
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  licencia: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  fechaInicio: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  fechaFinal: string;
+export class GetAllDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
+  ccomercial: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  tienda: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
   user: number;
 
   @ApiProperty()

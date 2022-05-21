@@ -3,7 +3,6 @@ import {
   Controller,
   DefaultValuePipe,
   Delete,
-  Get,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -11,19 +10,22 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { URLPAGE } from '../../config';
 
 import * as CONST from '../../common/constants';
 import {
   Auth,
   UserLogin,
 } from '../../common/decorators';
-import { UsersEntity } from '../users/entities/users.entity';
-import { CreateMensajesDto, GetAllxAtributoDto } from './dto';
+import { URLPAGE } from '../../config';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import {
+  CreateMensajesDto,
+  GetAllxAtributoDto,
+} from './dto';
 import { MensajesService } from './mensajes.service';
 
-@ApiTags(CONST.MODULES.MENSAJES.toUpperCase())
-@Controller(CONST.MODULES.MENSAJES)
+@ApiTags('Mensajes')
+@Controller('mensajes')
 export class MensajesController {
   constructor(
     private readonly mensajesService: MensajesService
@@ -33,7 +35,7 @@ export class MensajesController {
   @Post()
   async create(
     @Body() dto: CreateMensajesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.mensajesService.create(dto, userLogin);
     return {
@@ -54,7 +56,7 @@ export class MensajesController {
     const data = await this.mensajesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.MENSAJES}`,
+      route: `${URLPAGE}/mensajes/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,

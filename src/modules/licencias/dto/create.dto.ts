@@ -8,21 +8,31 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateImageDto {
+export class CreateLicenciasDto {
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  licencia: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  fechaInicio: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  fechaFinal: string;
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  user: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  galeria: number;
+  usuario: number;
 
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  isBack: boolean;
+  status: boolean;
 
 }

@@ -7,11 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.MENSAJES)
+@Entity('chat_mensajes')
 export class MensajesEntity {
 
   @PrimaryGeneratedColumn()
@@ -40,8 +39,8 @@ export class MensajesEntity {
   @JoinColumn({ name: 'id_contacto' })
   contacto: number;
 
-  @ManyToOne(() => UsersEntity, users => users.mensajes)
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @ManyToOne(() => UsuariosEntity, usu => usu.mensajes)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
 }

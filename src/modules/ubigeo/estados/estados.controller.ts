@@ -15,7 +15,7 @@ import {
   UserLogin,
 } from '../../../common/decorators';
 import { isEmptyUndefined } from '../../../common/helpers';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import {
   CreateEstadosDto,
   GetAllDto,
@@ -23,8 +23,8 @@ import {
 } from './dto';
 import { EstadosService } from './estados.service';
 
-@ApiTags(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.EDO}`)
-@Controller(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.EDO}`)
+@ApiTags('Ubicacion geografica de Estados')
+@Controller('ubigeo/estados')
 export class EstadosController {
   constructor(
     private readonly estadosService: EstadosService
@@ -34,7 +34,7 @@ export class EstadosController {
   @Post()
   async create(
     @Body() dto: CreateEstadosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.estadosService.create(dto, userLogin);
     return {
@@ -72,7 +72,7 @@ export class EstadosController {
   @Patch()
   async update(
     @Body() dto: UpdateEstadosDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.estadosService.update(dto, userLogin);
     return {

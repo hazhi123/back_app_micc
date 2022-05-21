@@ -11,7 +11,7 @@ export class AsignarCComercialesDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  user: number;
+  usuario: number;
 
   @ApiProperty()
   @IsArray()

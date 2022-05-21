@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
@@ -19,7 +18,7 @@ import {
   TiendasCComercialesEntity,
 } from '../../tiendas/entities/tiendas-ccomerciales.entity';
 
-@Entity(CONST.MODULES.PANORAMAS)
+@Entity('pan_panoramas')
 export class PanoramasEntity {
 
   @PrimaryGeneratedColumn()

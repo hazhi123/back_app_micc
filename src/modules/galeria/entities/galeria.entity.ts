@@ -5,9 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
-
-@Entity(CONST.MODULES.GALERIA)
+@Entity('gal_galeria')
 export class GaleriaEntity {
 
   @PrimaryGeneratedColumn()

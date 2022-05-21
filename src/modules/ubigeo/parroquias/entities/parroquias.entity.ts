@@ -7,10 +7,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../../common/constants';
 import { MunicipiosEntity } from '../../municipios/entities/municipios.entity';
 
-@Entity(`${CONST.MODULES.UBIGEO.UBIGEO}_${CONST.MODULES.UBIGEO.PARR}`)
+@Entity('ubigeo_parroquias')
 export class ParroquiasEntity {
 
   @PrimaryGeneratedColumn({ name: 'id_parroquia' })

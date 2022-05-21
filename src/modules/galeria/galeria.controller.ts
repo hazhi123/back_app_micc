@@ -20,15 +20,15 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateGaleriaDto,
   GetAllDto,
 } from './dto';
 import { GaleriaService } from './galeria.service';
 
-@ApiTags(CONST.MODULES.GALERIA.toUpperCase())
-@Controller(CONST.MODULES.GALERIA)
+@ApiTags('Galeria de imagenes y videos')
+@Controller('galeria')
 export class GaleriaController {
   constructor(
     private readonly galeriaService: GaleriaService
@@ -42,7 +42,7 @@ export class GaleriaController {
   async create(
     @UploadedFile() file,
     @Body() dto: CreateGaleriaDto,
-    @UserLogin() userLogin: UsersEntity,
+    @UserLogin() userLogin: UsuariosEntity,
   ) {
     let data = await this.galeriaService.create(file, dto, userLogin);
     return {
@@ -63,7 +63,7 @@ export class GaleriaController {
     const data = await this.galeriaService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.GALERIA}/all`,
+      route: `${URLPAGE}/galeria/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,

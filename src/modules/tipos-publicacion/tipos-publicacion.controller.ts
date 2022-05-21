@@ -15,7 +15,7 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateTiposPublicacionDto,
   GetAllDto,
@@ -23,20 +23,20 @@ import {
 } from './dto';
 import { TiposPublicacionService } from './tipos-publicacion.service';
 
-@ApiTags(CONST.MODULES.TIPOS_PUBLICACION.toUpperCase())
-@Controller(CONST.MODULES.TIPOS_PUBLICACION)
+@ApiTags('Tipos de publicaciones')
+@Controller('tipos_publicaciones')
 export class TiposPublicacionController {
   constructor(
-    private readonly tiposPubService: TiposPublicacionService
+    private readonly tiposPublicacionService: TiposPublicacionService
   ) { }
 
   @Auth()
   @Post()
   async create(
     @Body() dto: CreateTiposPublicacionDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
-    let data = await this.tiposPubService.create(dto, userLogin);
+    let data = await this.tiposPublicacionService.create(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -46,10 +46,10 @@ export class TiposPublicacionController {
 
   @Auth()
   @Post('/all')
-  async getAllxAtributo(
+  async getAll(
     @Body() dto: GetAllDto,
   ) {
-    const data = await this.tiposPubService.getAll(dto);
+    const data = await this.tiposPublicacionService.getAll(dto);
     let res = {
       statusCode: 200,
       data: data,
@@ -61,7 +61,7 @@ export class TiposPublicacionController {
   @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
-    const data = await this.tiposPubService.getOne(id);
+    const data = await this.tiposPublicacionService.getOne(id);
     return {
       statusCode: 200,
       data,
@@ -73,9 +73,9 @@ export class TiposPublicacionController {
   @Patch()
   async update(
     @Body() dto: UpdateTiposPublicacionDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
-    const data = await this.tiposPubService.update(dto, userLogin);
+    const data = await this.tiposPublicacionService.update(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -88,7 +88,7 @@ export class TiposPublicacionController {
   async delete(
     @Param('id') id: number,
   ) {
-    const data = await this.tiposPubService.delete(id);
+    const data = await this.tiposPublicacionService.delete(id);
     return {
       statusCode: 200,
       data,

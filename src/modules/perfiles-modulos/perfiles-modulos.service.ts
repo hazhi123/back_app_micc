@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PerfilesService } from '../perfiles/perfiles.service';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CreatePerfilesModulosDto } from './dto';
 import { PerfilesModulosEntity } from './entities/perfiles-modulos.entity';
 
@@ -19,7 +19,7 @@ export class PerfilesModulosService {
 
   ) { }
 
-  async create(dto: CreatePerfilesModulosDto, userLogin: UsersEntity) {
+  async create(dto: CreatePerfilesModulosDto, userLogin: UsuariosEntity) {
 
     await this.perfilesModulosRP
       .createQueryBuilder()

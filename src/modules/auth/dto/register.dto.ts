@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 /* eslint-disable prettier/prettier */
-export class registerDto {
+export class RegisterDto {
 
   @ApiProperty()
   @IsString()
@@ -27,19 +27,19 @@ export class registerDto {
   })
   @IsString()
   @IsNotEmpty()
-  user: string;
+  usuario: string;
 
   @ApiProperty()
   @IsString()
   @Length(8, 30)
   @IsNotEmpty()
-  password: string;
+  contrasena: string;
 
   @ApiProperty()
   @IsString()
   @Length(8, 30)
   @IsOptional()
-  passwordConfirm: string;
+  contrasenaConfirm: string;
 
   @ApiProperty()
   @IsNumber()

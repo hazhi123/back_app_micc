@@ -31,7 +31,7 @@ export class GetAllDto {
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  isTrabajaTienda: boolean;
+  isTrabajador: boolean;
 
   @ApiProperty()
   @IsBoolean()

@@ -5,22 +5,21 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
-import { UsersEntity } from './users.entity';
+import { UsuariosEntity } from './usuarios.entity';
 
-@Entity(CONST.MODULES.USERS.USERS_CCOMERCIALES)
-export class UsersCComercialesEntity {
+@Entity('usu_ccomerciales')
+export class UsuariosCComercialesEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
 
   // Relaciones
-  @ManyToOne(() => UsersEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @ManyToOne(() => UsuariosEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'id_ccomercial' })

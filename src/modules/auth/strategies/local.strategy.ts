@@ -15,17 +15,17 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 		private readonly authService: AuthService
 	) {
 		super({
-			usernameField: 'user',
-			passwordFiel: 'password'
+			usernameField: 'usuario',
+			passwordField: 'contrasena'
 		});
 	}
 	// validar_email(email) {
 	// 	var regex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 	// 	return regex.test(email) ? true : false;
 	// }
-	async validate(user: string, password: string) {
+	async validate(usuario: string, contrasena: string) {
 		let validateUser
-		validateUser = await this.authService.validateUser(user, password);
+		validateUser = await this.authService.validateUser(usuario, contrasena);
 		if (!validateUser) throw new UnauthorizedException(CONST.MESSAGES.USER.WARNING.NO_MATH_PASSWORD)
 		if (validateUser !== null && validateUser.status === false) throw new UnauthorizedException('El usuario se encuentra bloqueado, por favor contacte a un administrador')
 		return validateUser;

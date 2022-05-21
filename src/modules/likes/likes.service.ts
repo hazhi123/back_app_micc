@@ -18,7 +18,7 @@ import { isEmptyUndefined } from '../../common/helpers';
 import {
   PublicacionesEntity,
 } from '../publicaciones/entities/publicaciones.entity';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateLikesDto,
   GetAllDto,
@@ -38,7 +38,7 @@ export class LikesService {
 
   ) { }
 
-  async create(dto: CreateLikesDto, userLogin: UsersEntity) {
+  async create(dto: CreateLikesDto, userLogin: UsuariosEntity) {
     const existe = await this.existe(dto.user, dto.publicacion);
     if (!isEmptyUndefined(existe)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
@@ -91,7 +91,7 @@ export class LikesService {
     return getOne;
   }
 
-  async update(dto: UpdateLikesDto, userLogin: UsersEntity) {
+  async update(dto: UpdateLikesDto, userLogin: UsuariosEntity) {
     if (isEmptyUndefined(userLogin)) throw new NotFoundException(CONST.MESSAGES.COMMON.ERROR.ROLES);
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({

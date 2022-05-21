@@ -23,7 +23,7 @@ import {
 } from '../../../common/decorators';
 import { isEmptyUndefined } from '../../../common/helpers';
 import { URLPAGE } from '../../../config';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import {
   AsignarCinesDto,
   CreateImageDto,
@@ -34,8 +34,9 @@ import {
 } from './dto';
 import { PeliculasService } from './peliculas.service';
 
-@ApiTags(CONST.MODULES.CINES.PELICULAS.PELICULAS)
-@Controller(CONST.MODULES.CINES.PELICULAS.PELICULAS)
+const PELICULAS = 'cines/peliculas'
+@ApiTags('Peliculas')
+@Controller(PELICULAS)
 export class PeliculasController {
   constructor(
     private readonly peliculasService: PeliculasService
@@ -45,7 +46,7 @@ export class PeliculasController {
   @Post()
   async create(
     @Body() dto: CreatePeliculasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.peliculasService.create(dto, userLogin);
     return {
@@ -66,7 +67,7 @@ export class PeliculasController {
     const data = await this.peliculasService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.PLANES}`,
+      route: `${URLPAGE}/${PELICULAS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -89,7 +90,7 @@ export class PeliculasController {
     const data = await this.peliculasService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/publico`,
+      route: `${URLPAGE}/cines/peliculas/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -116,7 +117,7 @@ export class PeliculasController {
   @Patch()
   async update(
     @Body() dto: UpdatePeliculasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.peliculasService.update(dto, userLogin);
     return {
@@ -147,7 +148,7 @@ export class PeliculasController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.peliculasService.createImage(file, dto, userLogin);
     return {
@@ -195,7 +196,7 @@ export class PeliculasController {
     const data = await this.peliculasService.getCines(id, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CINES.PELICULAS.PELICULAS}/${id}/cines`,
+      route: `${URLPAGE}/${PELICULAS}/${id}/cines`,
     });
     let res = {
       statusCode: HttpStatus.OK,

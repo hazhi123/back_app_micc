@@ -15,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateGaleriaDto,
   GetAllDto,
@@ -39,7 +39,7 @@ export class GaleriaService {
     });
   }
 
-  async create(file, dto: CreateGaleriaDto, userLogin: UsersEntity) {
+  async create(file, dto: CreateGaleriaDto, userLogin: UsuariosEntity) {
     try {
       let image = await this.uploadImageToCloudinary(file)
       const save = await this.galeriaRP.save({

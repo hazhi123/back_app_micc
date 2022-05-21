@@ -25,11 +25,10 @@ import { AppGateway } from './websocket/app.gateway';
     }),
     AccessControlModule.forRoles(roles),
     MOD.AuthModule,
-    MOD.UsersModule,
     MOD.PerfilesModule,
+    // MOD.UsersModule,
     // MOD.ModulosModule,
     // MOD.PerfilesModulosModule,
-
     MOD.PlanesModule,
     MOD.LicenciasModule,
 
@@ -58,6 +57,9 @@ import { AppGateway } from './websocket/app.gateway';
     // Cines
     MOD.CinesModule,
     MOD.PeliculasModule,
+
+    //Dashboard
+    MOD.DashboardModule,
 
     CloudinaryModule,
 

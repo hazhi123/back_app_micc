@@ -7,13 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.COMENTARIOS)
+@Entity('pub_comentarios')
 export class ComentariosEntity {
 
   @PrimaryGeneratedColumn()
@@ -35,9 +34,9 @@ export class ComentariosEntity {
   updatedAt: Date;
 
   // Relaciones
-  @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @ManyToOne(() => UsuariosEntity)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
   @ManyToOne(() => PublicacionesEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'id_publicacion' })

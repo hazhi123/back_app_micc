@@ -2,18 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import {
   PerfilesModulosEntity,
 } from '../../perfiles-modulos/entities/perfiles-modulos.entity';
 
-@Entity(CONST.MODULES.MODULOS)
+@Entity('sis_modulos')
 export class ModulosEntity {
 
   @PrimaryGeneratedColumn()

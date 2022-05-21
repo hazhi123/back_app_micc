@@ -18,7 +18,7 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CategoriasService } from './categorias.service';
 import {
   CreateCategoriasDto,
@@ -28,8 +28,8 @@ import {
   UpdateImageDto,
 } from './dto';
 
-@ApiTags(CONST.MODULES.CATEGORIAS)
-@Controller(CONST.MODULES.CATEGORIAS)
+@ApiTags('Categorias de Centros Comerciales y Tiendas')
+@Controller('categorias')
 export class CategoriasController {
   constructor(
     private readonly categoriaService: CategoriasService
@@ -39,7 +39,7 @@ export class CategoriasController {
   @Post()
   async create(
     @Body() dto: CreateCategoriasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.categoriaService.create(dto, userLogin);
     return {
@@ -78,7 +78,7 @@ export class CategoriasController {
   @Patch()
   async update(
     @Body() dto: UpdateCategoriasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.categoriaService.update(dto, userLogin);
     return {
@@ -109,7 +109,7 @@ export class CategoriasController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.categoriaService.createImage(file, dto, userLogin);
     return {

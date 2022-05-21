@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../../common/constants';
 import { isEmptyUndefined } from '../../../common/helpers';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import {
   CreateParroquiasDto,
   GetAllDto,
@@ -25,7 +25,7 @@ export class ParroquiasService {
     private readonly municipiosRP: Repository<ParroquiasEntity>
   ) { }
 
-  async create(dto: CreateParroquiasDto, userLogin: UsersEntity) {
+  async create(dto: CreateParroquiasDto, userLogin: UsuariosEntity) {
     await this.findNombre(dto.parroquia, false)
     const save = await this.municipiosRP.save(dto);
     return await this.getOne(save.id);
@@ -69,7 +69,7 @@ export class ParroquiasService {
     return find;
   }
 
-  async update(dto: UpdateParroquiasDto, userLogin: UsersEntity) {
+  async update(dto: UpdateParroquiasDto, userLogin: UsuariosEntity) {
     const findNombre = await this.findNombre(dto.parroquia, true)
     if (!isEmptyUndefined(findNombre)) delete dto.parroquia
 

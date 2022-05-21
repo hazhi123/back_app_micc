@@ -15,7 +15,7 @@ import {
   UserLogin,
 } from '../../../common/decorators';
 import { isEmptyUndefined } from '../../../common/helpers';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import { CiudadesService } from './ciudades.service';
 import {
   CreateCiudadesDto,
@@ -23,8 +23,8 @@ import {
   UpdateCiudadesDto,
 } from './dto';
 
-@ApiTags(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.CIU}`)
-@Controller(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.CIU}`)
+@ApiTags('Ubicacion geografica de Ciudades')
+@Controller('ubigeo/ciudades')
 export class CiudadesController {
   constructor(
     private readonly ciudadesService: CiudadesService
@@ -34,7 +34,7 @@ export class CiudadesController {
   @Post()
   async create(
     @Body() dto: CreateCiudadesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.ciudadesService.create(dto, userLogin);
     return {
@@ -72,7 +72,7 @@ export class CiudadesController {
   @Patch()
   async update(
     @Body() dto: UpdateCiudadesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.ciudadesService.update(dto, userLogin);
     return {

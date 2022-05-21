@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 /* eslint-disable prettier/prettier */
-export class createUsersDto {
+export class createUsuariosDto {
 
   @ApiProperty()
   @IsString()
@@ -28,7 +28,7 @@ export class createUsersDto {
   })
   @IsString()
   @IsNotEmpty()
-  user: string;
+  usuario: string;
 
   @ApiProperty()
   @IsString()
@@ -39,13 +39,13 @@ export class createUsersDto {
   @IsString()
   @Length(8, 30)
   @IsNotEmpty()
-  password: string;
+  contrasena: string;
 
   @ApiProperty()
   @IsString()
   @Length(8, 30)
   @IsOptional()
-  passwordConfirm: string;
+  contrasenaConfirm: string;
 
   @ApiProperty()
   @IsNumber()
@@ -89,6 +89,11 @@ export class createUsersDto {
   tienda: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  cine: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
@@ -101,7 +106,7 @@ export class createUsersDto {
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  isTrabajaTienda: boolean;
+  isTrabajador: boolean;
 
 
 }

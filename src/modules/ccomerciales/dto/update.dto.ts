@@ -8,14 +8,13 @@ import {
   PartialType,
 } from '@nestjs/swagger';
 
-import { createUsersDto } from './create-user.dto';
+import { CreateCComercialesDto } from './create.dto';
 
-/* eslint-disable prettier/prettier */
-export class updatedUsersDto extends PartialType(createUsersDto) {
+export class UpdateCComercialesDto extends PartialType(CreateCComercialesDto) {
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  id: number;
+  id: any;
 
 }

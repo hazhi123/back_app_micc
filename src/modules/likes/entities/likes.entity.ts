@@ -7,13 +7,18 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
+import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 
-@Entity(CONST.MODULES.LIKES)
+@Entity('usu_likes')
 export class LikesEntity {
 
   @PrimaryGeneratedColumn()
@@ -32,12 +37,20 @@ export class LikesEntity {
   updatedAt: Date;
 
   // Relaciones
-  @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: 'id_user' })
-  user: number;
+  @ManyToOne(() => UsuariosEntity)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: number;
 
-  @ManyToOne(() => PublicacionesEntity, { onDelete: "CASCADE" })
+  @ManyToOne(() => PublicacionesEntity)
   @JoinColumn({ name: 'id_publicacion' })
   publicacion: any;
+
+  @ManyToOne(() => TiendasCComercialesEntity)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: any;
+
+  @ManyToOne(() => CinesCComercialesEntity)
+  @JoinColumn({ name: 'id_cine_cc' })
+  cineCC: any;
 
 }

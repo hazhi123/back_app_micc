@@ -23,7 +23,7 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   AsignarCComercialesDto,
   CreateImageDto,
@@ -34,8 +34,9 @@ import {
 } from './dto';
 import { TiendasService } from './tiendas.service';
 
-@ApiTags(CONST.MODULES.TIENDAS.TIENDAS)
-@Controller(CONST.MODULES.TIENDAS.TIENDAS)
+const TIENDAS = 'tiendas'
+@ApiTags('Tiendas')
+@Controller(TIENDAS)
 export class TiendasController {
   constructor(
     private readonly tiendasService: TiendasService
@@ -45,7 +46,7 @@ export class TiendasController {
   @Post()
   async create(
     @Body() dto: CreateTiendasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.tiendasService.create(dto, userLogin);
     return {
@@ -66,7 +67,7 @@ export class TiendasController {
     const data = await this.tiendasService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.TIENDAS}/all`,
+      route: `${URLPAGE}/${TIENDAS}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -89,7 +90,7 @@ export class TiendasController {
     const data = await this.tiendasService.getAllPublico(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.TIENDAS.TIENDAS}/publico`,
+      route: `${URLPAGE}/${TIENDAS}/publico`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -116,7 +117,7 @@ export class TiendasController {
   @Patch()
   async update(
     @Body() dto: UpdateTiendasDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.tiendasService.update(dto, userLogin);
     return {
@@ -145,7 +146,7 @@ export class TiendasController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.tiendasService.createImage(file, dto, userLogin);
     return {
@@ -176,7 +177,7 @@ export class TiendasController {
   async createGaleria(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.tiendasService.createImage(file, dto, userLogin);
     return {
@@ -250,7 +251,7 @@ export class TiendasController {
     const data = await this.tiendasService.getCComerciales(id, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CINES.CINES}/${id}/ccomerciales`,
+      route: `${URLPAGE}/${TIENDAS}/${id}/ccomerciales`,
     });
     let res = {
       statusCode: HttpStatus.OK,

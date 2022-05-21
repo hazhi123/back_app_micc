@@ -15,37 +15,38 @@ import * as CONST from '../../common/constants';
 import { codigoLincencia } from '../../utils/create-licenses-free';
 import { LicenciasService } from '../licencias/licencias.service';
 import {
-  UsersInformacionEntity,
-} from '../users/entities/users-informacion.entity';
-import { UsersEntity } from '../users/entities/users.entity';
-import { UsersService } from '../users/users.service';
+  UsuariosInformacionEntity,
+} from '../usuarios/entities/usuarios-informacion.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { UsuariosService } from '../usuarios/usuarios.service';
 import {
   ChangePasswwordDto,
-  RecoveryPasswordDto,
-  registerDto,
+  RecoveryDto,
+  RegisterDto,
 } from './dto';
 
 @Injectable()
 export class AuthService {
 
   constructor(
-    @InjectRepository(UsersEntity)
-    private readonly usersRP: Repository<UsersEntity>,
-
-    @InjectRepository(UsersInformacionEntity)
-    private readonly usersInformacionRP: Repository<UsersInformacionEntity>,
-
-    private readonly userService: UsersService,
-    private readonly licenciasService: LicenciasService,
     private readonly jwtService: JwtService,
+    private readonly userService: UsuariosService,
+    private readonly licenciasService: LicenciasService,
+
+    @InjectRepository(UsuariosEntity)
+    private readonly usuariosRP: Repository<UsuariosEntity>,
+
+    @InjectRepository(UsuariosInformacionEntity)
+    private readonly usuariosInformacionRP: Repository<UsuariosInformacionEntity>,
+
   ) { }
 
-  async validateUser(user: string, password: string): Promise<any | null> {
-    const find = await this.userService.findUser(user)
+  async validateUser(usuario: string, contrasena: string): Promise<any | null> {
+    const find = await this.userService.findUsuario(usuario)
     if (find) {
-      const comparePassword = await bcrypt.compare(password, find.password);
-      delete find.password
-      if (comparePassword) {
+      const compararContrasena = await bcrypt.compare(contrasena, find.contrasena);
+      delete find.contrasena
+      if (compararContrasena) {
         return await this.getLogin(find.id);
       }
     }
@@ -53,29 +54,38 @@ export class AuthService {
   }
 
   async getLogin(id: number) {
-    const findOne = await this.usersRP.findOne({
+    const findOne = await this.usuariosRP.findOne({
       where: { id },
+      select: [
+        'id',
+        'nombre',
+        'apellido',
+        'usuario',
+        'status',
+      ],
     })
     if (!findOne) throw new NotFoundException('Usuario no existe');
+    delete findOne.licencia
+    delete findOne.informacion
     return findOne;
   }
 
-  login(user: UsersEntity) {
-    const { id, ...rest } = user;
+  async login(usuario: UsuariosEntity) {
+    const { id } = usuario;
     const payload = { sub: id, isUser: true };
     return {
-      user,
+      usuario,
       accessToken: this.jwtService.sign(payload)
     }
   }
 
-  async register(dto: registerDto) {
-    if (dto.password !== dto.passwordConfirm) throw new HttpException({
+  async register(dto: RegisterDto) {
+    if (dto.contrasena !== dto.contrasenaConfirm) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.AUTH.RECOVERY_PASSWORD.ERROR.MATCH,
     }, HttpStatus.ACCEPTED)
 
-    let isExist = await this.usersRP.findOne({ where: { user: dto.user } });
+    let isExist = await this.usuariosRP.findOne({ where: { usuario: dto.usuario } });
     if (isExist) throw new HttpException({
       statusCode: HttpStatus.BAD_REQUEST,
       message: CONST.MESSAGES.USER.WARNING.EMAIL_CREATE,
@@ -85,29 +95,28 @@ export class AuthService {
       nombre: dto.nombre,
       apellido: dto.apellido,
       ciudad: dto.ciudad,
-      user: dto.user,
-      password: dto.password,
-      isVisitante: true,
+      usuario: dto.usuario,
+      contrasena: dto.contrasena,
       perfil: 5,
       createdBy: 0,
       createdAt: new Date(),
       updatedBy: 0,
       updatedAt: new Date(),
     };
-    const create = await this.usersRP.create(data);
-    const save = await this.usersRP.save(create);
-    await this.usersInformacionRP.save({
-      correo: dto.user,
-      user: save.id
+    const create = await this.usuariosRP.create(data);
+    const save = await this.usuariosRP.save(create);
+    await this.usuariosInformacionRP.save({
+      correo: dto.usuario,
+      usuario: save.id
     });
 
-    delete save.password;
+    delete save.contrasena;
 
     const dataLic = {
       licencia: await codigoLincencia(),
       fechaInicio: moment().format('YYYY-MM-DD').toString(),
       fechaFinal: moment().add(20, 'days').format('YYYY-MM-DD').toString(),
-      user: save.id,
+      usuario: save.id,
       status: true
     }
     await this.licenciasService.create(dataLic, null)
@@ -117,8 +126,8 @@ export class AuthService {
     };
   }
 
-  async recovery(recover: RecoveryPasswordDto) {
-    let isExist = await this.userService.findUser(recover.email);
+  async recovery(recover: RecoveryDto) {
+    let isExist = await this.userService.findUsuario(recover.email);
     if (!isExist) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,
       message: CONST.MESSAGES.AUTH.RECOVERY_PASSWORD.NO_EMAIL,

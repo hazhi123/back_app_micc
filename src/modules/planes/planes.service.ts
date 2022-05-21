@@ -14,7 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreatePlanesDto,
   GetAllDto,
@@ -32,7 +32,7 @@ export class PlanesService {
     private readonly planesRP: Repository<PlanesEntity>
   ) { }
 
-  async create(dto: CreatePlanesDto, userLogin: UsersEntity) {
+  async create(dto: CreatePlanesDto, userLogin: UsuariosEntity) {
     const save = await this.planesRP.save({
       ...dto,
       createdBy: userLogin.id,
@@ -73,7 +73,7 @@ export class PlanesService {
     });
   }
 
-  async update(dto: UpdatePlanesDto, userLogin: UsersEntity) {
+  async update(dto: UpdatePlanesDto, userLogin: UsuariosEntity) {
     const getOne = await this.getOne(dto.id);
     if (isEmptyUndefined(getOne)) throw new HttpException({
       statusCode: HttpStatus.ACCEPTED,

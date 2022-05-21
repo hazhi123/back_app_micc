@@ -7,11 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { ModulosEntity } from '../../modulos/entities/modulos.entity';
 import { PerfilesEntity } from '../../perfiles/entities/perfiles.entity';
 
-@Entity(CONST.MODULES.USERS.PERFILES_MODULOS)
+@Entity('perf_modulos')
 export class PerfilesModulosEntity {
 
   @PrimaryGeneratedColumn()

@@ -13,7 +13,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CreateGuardadosDto } from './dto';
 import { GuardadosEntity } from './entities/guardados.entity';
 
@@ -32,7 +32,7 @@ export class GuardadosService {
 
   ) { }
 
-  async create(dto: CreateGuardadosDto, userLogin: UsersEntity) {
+  async create(dto: CreateGuardadosDto, userLogin: UsuariosEntity) {
 
     const findOne = await this.guardadosRP.findOne({
       where: {

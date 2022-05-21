@@ -15,7 +15,7 @@ import {
   UserLogin,
 } from '../../../common/decorators';
 import { isEmptyUndefined } from '../../../common/helpers';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import {
   CreatePaisesDto,
   GetAllDto,
@@ -23,8 +23,8 @@ import {
 } from './dto';
 import { PaisesService } from './paises.service';
 
-@ApiTags(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.PAISES}`)
-@Controller(`${CONST.MODULES.UBIGEO.UBIGEO}/${CONST.MODULES.UBIGEO.PAISES}`)
+@ApiTags('Ubicacion geografica de Paises')
+@Controller('ubigeo/paises')
 export class PaisesController {
   constructor(
     private readonly paisesService: PaisesService
@@ -34,7 +34,7 @@ export class PaisesController {
   @Post()
   async create(
     @Body() dto: CreatePaisesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.paisesService.create(dto, userLogin);
     return {
@@ -72,7 +72,7 @@ export class PaisesController {
   @Patch()
   async update(
     @Body() dto: UpdatePaisesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.paisesService.update(dto, userLogin);
     return {

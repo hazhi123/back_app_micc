@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../common/constants';
 import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   CComercialesEntity,
@@ -23,10 +22,10 @@ import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import {
   TiposPublicacionEntity,
 } from '../../tipos-publicacion/entities/tipos-publicacion.entity';
-import { UsersEntity } from '../../users/entities/users.entity';
+import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import { PublicacionesGaleriaEntity } from './publicaciones-galeria.entity';
 
-@Entity(CONST.MODULES.PUBLICACIONES)
+@Entity('pub_publicaciones')
 export class PublicacionesEntity {
 
   @PrimaryGeneratedColumn()
@@ -86,14 +85,14 @@ export class PublicacionesEntity {
   @JoinColumn({ name: 'id_tienda' })
   tienda: number;
 
-  @ManyToOne(() => UsersEntity)
-  @JoinColumn({ name: 'id_user' })
-  userEditor: number;
+  @ManyToOne(() => UsuariosEntity)
+  @JoinColumn({ name: 'id_usuario' })
+  usuarioEditor: number;
 
-  @OneToMany(() => ComentariosEntity, comentarios => comentarios.publicacion, { eager: true })
+  @OneToMany(() => ComentariosEntity, comentarios => comentarios.publicacion)
   comentarios: ComentariosEntity[];
 
-  @OneToMany(() => LikesEntity, likes => likes.publicacion, { eager: true })
+  @OneToMany(() => LikesEntity, likes => likes.publicacion)
   likes: LikesEntity[];
 
   @OneToMany(() => GuardadosEntity, guardados => guardados.publicacion)

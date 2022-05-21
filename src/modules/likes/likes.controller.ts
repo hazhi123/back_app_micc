@@ -12,7 +12,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { URLPAGE } from '../../config';
 
 import * as CONST from '../../common/constants';
 import {
@@ -20,7 +19,8 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { URLPAGE } from '../../config';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreateLikesDto,
   GetAllDto,
@@ -28,8 +28,8 @@ import {
 } from './dto';
 import { LikesService } from './likes.service';
 
-@ApiTags(CONST.MODULES.LIKES.toUpperCase())
-@Controller(CONST.MODULES.LIKES)
+@ApiTags('Likes')
+@Controller('likes')
 export class LikesController {
   constructor(
     private readonly likesService: LikesService
@@ -39,7 +39,7 @@ export class LikesController {
   @Post()
   async create(
     @Body() dto: CreateLikesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.likesService.create(dto, userLogin);
     return {
@@ -60,7 +60,7 @@ export class LikesController {
     const data = await this.likesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.LIKES}/all`,
+      route: `${URLPAGE}/likes/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -87,7 +87,7 @@ export class LikesController {
   @Patch()
   async update(
     @Body() dto: UpdateLikesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.likesService.update(dto, userLogin);
     return {

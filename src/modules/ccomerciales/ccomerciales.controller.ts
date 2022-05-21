@@ -23,7 +23,7 @@ import {
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import { CComercialesService } from './ccomerciales.service';
 import {
   CreateCComercialesDto,
@@ -33,8 +33,9 @@ import {
   UpdateImageDto,
 } from './dto';
 
-@ApiTags(CONST.MODULES.CCOMERCIALES.CCOMERCIALES)
-@Controller(CONST.MODULES.CCOMERCIALES.CCOMERCIALES)
+const CCOMERCIALES = 'ccomerciales'
+@ApiTags('Centro Comerciales')
+@Controller(CCOMERCIALES)
 export class CComercialesController {
   constructor(
     private readonly ccomercialesService: CComercialesService
@@ -44,7 +45,7 @@ export class CComercialesController {
   @Post()
   async create(
     @Body() dto: CreateCComercialesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.ccomercialesService.create(dto, userLogin);
     return {
@@ -65,7 +66,7 @@ export class CComercialesController {
     const data = await this.ccomercialesService.getAll(dto, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES.CCOMERCIALES}/all`,
+      route: `${URLPAGE}/${CCOMERCIALES}/all`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -108,7 +109,7 @@ export class CComercialesController {
   @Patch()
   async update(
     @Body() dto: UpdateCComercialesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.ccomercialesService.update(dto, userLogin);
     return {
@@ -137,7 +138,7 @@ export class CComercialesController {
   async createImage(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.ccomercialesService.createImage(file, dto, userLogin);
     return {
@@ -168,7 +169,7 @@ export class CComercialesController {
   async createGaleria(
     @UploadedFile() file,
     @Body() dto: CreateImageDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.ccomercialesService.createImage(file, dto, userLogin);
     return {
@@ -215,7 +216,7 @@ export class CComercialesController {
     const data = await this.ccomercialesService.getCines(id, {
       page,
       limit,
-      route: `${URLPAGE}/${CONST.MODULES.CCOMERCIALES.CCOMERCIALES}/${id}/cines`,
+      route: `${URLPAGE}/${CCOMERCIALES}/${id}/cines`,
     });
     let res = {
       statusCode: HttpStatus.OK,
@@ -237,7 +238,7 @@ export class CComercialesController {
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
     limit = limit > 50 ? 50 : limit;
-    const route = `${URLPAGE}/${CONST.MODULES.CCOMERCIALES.CCOMERCIALES}/${id}/tiendas`;
+    const route = `${URLPAGE}/${CCOMERCIALES}/${id}/tiendas`;
     const data = isGastro !== undefined && isGastro === 'true' ?
       await this.ccomercialesService.getGastro(id, isGastro, { page, limit, route })
       : await this.ccomercialesService.getTiendas(id, idCategoria, { page, limit, route });

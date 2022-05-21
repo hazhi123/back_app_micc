@@ -1,17 +1,23 @@
-import { Repository } from 'typeorm';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import * as CONST from '../../common/constants';
-import { UsersEntity } from '../users/entities/users.entity';
-import { CreateMensajesDto } from './dto';
-import { MensajesEntity } from './entities/mensajes.entity';
 import { isEmptyUndefined } from '../../common/helpers';
 import { ContactosEntity } from '../contactos/entities/contactos.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { CreateMensajesDto } from './dto';
+import { MensajesEntity } from './entities/mensajes.entity';
 
 @Injectable()
 export class MensajesService {
@@ -31,7 +37,7 @@ export class MensajesService {
 
   ) { }
 
-  async create(dto: CreateMensajesDto, userLogin: UsersEntity) {
+  async create(dto: CreateMensajesDto, userLogin: UsuariosEntity) {
 
     const save = await this.mensajesRP.save({
       ...dto,

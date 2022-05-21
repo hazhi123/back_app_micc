@@ -1,10 +1,12 @@
 import * as Faker from 'faker';
 import { define } from 'typeorm-seeding';
 
-import { UsersEntity } from '../../modules/users/entities/users.entity';
+import {
+  UsuariosEntity,
+} from '../../modules/usuarios/entities/usuarios.entity';
 
-define(UsersEntity, (faker: typeof Faker) => {
-  const user = new UsersEntity();
+define(UsuariosEntity, (faker: typeof Faker) => {
+  const user = new UsuariosEntity();
   user.nombre = faker.name.firstName();
   user.apellido = faker.name.lastName();
   user.user = faker.internet.email();

@@ -15,7 +15,7 @@ import {
   UserLogin,
 } from '../../common/decorators';
 import { isEmptyUndefined } from '../../common/helpers';
-import { UsersEntity } from '../users/entities/users.entity';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   CreatePerfilesDto,
   GetAllDto,
@@ -23,8 +23,8 @@ import {
 } from './dto';
 import { PerfilesService } from './perfiles.service';
 
-@ApiTags(CONST.MODULES.USERS.PERFILES.toUpperCase())
-@Controller(CONST.MODULES.USERS.PERFILES)
+@ApiTags('Perfiles de usuarios')
+@Controller('usuarios/perfiles')
 export class PerfilesController {
   constructor(
     private readonly perfilesService: PerfilesService
@@ -34,7 +34,7 @@ export class PerfilesController {
   @Post()
   async create(
     @Body() dto: CreatePerfilesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     let data = await this.perfilesService.create(dto, userLogin);
     return {
@@ -73,7 +73,7 @@ export class PerfilesController {
   @Patch()
   async update(
     @Body() dto: UpdatePerfilesDto,
-    @UserLogin() userLogin: UsersEntity
+    @UserLogin() userLogin: UsuariosEntity
   ) {
     const data = await this.perfilesService.update(dto, userLogin);
     return {

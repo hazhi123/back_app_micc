@@ -6,11 +6,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import * as CONST from '../../../../common/constants';
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
 import { CinesCComercialesEntity } from './cines-ccomerciales.entity';
 
-@Entity(CONST.MODULES.CINES.GALERIA)
+@Entity('cin_galeria')
 export class CinesGaleriaEntity {
 
   @PrimaryGeneratedColumn()
