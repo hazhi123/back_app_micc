@@ -15,6 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as CONST from '../../common/constants';
 import { isEmptyUndefined } from '../../common/helpers';
 import { GaleriaService } from '../galeria/galeria.service';
+import { ProductosEntity } from '../productos/entities/productos.entity';
 import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
   AsignarCComercialesDto,
@@ -34,16 +35,19 @@ import { TiendasEntity } from './entities/tiendas.entity';
 export class TiendasService {
 
   constructor(
+    private galeriaService: GaleriaService,
+
     @InjectRepository(TiendasEntity)
     private readonly tiendasRP: Repository<TiendasEntity>,
-
-    @InjectRepository(TiendasCComercialesEntity)
-    private readonly tiendasCComercialesRP: Repository<TiendasCComercialesEntity>,
 
     @InjectRepository(TiendasGaleriaEntity)
     private readonly tiendasGaleriaRP: Repository<TiendasGaleriaEntity>,
 
-    private galeriaService: GaleriaService,
+    @InjectRepository(TiendasCComercialesEntity)
+    private readonly tiendasCComercialesRP: Repository<TiendasCComercialesEntity>,
+
+    @InjectRepository(ProductosEntity)
+    private readonly productosRP: Repository<ProductosEntity>,
 
   ) { }
 
@@ -62,77 +66,73 @@ export class TiendasService {
 
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
     const query = await this.tiendasRP
-      .createQueryBuilder("ti")
-      .leftJoinAndSelect("ti.categoria", "cat")
-      .leftJoinAndSelect("ti.image", "imgGal")
-      .leftJoinAndSelect("ti.imageBack", "imgBackGal")
+      .createQueryBuilder("tie")
+      .leftJoinAndSelect("tie.image", "imgGal")
+      .leftJoinAndSelect("tie.imageBack", "imgBackGal")
       .select([
-        'ti.id',
-        'ti.nombre',
-        'ti.desc',
-        'ti.isGastro',
-        'ti.status',
-        'cat.id',
-        'cat.nombre',
+        'tie.id',
+        'tie.nombre',
+        'tie.desc',
+        'tie.isGastro',
+        'tie.status',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
         'imgBackGal.file',
       ])
-    if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('ti.categoria = :categoria', { categoria: dto.categoria })
-    }
     if (!isEmptyUndefined(dto.isGastro)) {
-      query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
+      query.andWhere('tie.isGastro = :isGastro', { isGastro: dto.isGastro })
     }
     if (!isEmptyUndefined(dto.status)) {
-      query.andWhere('ti.status = :status', { status: dto.status })
+      query.andWhere('tie.status = :status', { status: dto.status })
     }
-    query.orderBy("ti.id", "DESC")
+    query.orderBy("tie.id", "DESC")
     query.getMany();
     return paginate<TiendasEntity>(query, options);
   }
 
-  async getAllPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasEntity>> {
-    const query = await this.tiendasRP
-      .createQueryBuilder("ti")
+  async getPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<TiendasCComercialesEntity>> {
+    const query = await this.tiendasCComercialesRP
+      .createQueryBuilder("tieCC")
     query
-      .leftJoinAndSelect("ti.ccomercial", "cc")
-      .leftJoinAndSelect("ti.categoria", "cat")
-      .leftJoinAndSelect("ti.image", "imgGal")
-      .leftJoinAndSelect("ti.imageBack", "imgBackGal")
+      .leftJoinAndSelect("tieCC.ccomercial", "cc")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("tie.image", "imgGal")
+      .leftJoinAndSelect("tie.imageBack", "imgBackGal")
       .select([
-        'ti.id',
-        'ti.nombre',
-        'ti.ubicacion',
-        'ti.isGastro',
-        'cat.id',
-        'cat.nombre',
+        'tieCC.id',
+        'tieCC.correo',
+        'tieCC.telPrimero',
+        'tieCC.telSegundo',
+        'tieCC.ubicacion',
+        'tieCC.abierto',
+        'tie.id',
+        'tie.nombre',
+        'tie.isGastro',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
         'imgBackGal.file',
       ])
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
+      query.andWhere('tieCC.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
+      query.andWhere('tieCC.categoria = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.isGastro)) {
-      query.andWhere('ti.isGastro = :isGastro', { isGastro: dto.isGastro })
+      query.andWhere('tie.isGastro = :isGastro', { isGastro: dto.isGastro })
     }
-    query.andWhere('ti.status = :status', { status: true })
-    query.addOrderBy("ti.nombre", "ASC")
+    query.andWhere('tie.status = :status', { status: true })
+    query.addOrderBy("tie.nombre", "ASC")
 
     query.getMany();
-    return paginate<TiendasEntity>(query, options);
+    return paginate<TiendasCComercialesEntity>(query, options);
   }
 
   async getOne(id: number): Promise<TiendasEntity> {
     const getOne = await this.tiendasRP
       .createQueryBuilder("ti")
-      .leftJoinAndSelect("ti.categoria", "cat")
       .leftJoinAndSelect("ti.image", "imgGal")
       .leftJoinAndSelect("ti.imageBack", "imgBackGal")
       .select([
@@ -145,8 +145,6 @@ export class TiendasService {
         'ti.updatedAt',
         'ti.status',
         'ti.isGastro',
-        'cat.id',
-        'cat.nombre',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
@@ -355,7 +353,29 @@ export class TiendasService {
         tienda: dto.tienda,
         ccomercial: dto.ccomerciales[i]
       };
-      const findOne = await this.tiendasCComercialesRP.findOne({ where: data })
+      const findOne = await this.tiendasCComercialesRP.findOne({
+        where: data,
+        relations: ['ccomercial', 'ccomercial.ciudad'],
+      })
+      if (!isEmptyUndefined(findOne)) {
+        const count = await this.productosRP.count({ tiendaCC: findOne.id })
+        if (count > 0) {
+          throw new HttpException({
+            statusCode: HttpStatus.ACCEPTED,
+            message: `La tienda no se puede eliminar del Centro Comercial ${findOne.ccomercial.nombre} de ${findOne.ccomercial.ciudad.ciudad}, porque tiene (${count}) productos asignados`,
+          }, HttpStatus.ACCEPTED)
+        }
+      }
+    }
+    for (let i = 0; i < dto.ccomerciales.length; i++) {
+      const data = {
+        tienda: dto.tienda,
+        ccomercial: dto.ccomerciales[i]
+      };
+      const findOne = await this.tiendasCComercialesRP.findOne({
+        where: data,
+        relations: ['tienda'],
+      })
       if (isEmptyUndefined(findOne)) {
         await this.tiendasCComercialesRP.save(data);
       } else {

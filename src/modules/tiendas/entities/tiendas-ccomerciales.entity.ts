@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
@@ -16,6 +17,10 @@ import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import { LikesEntity } from '../../likes/entities/likes.entity';
 import { PanoramasEntity } from '../../panoramas/entities/panoramas.entity';
 import { ProductosEntity } from '../../productos/entities/productos.entity';
+import {
+  PublicacionesEntity,
+} from '../../publicaciones/entities/publicaciones.entity';
+import { FavoritosEntity } from '../../usuarios/entities/favoritos.entity';
 import { TiendasGaleriaEntity } from './tiendas-galeria.entity';
 import { TiendasEntity } from './tiendas.entity';
 
@@ -43,11 +48,15 @@ export class TiendasCComercialesEntity {
   //relaciones
   @ManyToOne(() => TiendasEntity)
   @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  tienda: any;
 
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'id_ccomercial' })
-  ccomercial: number;
+  ccomercial: any;
+
+  @ManyToOne(() => CategoriasEntity)
+  @JoinColumn({ name: 'id_categoria' })
+  categoria: number;
 
   @OneToMany(() => TiendasGaleriaEntity, cg => cg.tiendaCC)
   files: TiendasGaleriaEntity[];
@@ -66,5 +75,11 @@ export class TiendasCComercialesEntity {
 
   @OneToMany(() => LikesEntity, likes => likes.tiendaCC)
   likes: LikesEntity[];
+
+  @OneToMany(() => FavoritosEntity, fav => fav.tiendaCC)
+  favoritos: FavoritosEntity[];
+
+  @OneToMany(() => PublicacionesEntity, pub => pub.tiendaCC)
+  publicaciones: PublicacionesEntity[];
 
 }

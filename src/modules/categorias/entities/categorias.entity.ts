@@ -15,7 +15,9 @@ import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 
 @Entity('cco_categorias')
 export class CategoriasEntity {
@@ -49,8 +51,8 @@ export class CategoriasEntity {
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @OneToMany(() => TiendasEntity, tiendas => tiendas.categoria)
-  tiendas: TiendasEntity[];
+  @OneToMany(() => TiendasCComercialesEntity, tie => tie.categoria)
+  tiendas: TiendasCComercialesEntity[];
 
   @OneToMany(() => PublicacionesEntity, pub => pub.categoria)
   publicaciones: PublicacionesEntity[];

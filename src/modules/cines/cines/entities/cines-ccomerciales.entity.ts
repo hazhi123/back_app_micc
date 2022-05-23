@@ -15,6 +15,9 @@ import { HorariosEntity } from '../../../horarios/entities/horarios.entity';
 import { LikesEntity } from '../../../likes/entities/likes.entity';
 import { PanoramasEntity } from '../../../panoramas/entities/panoramas.entity';
 import {
+  PublicacionesEntity,
+} from '../../../publicaciones/entities/publicaciones.entity';
+import {
   PeliculasCinesEntity,
 } from '../../peliculas/entities/peliculas-cines.entity';
 import { CinesGaleriaEntity } from './cines-galeria.entity';
@@ -52,4 +55,7 @@ export class CinesCComercialesEntity {
 
   @OneToMany(() => LikesEntity, likes => likes.cineCC)
   likes: LikesEntity[];
+
+  @OneToMany(() => PublicacionesEntity, pub => pub.cineCC)
+  publicaciones: PublicacionesEntity[];
 }

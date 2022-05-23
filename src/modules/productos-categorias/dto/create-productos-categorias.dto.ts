@@ -1,15 +1,13 @@
 import {
   IsBoolean,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
-  Length,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateProductosDto {
+export class CreateProductosCategoriasDto {
 
   @ApiProperty()
   @IsString()
@@ -18,23 +16,12 @@ export class CreateProductosDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  desc: string;
-
-  @ApiProperty()
-  @IsString()
-  @Length(0, 20)
   @IsOptional()
-  etiqueta: string;
+  desc: string;
 
   @ApiProperty()
   @IsOptional()
   @IsBoolean()
   status: boolean;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  tienda: number;
 
 }

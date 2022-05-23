@@ -81,13 +81,13 @@ export class TiendasController {
 
   @Auth()
   @Post('/publico')
-  async getAllPublico(
+  async getPublico(
     @Body() dto: GetAllDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
   ) {
     limit = limit > 50 ? 50 : limit;
-    const data = await this.tiendasService.getAllPublico(dto, {
+    const data = await this.tiendasService.getPublico(dto, {
       page,
       limit,
       route: `${URLPAGE}/${TIENDAS}/publico`,
@@ -228,7 +228,7 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/asignar/ccomerciales')
+  @Post('/asignarCComerciales')
   async asignarCComerciales(
     @Body() dto: AsignarCComercialesDto,
   ) {

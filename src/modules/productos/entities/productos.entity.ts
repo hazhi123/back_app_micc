@@ -8,8 +8,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
+import {
+  ProductosCategoriasEntity,
+} from '../../productos-categorias/entities/productos-categorias.entity';
 import {
   TiendasCComercialesEntity,
 } from '../../tiendas/entities/tiendas-ccomerciales.entity';
@@ -54,7 +56,7 @@ export class ProductosEntity {
   @JoinColumn({ name: 'id_tienda_cc' })
   tiendaCC: number;
 
-  @ManyToOne(() => CategoriasEntity)
+  @ManyToOne(() => ProductosCategoriasEntity)
   @JoinColumn({ name: 'id_categoria' })
   categoria: number;
 

@@ -16,6 +16,9 @@ import {
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { HorariosEntity } from '../../horarios/entities/horarios.entity';
 import {
+  PublicacionesEntity,
+} from '../../publicaciones/entities/publicaciones.entity';
+import {
   TiendasCComercialesEntity,
 } from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
@@ -79,8 +82,8 @@ export class CComercialesEntity {
   @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
 
-  @OneToMany(() => UsuariosEntity, users => users.ccomercial)
-  users: UsuariosEntity[];
+  @OneToMany(() => UsuariosEntity, usu => usu.ccomercial)
+  usuarios: UsuariosEntity[];
 
   @OneToMany(() => TiendasCComercialesEntity, tieCC => tieCC.ccomercial)
   tiendas: TiendasCComercialesEntity[];
@@ -104,4 +107,7 @@ export class CComercialesEntity {
 
   @OneToMany(() => CinesCComercialesEntity, ccC => ccC.ccomercial)
   cines: CinesCComercialesEntity[];
+
+  @OneToMany(() => PublicacionesEntity, pub => pub.ccomercial)
+  publicaciones: PublicacionesEntity[];
 }

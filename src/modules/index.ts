@@ -24,12 +24,12 @@ export * from './tipos-publicacion/tipos-publicacion.module';
 export * from './publicaciones/publicaciones.module';
 export * from './comentarios/comentarios.module';
 export * from './likes/likes.module';
-export * from './guardados/guardados.module';
 export * from './contactos/contactos.module';
 export * from './mensajes/mensajes.module';
 export * from './galeria/galeria.module';
 
 export * from './productos/productos.module';
+export * from './productos-categorias/productos-categorias.module';
 
 export * from './cines/cines/cines.module';
 export * from './cines/peliculas/peliculas.module';

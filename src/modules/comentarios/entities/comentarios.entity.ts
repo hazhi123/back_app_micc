@@ -21,17 +21,8 @@ export class ComentariosEntity {
   @Column({ type: 'varchar' })
   comentario: string;
 
-  @Column({ name: 'created_by' })
-  createdBy: number;
-
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
-
-  @Column({ name: 'updated_by' })
-  updatedBy: number;
-
-  @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt: Date;
 
   // Relaciones
   @ManyToOne(() => UsuariosEntity)

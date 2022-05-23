@@ -10,7 +10,10 @@ import { PublicacionesController } from './publicaciones.controller';
 import { PublicacionesService } from './publicaciones.service';
 
 @Module({
-  imports: [GaleriaModule, TypeOrmModule.forFeature([PublicacionesEntity, PublicacionesGaleriaEntity])],
+  imports: [GaleriaModule, TypeOrmModule.forFeature([
+    PublicacionesEntity,
+    PublicacionesGaleriaEntity
+  ])],
   controllers: [PublicacionesController],
   providers: [PublicacionesService],
   exports: [PublicacionesService]

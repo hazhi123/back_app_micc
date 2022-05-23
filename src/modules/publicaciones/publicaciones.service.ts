@@ -33,13 +33,13 @@ import { PublicacionesEntity } from './entities/publicaciones.entity';
 export class PublicacionesService {
 
   constructor(
+    private galeriaService: GaleriaService,
+
     @InjectRepository(PublicacionesEntity)
     private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
     @InjectRepository(PublicacionesGaleriaEntity)
     private readonly publicacionesGaleriaRP: Repository<PublicacionesGaleriaEntity>,
-
-    private galeriaService: GaleriaService,
 
   ) { }
 
@@ -63,11 +63,16 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.categoria", "cat")
       .leftJoinAndSelect("pub.image", "pubGal")
       .leftJoinAndSelect("pub.tipoPub", "tPub")
-      .leftJoinAndSelect("pub.userEditor", "uEdit")
+      .leftJoinAndSelect("pub.usuarioEditor", "usuEdit")
       .leftJoinAndSelect("pub.ccomercial", "cc")
-      .leftJoinAndSelect("pub.tienda", "tie")
+      .leftJoinAndSelect("pub.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieImgGal")
       .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
+      .leftJoinAndSelect("pub.cineCC", "cinCC")
+      .leftJoinAndSelect("cinCC.cine", "cin")
+      .leftJoinAndSelect("cin.image", "cinImgGal")
+      .leftJoinAndSelect("cin.imageBack", "cinImgBackGal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -86,36 +91,37 @@ export class PublicacionesService {
         'cc.nombre',
         'cat.id',
         'cat.nombre',
+        'tieCC.id',
         'tie.id',
         'tie.nombre',
-        'uEdit.id',
-        'uEdit.nombre',
-        'uEdit.apellido',
+        'usuEdit.id',
+        'usuEdit.nombre',
+        'usuEdit.apellido',
         'tieImgGal.id',
         'tieImgGal.file',
         'tieImgBackGal.id',
         'tieImgBackGal.file',
       ])
-      .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
-      .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
+      .loadRelationCountAndMap('pub.totalLikes', 'pub.likes')
+      .loadRelationCountAndMap('pub.totalComentarios', 'pub.comentarios')
 
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
+      query.andWhere('pub.categoria = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.tipoPub)) {
-      query.andWhere('tPub.id = :tipoPub', { tipoPub: dto.tipoPub })
+      query.andWhere('pub.tipoPub = :tipoPub', { tipoPub: dto.tipoPub })
     }
     if (!isEmptyUndefined(dto.userEditor)) {
-      query.andWhere('uEdit.id = :userEditor', { userEditor: dto.userEditor })
+      query.andWhere('pub.usuarioEditor = :usuarioEditor', { userEditor: dto.userEditor })
     }
     if (!isEmptyUndefined(dto.status)) {
       query.andWhere('pub.status = :status', { status: dto.status })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
+      query.andWhere('pub.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
+      query.andWhere('pub.ccomercial = :tienda', { tienda: dto.tienda })
     }
     query.orderBy("pub.id", "DESC")
     query.getMany();
@@ -130,9 +136,10 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.tipoPub", "tPub")
       .leftJoinAndSelect("pub.ccomercial", "cc")
       .leftJoinAndSelect("cc.image", "ccGal")
-      .leftJoinAndSelect("pub.userEditor", "uEdit")
+      .leftJoinAndSelect("pub.usuarioEditor", "usuEdit")
       .leftJoinAndSelect("pub.image", "pubGal")
-      .leftJoinAndSelect("pub.tienda", "tie")
+      .leftJoinAndSelect("pub.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieImgGal")
       .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
       .select([
@@ -146,34 +153,35 @@ export class PublicacionesService {
         'cc.nombre',
         'ccGal.id',
         'ccGal.file',
-        'tie.id',
-        'tie.nombre',
         'tPub.id',
         'tPub.nombre',
+        'tieCC.id',
+        'tie.id',
+        'tie.nombre',
         'tieImgGal.id',
         'tieImgGal.file',
         'tieImgBackGal.id',
         'tieImgBackGal.file',
-        'uEdit.id',
-        'uEdit.nombre',
-        'uEdit.apellido',
+        'usuEdit.id',
+        'usuEdit.nombre',
+        'usuEdit.apellido',
       ])
-      .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
-      .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
+      .loadRelationCountAndMap('pub.totalLikes', 'pub.likes')
+      .loadRelationCountAndMap('pub.totalComentarios', 'pub.comentarios')
 
     query.where('pub.status = :status', { status: true })
 
     if (!isEmptyUndefined(dto.tipoPub)) {
-      query.andWhere('tPub.id = :tipoPub', { tipoPub: dto.tipoPub })
+      query.andWhere('pub.tipoPub = :tipoPub', { tipoPub: dto.tipoPub })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
+      query.andWhere('pub.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.categoria)) {
-      query.andWhere('cat.id = :categoria', { categoria: dto.categoria })
+      query.andWhere('pub.categoria = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
+      query.andWhere('pub.tienda = :tienda', { tienda: dto.tienda })
     }
     query.orderBy("pub.createdAt", "DESC")
     query.getMany();
@@ -187,9 +195,10 @@ export class PublicacionesService {
       .leftJoinAndSelect("pub.tipoPub", "tPub")
       .leftJoinAndSelect("pub.ccomercial", "cc")
       .leftJoinAndSelect("cc.image", "ccGal")
-      .leftJoinAndSelect("pub.userEditor", "uEdit")
+      .leftJoinAndSelect("pub.usuarioEditor", "usuEdit")
       .leftJoinAndSelect("pub.image", "pubGal")
-      .leftJoinAndSelect("pub.tienda", "tie")
+      .leftJoinAndSelect("pub.tienda", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieImgGal")
       .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
       .leftJoinAndSelect("pub.files", "file")
@@ -215,22 +224,23 @@ export class PublicacionesService {
         'cc.nombre',
         'ccGal.id',
         'ccGal.file',
+        'tieCC.id',
         'tie.id',
         'tie.nombre',
         'tieImgGal.id',
         'tieImgGal.file',
         'tieImgBackGal.id',
         'tieImgBackGal.file',
-        'uEdit.id',
-        'uEdit.nombre',
-        'uEdit.apellido',
+        'usuEdit.id',
+        'usuEdit.nombre',
+        'usuEdit.apellido',
         'file.id',
         'file.index',
         'gal.id',
         'gal.file',
       ])
-      .loadRelationCountAndMap('cc.totalLikes', 'pub.likes')
-      .loadRelationCountAndMap('cc.totalComentarios', 'pub.comentarios')
+      .loadRelationCountAndMap('pub.totalLikes', 'pub.likes')
+      .loadRelationCountAndMap('pub.totalComentarios', 'pub.comentarios')
       .where('pub.id = :id', { id })
       .getOne();
 

@@ -21,7 +21,6 @@ import {
 } from '../../comentarios/entities/comentarios.entity';
 import { ContactosEntity } from '../../contactos/entities/contactos.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import { LicenciasEntity } from '../../licencias/entities/licencias.entity';
 import { LikesEntity } from '../../likes/entities/likes.entity';
 import { MensajesEntity } from '../../mensajes/entities/mensajes.entity';
@@ -31,6 +30,7 @@ import {
 } from '../../publicaciones/entities/publicaciones.entity';
 import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
 import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
+import { FavoritosEntity } from './favoritos.entity';
 import { UsuariosCComercialesEntity } from './usuarios-ccomerciales.entity';
 import { UsuariosInformacionEntity } from './usuarios-informacion.entity';
 
@@ -101,31 +101,31 @@ export class UsuariosEntity {
   @JoinColumn({ name: 'id_ciudad' })
   ciudad: number;
 
-  @OneToOne(() => UsuariosInformacionEntity, informacion => informacion.usuario, { eager: true })
+  @OneToOne(() => UsuariosInformacionEntity, info => info.usuario, { eager: true })
   informacion: UsuariosInformacionEntity;
 
-  @OneToOne(() => LicenciasEntity, licencias => licencias.usuario, { eager: true })
+  @OneToOne(() => LicenciasEntity, lin => lin.usuario, { eager: true })
   licencia: LicenciasEntity;
 
   @OneToMany(() => PublicacionesEntity, pub => pub.usuarioEditor)
   publicaciones: PublicacionesEntity[];
 
-  @OneToMany(() => ComentariosEntity, comentarios => comentarios.usuario)
+  @OneToMany(() => ComentariosEntity, com => com.usuario)
   comentarios: ComentariosEntity[];
 
-  @OneToMany(() => GuardadosEntity, guardado => guardado.usuario)
-  guardados: GuardadosEntity[];
+  @OneToMany(() => FavoritosEntity, fav => fav.usuario)
+  favoritos: FavoritosEntity[];
 
-  @OneToMany(() => LikesEntity, likes => likes.usuario)
+  @OneToMany(() => LikesEntity, like => like.usuario)
   likes: LikesEntity[];
 
-  @OneToMany(() => UsuariosCComercialesEntity, likes => likes.usuario)
+  @OneToMany(() => UsuariosCComercialesEntity, usuCC => usuCC.usuario)
   ccomerciales: UsuariosCComercialesEntity[];
 
-  @OneToMany(() => ContactosEntity, contactos => contactos.usuario)
+  @OneToMany(() => ContactosEntity, con => con.usuario)
   contactos: ContactosEntity[];
 
-  @OneToMany(() => MensajesEntity, mensajes => mensajes.usuario)
+  @OneToMany(() => MensajesEntity, men => men.usuario)
   mensajes: MensajesEntity[];
 
   @ManyToOne(() => GaleriaEntity, { onDelete: "CASCADE" })

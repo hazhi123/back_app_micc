@@ -44,6 +44,7 @@ export class ProductosService {
   async create(dto: CreateProductosDto, userLogin: UsuariosEntity) {
     const save = await this.productosRP.save({
       ...dto,
+      tiendaCC: dto.tienda,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -58,8 +59,9 @@ export class ProductosService {
       .createQueryBuilder("pro")
     query
       .leftJoinAndSelect("pro.image", "proGal")
-      .leftJoinAndSelect("pro.tienda", "tie")
       .leftJoinAndSelect("pro.categoria", "cat")
+      .leftJoinAndSelect("pro.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieGal")
       .select([
         'pro.id',
@@ -71,6 +73,7 @@ export class ProductosService {
         'proGal.file',
         'cat.id',
         'cat.nombre',
+        'tieCC.id',
         'tie.id',
         'tie.nombre',
       ])
@@ -79,7 +82,7 @@ export class ProductosService {
       query.andWhere('pro.status = :status', { status: dto.status })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
+      query.andWhere('pro.tiendaCC = :tienda', { tienda: dto.tienda })
     }
     query.orderBy("pro.id", "DESC")
     query.getMany();
@@ -91,10 +94,10 @@ export class ProductosService {
       .createQueryBuilder("pro")
     query
       .leftJoinAndSelect("pro.image", "proGal")
-      .leftJoinAndSelect("pro.tienda", "tie")
       .leftJoinAndSelect("pro.categoria", "cat")
+      .leftJoinAndSelect("pro.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieGal")
-      .leftJoinAndSelect("tie.ccomercial", "tiecc")
       .select([
         'pro.id',
         'pro.nombre',
@@ -104,6 +107,7 @@ export class ProductosService {
         'proGal.file',
         'cat.id',
         'cat.nombre',
+        'tieCC.id',
         'tie.id',
         'tie.nombre',
       ])
@@ -111,10 +115,10 @@ export class ProductosService {
       query.andWhere("LOWER(pro.nombre) like :filtro", { filtro: `%${dto.filtro.toLowerCase()}%` })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('tie.id = :tienda', { tienda: dto.tienda })
+      query.andWhere('pro.tiendaCC = :tienda', { tienda: dto.tienda })
     }
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('tiecc.id = :ccomercial', { ccomercial: dto.ccomercial })
+      query.andWhere('tie.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }
     query.andWhere('pro.status = :status', { status: true })
     query.getMany();
@@ -125,10 +129,11 @@ export class ProductosService {
     const getOne = await this.productosRP
       .createQueryBuilder("pro")
       .leftJoinAndSelect("pro.image", "proGal")
-      .leftJoinAndSelect("pro.tienda", "tie")
       .leftJoinAndSelect("pro.categoria", "cat")
       .leftJoinAndSelect("pro.files", "file")
       .leftJoinAndSelect("file.galeria", "gal")
+      .leftJoinAndSelect("pro.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieGal")
       .select([
         'pro.id',
@@ -169,6 +174,7 @@ export class ProductosService {
     }, HttpStatus.ACCEPTED)
     const assing = Object.assign(getOne, {
       ...dto,
+      tiendaCC: dto.tienda,
       updatedBy: userLogin.id,
       updatedAt: new Date(),
     })

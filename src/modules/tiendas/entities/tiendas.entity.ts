@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { CategoriasEntity } from '../../categorias/entities/categorias.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
 import { TiendasCComercialesEntity } from './tiendas-ccomerciales.entity';
 
@@ -50,10 +49,6 @@ export class TiendasEntity {
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria_back' })
   imageBack: number;
-
-  @ManyToOne(() => CategoriasEntity)
-  @JoinColumn({ name: 'id_categoria' })
-  categoria: number;
 
   @OneToMany(() => TiendasCComercialesEntity, tieCC => tieCC.tienda)
   ccomerciales: TiendasCComercialesEntity[];

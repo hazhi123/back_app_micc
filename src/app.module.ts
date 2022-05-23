@@ -38,21 +38,22 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.MunicipiosModule,
     MOD.ParroquiasModule,
 
-    MOD.CategoriasModule,
     MOD.CComercialesModule,
+    MOD.CategoriasModule,
     MOD.HorariosModule,
     MOD.TiendasModule,
 
+    MOD.PublicacionesModule,
     MOD.TiposPublicacionModule,
-    MOD.PublicacionesModule,
-    MOD.PublicacionesModule,
+
     MOD.ComentariosModule,
     MOD.LikesModule,
-    MOD.GuardadosModule,
     MOD.ContactosModule,
     MOD.MensajesModule,
     MOD.GaleriaModule,
+
     MOD.ProductosModule,
+    MOD.ProductosCategoriasModule,
 
     // Cines
     MOD.CinesModule,

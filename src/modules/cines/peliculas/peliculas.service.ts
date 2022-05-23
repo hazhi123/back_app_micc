@@ -221,7 +221,7 @@ export class PeliculasService {
     for (let i = 0; i < dto.cines.length; i++) {
       const data = {
         pelicula: dto.pelicula,
-        cineCC: dto.cines[i]
+        cineCC: dto.cines[i],
       };
       const findOne = await this.peliculasCinesRP.findOne({ where: data })
       if (isEmptyUndefined(findOne)) {
@@ -236,16 +236,16 @@ export class PeliculasService {
   async getCines(id: Number, options: IPaginationOptions): Promise<Pagination<PeliculasCinesEntity>> {
     const query = await this.peliculasCinesRP
       .createQueryBuilder("pCine")
-      .leftJoinAndSelect("pCine.cineCC", "cCC")
-      .leftJoinAndSelect("cCC.cine", "cine")
+      .leftJoinAndSelect("pCine.cineCC", "ciCC")
+      .leftJoinAndSelect("ciCC.cine", "cine")
       .leftJoinAndSelect("cine.image", "imgGal")
       .leftJoinAndSelect("cine.imageBack", "imgBackGal")
-      .leftJoinAndSelect("cCC.ccomercial", "cc")
+      .leftJoinAndSelect("ciCC.ccomercial", "cc")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .select([
         'pCine.id',
-        'cCC.id',
-        'cCC.ubicacion',
+        'ciCC.id',
+        'ciCC.ubicacion',
         'cine.id',
         'cine.nombre',
         'imgGal.id',
@@ -258,7 +258,6 @@ export class PeliculasService {
         'ciu.ciudad',
       ])
       .where('pCine.pelicula = :id', { id })
-      .orderBy("cc.nombre", "ASC")
       .addOrderBy("cine.nombre", "ASC")
     query.getMany();
     return paginate<PeliculasCinesEntity>(query, options);

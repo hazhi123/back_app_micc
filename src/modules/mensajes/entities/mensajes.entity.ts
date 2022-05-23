@@ -19,20 +19,8 @@ export class MensajesEntity {
   @Column({ type: 'varchar' })
   mensaje: string;
 
-  @Column({ name: 'created_by' })
-  createdBy: number;
-
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
-
-  @Column({ name: 'updated_by' })
-  updatedBy: number;
-
-  @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt: Date;
-
-  @Column({ type: 'bool', default: true })
-  status: boolean;
 
   // Relaciones
   @ManyToOne(() => ContactosEntity, contactos => contactos.mensajes)

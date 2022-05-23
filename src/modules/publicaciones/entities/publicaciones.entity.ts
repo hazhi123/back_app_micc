@@ -13,15 +13,20 @@ import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
 import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
+import {
   ComentariosEntity,
 } from '../../comentarios/entities/comentarios.entity';
 import { GaleriaEntity } from '../../galeria/entities/galeria.entity';
-import { GuardadosEntity } from '../../guardados/entities/guardados.entity';
 import { LikesEntity } from '../../likes/entities/likes.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import {
   TiposPublicacionEntity,
 } from '../../tipos-publicacion/entities/tipos-publicacion.entity';
+import { FavoritosEntity } from '../../usuarios/entities/favoritos.entity';
 import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import { PublicacionesGaleriaEntity } from './publicaciones-galeria.entity';
 
@@ -81,24 +86,29 @@ export class PublicacionesEntity {
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
+  @ManyToOne(() => TiendasCComercialesEntity)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
+
+  @ManyToOne(() => CinesCComercialesEntity)
+  @JoinColumn({ name: 'id_cine_cc' })
+  cineCC: number;
 
   @ManyToOne(() => UsuariosEntity)
   @JoinColumn({ name: 'id_usuario' })
   usuarioEditor: number;
 
-  @OneToMany(() => ComentariosEntity, comentarios => comentarios.publicacion)
+  @OneToMany(() => ComentariosEntity, com => com.publicacion)
   comentarios: ComentariosEntity[];
-
-  @OneToMany(() => LikesEntity, likes => likes.publicacion)
-  likes: LikesEntity[];
-
-  @OneToMany(() => GuardadosEntity, guardados => guardados.publicacion)
-  guardados: GuardadosEntity[];
 
   @OneToMany(() => PublicacionesGaleriaEntity, pubGal => pubGal.publicacion)
   files: PublicacionesGaleriaEntity[];
+
+  @OneToMany(() => LikesEntity, like => like.publicacion)
+  likes: LikesEntity[];
+
+  @OneToMany(() => FavoritosEntity, fov => fov.publicacion)
+  favoritos: FavoritosEntity[];
+
 
 }

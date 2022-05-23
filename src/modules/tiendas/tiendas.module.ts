@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { GaleriaModule } from '../galeria/galeria.module';
+import { ProductosEntity } from '../productos/entities/productos.entity';
 import {
   TiendasCComercialesEntity,
 } from './entities/tiendas-ccomerciales.entity';
@@ -14,7 +15,8 @@ import { TiendasService } from './tiendas.service';
   imports: [GaleriaModule, TypeOrmModule.forFeature([
     TiendasEntity,
     TiendasCComercialesEntity,
-    TiendasGaleriaEntity
+    TiendasGaleriaEntity,
+    ProductosEntity,
   ])],
   controllers: [TiendasController],
   providers: [TiendasService],

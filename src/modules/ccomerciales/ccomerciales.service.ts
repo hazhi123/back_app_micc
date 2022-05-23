@@ -74,6 +74,7 @@ export class CComercialesService {
       .leftJoinAndSelect("cc.image", "imgGal")
       .leftJoinAndSelect("cc.imageBack", "imgBackGal")
       .leftJoinAndSelect("ciu.estado", "edo")
+      .leftJoinAndSelect("edo.pais", "pais")
       .select([
         'cc.id',
         'cc.nombre',
@@ -86,6 +87,8 @@ export class CComercialesService {
         'ciu.ciudad',
         'edo.id',
         'edo.estado',
+        'pais.id',
+        'pais.nombre',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
@@ -349,8 +352,8 @@ export class CComercialesService {
   async getTiendas(id: Number, idCategoria, options: IPaginationOptions): Promise<Pagination<TiendasCComercialesEntity>> {
     const query = await this.tiendasCComercialesRP
       .createQueryBuilder("tieCC")
+      .leftJoinAndSelect("tieCC.categoria", "cat")
       .leftJoinAndSelect("tieCC.tienda", "tie")
-      .leftJoinAndSelect("tie.categoria", "cat")
       .leftJoinAndSelect("tie.image", "imgGal")
       .leftJoinAndSelect("tie.imageBack", "imgBackGal")
       .leftJoinAndSelect("tieCC.files", "tieFiGal")

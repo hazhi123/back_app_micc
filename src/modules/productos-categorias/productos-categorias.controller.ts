@@ -17,26 +17,26 @@ import {
 import { isEmptyUndefined } from '../../common/helpers';
 import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
-  CreateTiposPublicacionDto,
-  GetAllDto,
-  UpdateTiposPublicacionDto,
+  CreateProductosCategoriasDto,
+  GetAllProductosCategoriasDto,
+  UpdateProductosCategoriasDto,
 } from './dto';
-import { TiposPublicacionService } from './tipos-publicacion.service';
+import { ProductosCategoriasService } from './productos-categorias.service';
 
-@ApiTags('Tipos de publicacion')
-@Controller('publicaciones/tipos_publicacion')
-export class TiposPublicacionController {
+@ApiTags('Categorias de productos')
+@Controller('productos/categorias')
+export class ProductosCategoriasController {
   constructor(
-    private readonly tiposPublicacionService: TiposPublicacionService
+    private readonly categoriaService: ProductosCategoriasService
   ) { }
 
   @Auth()
   @Post()
   async create(
-    @Body() dto: CreateTiposPublicacionDto,
+    @Body() dto: CreateProductosCategoriasDto,
     @UserLogin() userLogin: UsuariosEntity
   ) {
-    let data = await this.tiposPublicacionService.create(dto, userLogin);
+    let data = await this.categoriaService.create(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -47,9 +47,9 @@ export class TiposPublicacionController {
   @Auth()
   @Post('/all')
   async getAll(
-    @Body() dto: GetAllDto,
+    @Body() dto: GetAllProductosCategoriasDto,
   ) {
-    const data = await this.tiposPublicacionService.getAll(dto);
+    const data = await this.categoriaService.getAll(dto);
     let res = {
       statusCode: 200,
       data: data,
@@ -61,7 +61,7 @@ export class TiposPublicacionController {
   @Auth()
   @Get(':id')
   async getOne(@Param('id') id: number) {
-    const data = await this.tiposPublicacionService.getOne(id);
+    const data = await this.categoriaService.getOne(id);
     return {
       statusCode: 200,
       data,
@@ -72,10 +72,10 @@ export class TiposPublicacionController {
   @Auth()
   @Patch()
   async update(
-    @Body() dto: UpdateTiposPublicacionDto,
+    @Body() dto: UpdateProductosCategoriasDto,
     @UserLogin() userLogin: UsuariosEntity
   ) {
-    const data = await this.tiposPublicacionService.update(dto, userLogin);
+    const data = await this.categoriaService.update(dto, userLogin);
     return {
       statusCode: 200,
       data,
@@ -88,7 +88,7 @@ export class TiposPublicacionController {
   async delete(
     @Param('id') id: number,
   ) {
-    const data = await this.tiposPublicacionService.delete(id);
+    const data = await this.categoriaService.delete(id);
     return {
       statusCode: 200,
       data,

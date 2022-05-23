@@ -53,6 +53,8 @@ export class CategoriasService {
       .select([
         'cat.id',
         'cat.nombre',
+        'cc.id',
+        'cc.nombre',
         'cat.desc',
         'cat.status',
         'gal.id',
@@ -74,10 +76,37 @@ export class CategoriasService {
   }
 
   async getOne(id: number): Promise<CategoriasEntity> {
-    return await this.categoriasRP.findOne({
-      relations: ['image'],
-      where: { id },
-    });
+    const getOne = await this.categoriasRP
+      .createQueryBuilder("cat")
+      .leftJoinAndSelect("cat.image", "imgGal")
+      .leftJoinAndSelect("cat.ccomercial", "cc")
+      .leftJoinAndSelect("cc.ciudad", "ciu")
+      .leftJoinAndSelect("ciu.estado", "edo")
+      .leftJoinAndSelect("edo.pais", "pais")
+      .select([
+        'cat.id',
+        'cat.nombre',
+        'cat.desc',
+        'cat.createdBy',
+        'cat.createdAt',
+        'cat.updatedBy',
+        'cat.updatedAt',
+        'cat.status',
+        'imgGal.id',
+        'imgGal.file',
+        'cc.id',
+        'cc.nombre',
+        'ciu.id',
+        'ciu.ciudad',
+        'edo.id',
+        'edo.estado',
+        'pais.id',
+        'pais.nombre',
+      ])
+      .where('cat.id = :id', { id })
+      .getOne()
+    if (isEmptyUndefined(getOne)) return null
+    return getOne;
   }
 
   async update(dto: UpdateCategoriasDto, userLogin: UsuariosEntity) {

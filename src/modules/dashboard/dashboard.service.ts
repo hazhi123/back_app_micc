@@ -3,6 +3,17 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { CategoriasEntity } from '../categorias/entities/categorias.entity';
+import {
+  CComercialesEntity,
+} from '../ccomerciales/entities/ccomerciales.entity';
+import { CinesEntity } from '../cines/cines/entities/cines.entity';
+import { PeliculasEntity } from '../cines/peliculas/entities/peliculas.entity';
+import { ProductosEntity } from '../productos/entities/productos.entity';
+import {
+  PublicacionesEntity,
+} from '../publicaciones/entities/publicaciones.entity';
+import { TiendasEntity } from '../tiendas/entities/tiendas.entity';
 import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 
 @Injectable()
@@ -12,6 +23,27 @@ export class DashboardService {
 
     @InjectRepository(UsuariosEntity)
     private readonly usuariosRP: Repository<UsuariosEntity>,
+
+    @InjectRepository(CComercialesEntity)
+    private readonly ccomercialesRP: Repository<CComercialesEntity>,
+
+    @InjectRepository(CategoriasEntity)
+    private readonly categoriasRP: Repository<CategoriasEntity>,
+
+    @InjectRepository(TiendasEntity)
+    private readonly tiendasRP: Repository<TiendasEntity>,
+
+    @InjectRepository(ProductosEntity)
+    private readonly productosRP: Repository<ProductosEntity>,
+
+    @InjectRepository(CinesEntity)
+    private readonly cinesRP: Repository<CinesEntity>,
+
+    @InjectRepository(PeliculasEntity)
+    private readonly peliculasRP: Repository<PeliculasEntity>,
+
+    @InjectRepository(PublicacionesEntity)
+    private readonly publicacionesRP: Repository<PublicacionesEntity>,
 
   ) { }
 
@@ -24,6 +56,16 @@ export class DashboardService {
     const visitantesCount = await this.usuariosRP.count({ perfil: 5 });
     const totalCount = await this.usuariosRP.count();
 
+    const totalCC = await this.ccomercialesRP.count();
+    const totalCategorias = await this.categoriasRP.count();
+
+    const totalTiendas = await this.tiendasRP.count();
+    const totalProductos = await this.productosRP.count();
+
+    const totalCines = await this.cinesRP.count();
+    const totalPeliculas = await this.peliculasRP.count();
+    const totalPublicaciones = await this.publicacionesRP.count();
+
     const data = {
       'usuarios': {
         "total": totalCount,
@@ -32,6 +74,25 @@ export class DashboardService {
         "tiendas": tiendaCount,
         "cines": cineCount,
         "visitantes": visitantesCount,
+      },
+      'ccomerciales': {
+        "total": totalCC,
+        "categorias": totalCategorias,
+      },
+      'tiendas': {
+        "total": totalTiendas,
+        'productos': {
+          "total": totalProductos,
+        }
+      },
+      'cines': {
+        "total": totalCines,
+        'peliculas': {
+          "total": totalPeliculas,
+        }
+      },
+      'publicaciones': {
+        "total": totalPublicaciones,
       }
     }
 

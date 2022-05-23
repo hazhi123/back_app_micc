@@ -1,7 +1,6 @@
 import {
   IsBoolean,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -15,50 +14,15 @@ export class CreateTiendasDto {
   @IsNotEmpty()
   nombre: string;
 
-  // @ApiProperty()
-  // @IsString()
-  // @IsOptional()
-  // correo: string;
-
-  // @ApiProperty()
-  // @IsString()
-  // @IsNotEmpty()
-  // telPrimero: string;
-
-  // @ApiProperty()
-  // @IsString()
-  // @IsOptional()
-  // telSegundo: string;
-
-  // @ApiProperty()
-  // @IsString()
-  // @IsOptional()
-  // ubicacion: string;
-
   @ApiProperty()
   @IsString()
   @IsOptional()
   desc: string;
 
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  categoria: number;
-
-  @ApiProperty()
   @IsOptional()
   @IsBoolean()
   status: boolean;
-
-  // @ApiProperty()
-  // @IsNumber()
-  // @IsNotEmpty()
-  // ccomercial: number;
-
-  // @ApiProperty()
-  // @IsBoolean()
-  // @IsOptional()
-  // abierto: boolean;
 
   @ApiProperty()
   @IsOptional()
