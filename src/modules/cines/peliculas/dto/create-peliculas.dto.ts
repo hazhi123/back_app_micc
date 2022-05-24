@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -15,9 +16,9 @@ export class CreatePeliculasDto {
   nombre: string;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  genero: string;
+  categoria: number;
 
   @ApiProperty()
   @IsString()

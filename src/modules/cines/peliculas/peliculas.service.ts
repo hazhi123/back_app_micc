@@ -58,6 +58,7 @@ export class PeliculasService {
   async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PeliculasEntity>> {
     const query = await this.peliculasRP
       .createQueryBuilder("peli")
+      .leftJoinAndSelect("peli.categoria", "cat")
       .leftJoinAndSelect("peli.image", "imgGal")
       .leftJoinAndSelect("peli.imageBack", "imgBackGal")
       .select([
@@ -67,6 +68,8 @@ export class PeliculasService {
         'peli.duracion',
         'peli.sinopsis',
         'peli.status',
+        'cat.id',
+        'cat.nombre',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
@@ -84,6 +87,7 @@ export class PeliculasService {
   async getAllPublico(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PeliculasEntity>> {
     const query = await this.peliculasRP
       .createQueryBuilder("peli")
+      .leftJoinAndSelect("peli.categoria", "cat")
       .leftJoinAndSelect("peli.image", "imgGal")
       .leftJoinAndSelect("peli.imageBack", "imgBackGal")
       .leftJoinAndSelect("peli.peliculas", "cine")
@@ -93,6 +97,8 @@ export class PeliculasService {
         'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
+        'cat.id',
+        'cat.nombre',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',
@@ -108,6 +114,7 @@ export class PeliculasService {
   async getOne(id: number): Promise<PeliculasEntity> {
     const getOne = await this.peliculasRP
       .createQueryBuilder("peli")
+      .leftJoinAndSelect("peli.categoria", "cat")
       .leftJoinAndSelect("peli.image", "imgGal")
       .leftJoinAndSelect("peli.imageBack", "imgBackGal")
       .leftJoinAndSelect("peli.trailer", "trai")
@@ -118,6 +125,8 @@ export class PeliculasService {
         'peli.duracion',
         'peli.sinopsis',
         'peli.status',
+        'cat.id',
+        'cat.nombre',
         'imgGal.id',
         'imgGal.file',
         'imgBackGal.id',

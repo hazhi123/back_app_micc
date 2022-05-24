@@ -9,6 +9,9 @@ import {
 } from 'typeorm';
 
 import { GaleriaEntity } from '../../../galeria/entities/galeria.entity';
+import {
+  PeliculasCategoriasEntity,
+} from '../../peliculas-categorias/entities/peliculas-categorias.entity';
 import { PeliculasCinesEntity } from './peliculas-cines.entity';
 
 @Entity('pel_peliculas')
@@ -56,6 +59,10 @@ export class PeliculasEntity {
   @ManyToOne(() => GaleriaEntity)
   @JoinColumn({ name: 'id_galeria_video' })
   trailer: number;
+
+  @ManyToOne(() => PeliculasCategoriasEntity)
+  @JoinColumn({ name: 'id_categoria' })
+  categoria: number;
 
   @OneToMany(() => PeliculasCinesEntity, cp => cp.pelicula)
   cines: PeliculasCinesEntity[];

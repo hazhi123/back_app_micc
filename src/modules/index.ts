@@ -33,4 +33,5 @@ export * from './productos-categorias/productos-categorias.module';
 
 export * from './cines/cines/cines.module';
 export * from './cines/peliculas/peliculas.module';
+export * from './cines/peliculas-categorias/peliculas-categorias.module';
 export * from './dashboard/dashboard.module';

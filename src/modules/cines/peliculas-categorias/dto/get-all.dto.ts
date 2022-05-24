@@ -6,26 +6,17 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllDto {
+export class GetAllPeliculasCategoriasDto {
 
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  id: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  cine: number;
+  ccomercial: number;
 
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;
 
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  categoria: number;
 
 }

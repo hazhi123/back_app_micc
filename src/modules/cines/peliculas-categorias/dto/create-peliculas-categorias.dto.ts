@@ -1,31 +1,27 @@
 import {
   IsBoolean,
-  IsNumber,
+  IsNotEmpty,
   IsOptional,
+  IsString,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAllDto {
+export class CreatePeliculasCategoriasDto {
 
   @ApiProperty()
-  @IsNumber()
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
-  id: number;
+  desc: string;
 
   @ApiProperty()
-  @IsNumber()
   @IsOptional()
-  cine: number;
-
-  @ApiProperty()
   @IsBoolean()
-  @IsOptional()
   status: boolean;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  categoria: number;
 
 }

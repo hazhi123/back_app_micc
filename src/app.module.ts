@@ -58,6 +58,7 @@ import { AppGateway } from './websocket/app.gateway';
     // Cines
     MOD.CinesModule,
     MOD.PeliculasModule,
+    MOD.PeliculasCategoriasModule,
 
     //Dashboard
     MOD.DashboardModule,
