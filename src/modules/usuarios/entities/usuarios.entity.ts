@@ -15,7 +15,9 @@ import {
 import {
   CComercialesEntity,
 } from '../../ccomerciales/entities/ccomerciales.entity';
-import { CinesEntity } from '../../cines/cines/entities/cines.entity';
+import {
+  CinesCComercialesEntity,
+} from '../../cines/cines/entities/cines-ccomerciales.entity';
 import {
   ComentariosEntity,
 } from '../../comentarios/entities/comentarios.entity';
@@ -28,7 +30,9 @@ import { PerfilesEntity } from '../../perfiles/entities/perfiles.entity';
 import {
   PublicacionesEntity,
 } from '../../publicaciones/entities/publicaciones.entity';
-import { TiendasEntity } from '../../tiendas/entities/tiendas.entity';
+import {
+  TiendasCComercialesEntity,
+} from '../../tiendas/entities/tiendas-ccomerciales.entity';
 import { CiudadesEntity } from '../../ubigeo/ciudades/entities/ciudades.entity';
 import { FavoritosEntity } from './favoritos.entity';
 import { UsuariosCComercialesEntity } from './usuarios-ccomerciales.entity';
@@ -67,7 +71,7 @@ export class UsuariosEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
-  @Column({ name: 'is_trabajor', type: 'bool', default: false })
+  @Column({ name: 'is_trabajador', type: 'bool', default: false })
   isTrabajador: boolean;
 
   @Column({ name: 'is_visitante', type: 'bool', default: true })
@@ -85,17 +89,17 @@ export class UsuariosEntity {
   @JoinColumn({ name: 'id_perfil' })
   perfil: number;
 
-  @ManyToOne(() => TiendasEntity)
-  @JoinColumn({ name: 'id_tienda' })
-  tienda: number;
-
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'id_ccomercial' })
   ccomercial: number;
 
-  @ManyToOne(() => CinesEntity)
-  @JoinColumn({ name: 'id_cine' })
-  cine: number;
+  @ManyToOne(() => TiendasCComercialesEntity)
+  @JoinColumn({ name: 'id_tienda_cc' })
+  tiendaCC: number;
+
+  @ManyToOne(() => CinesCComercialesEntity)
+  @JoinColumn({ name: 'id_cine_cc' })
+  cineCC: number;
 
   @ManyToOne(() => CiudadesEntity)
   @JoinColumn({ name: 'id_ciudad' })

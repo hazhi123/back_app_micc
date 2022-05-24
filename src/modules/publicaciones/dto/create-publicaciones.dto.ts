@@ -62,6 +62,11 @@ export class CreatePublicacionesDto {
 
   @ApiProperty()
   @IsNumber()
+  @IsOptional()
+  cine: number;
+
+  @ApiProperty()
+  @IsNumber()
   @IsNotEmpty()
   tipoPub: number;
 

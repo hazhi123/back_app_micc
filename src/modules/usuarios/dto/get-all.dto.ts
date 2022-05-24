@@ -21,6 +21,11 @@ export class GetAllDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
+  cine: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
   ciudad: number;
 
   @ApiProperty()

@@ -62,6 +62,8 @@ export class UsuariosService {
 
     const create = await this.usuariosRP.create({
       ...dto,
+      tiendaCC: dto.tienda,
+      cineCC: dto.cine,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -103,10 +105,13 @@ export class UsuariosService {
       .leftJoinAndSelect("usu.imageBack", "usuGalBack")
       .leftJoinAndSelect("usu.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
-      // .leftJoinAndSelect("edo.pais", "pais")
+      .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("usu.informacion", "inf")
       .leftJoinAndSelect("usu.ccomercial", "cc")
-      .leftJoinAndSelect("usu.tienda", "tie")
+      .leftJoinAndSelect("usu.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("usu.cineCC", "cinCC")
+      .leftJoinAndSelect("cinCC.cine", "cine")
       .select([
         'usu.id',
         'usu.nombre',
@@ -122,21 +127,30 @@ export class UsuariosService {
         'per.nombre',
         'cc.id',
         'cc.nombre',
+        'tieCC.id',
         'tie.id',
         'tie.nombre',
+        'cinCC.id',
+        'cine.id',
+        'cine.nombre',
         'ciu.id',
         'ciu.ciudad',
         'edo.id',
         'edo.estado',
+        'pais.id',
+        'pais.nombre',
         'inf.usuario',
         'inf.celular',
         'inf.dni',
       ])
     if (!isEmptyUndefined(dto.ccomercial)) {
-      query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
+      query.andWhere('usu.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('tie.id = :tienda', { tienda: dto.tienda == 0 ? null : dto.tienda })
+      query.andWhere('usu.tiendaCC = :tienda', { tienda: dto.tienda == 0 ? null : dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.cine)) {
+      query.andWhere('usu.cineCC = :cine', { cine: dto.cine == 0 ? null : dto.cine })
     }
     if (!isEmptyUndefined(dto.isVisitante)) {
       query.andWhere('usu.isVisitante = :isVisitante', { isVisitante: dto.isVisitante })
@@ -163,10 +177,13 @@ export class UsuariosService {
       .leftJoinAndSelect("usu.imageBack", "imgBackGal")
       .leftJoinAndSelect("usu.ciudad", "ciu")
       .leftJoinAndSelect("ciu.estado", "edo")
-      // .leftJoinAndSelect("edo.pais", "pais")
+      .leftJoinAndSelect("edo.pais", "pais")
       .leftJoinAndSelect("usu.informacion", "inf")
       .leftJoinAndSelect("usu.ccomercial", "cc")
-      .leftJoinAndSelect("usu.tienda", "tie")
+      .leftJoinAndSelect("usu.tiendaCC", "tieCC")
+      .leftJoinAndSelect("tieCC.tienda", "tie")
+      .leftJoinAndSelect("usu.cineCC", "cinCC")
+      .leftJoinAndSelect("cinCC.cine", "cine")
       .leftJoinAndSelect("usu.licencia", "lic")
       .leftJoinAndSelect("lic.plan", "plan")
       .select([
@@ -187,16 +204,20 @@ export class UsuariosService {
         'imgBackGal.file',
         'per.id',
         'per.nombre',
-        'tie.id',
-        'tie.nombre',
         'cc.id',
         'cc.nombre',
+        'tieCC.id',
+        'tie.id',
+        'tie.nombre',
+        'cinCC.id',
+        'cine.id',
+        'cine.nombre',
         'ciu.id',
         'ciu.ciudad',
         'edo.id',
         'edo.estado',
-        // 'pais.id',
-        // 'pais.nombre',
+        'pais.id',
+        'pais.nombre',
         'inf.usuario',
         'inf.dni',
         'inf.celular',
@@ -265,8 +286,8 @@ export class UsuariosService {
 
     if (isVisitante) {
       getOne['ccomercial'] = null;
-      getOne['tienda'] = null;
-      getOne['cine'] = null;
+      getOne['tiendaCC'] = null;
+      getOne['cineCC'] = null;
       ccomercial = null;
       tienda = null;
       cine = null;
@@ -281,7 +302,8 @@ export class UsuariosService {
       isTrabajador,
       perfil,
       ccomercial,
-      tienda,
+      tiendaCC: tienda,
+      cineCC: cine,
       updatedBy: userLogin.id,
       updatedAt: new Date(),
       status,

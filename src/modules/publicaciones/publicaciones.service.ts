@@ -47,6 +47,8 @@ export class PublicacionesService {
     await this.findNombre(dto.nombre, false)
     const save = await this.publicacionesRP.save({
       ...dto,
+      tiendaCC: dto.tienda,
+      cineCC: dto.cine,
       createdBy: userLogin.id,
       createdAt: new Date(),
       updatedBy: userLogin.id,
@@ -121,7 +123,10 @@ export class PublicacionesService {
       query.andWhere('pub.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }
     if (!isEmptyUndefined(dto.tienda) && dto.tienda !== 0) {
-      query.andWhere('pub.ccomercial = :tienda', { tienda: dto.tienda })
+      query.andWhere('pub.tiendaCC = :tienda', { tienda: dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.cine) && dto.cine !== 0) {
+      query.andWhere('pub.cineCC = :cine', { cine: dto.cine })
     }
     query.orderBy("pub.id", "DESC")
     query.getMany();
@@ -142,6 +147,10 @@ export class PublicacionesService {
       .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieImgGal")
       .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
+      .leftJoinAndSelect("pub.cineCC", "cinCC")
+      .leftJoinAndSelect("cinCC.cine", "cine")
+      .leftJoinAndSelect("cine.image", "cineImgGal")
+      .leftJoinAndSelect("cine.imageBack", "cineImgBackGal")
       .select([
         'pub.id',
         'pub.nombre',
@@ -162,6 +171,13 @@ export class PublicacionesService {
         'tieImgGal.file',
         'tieImgBackGal.id',
         'tieImgBackGal.file',
+        'cinCC.id',
+        'cine.id',
+        'cine.nombre',
+        'cineImgGal.id',
+        'cineImgGal.file',
+        'cineImgBackGal.id',
+        'cineImgBackGal.file',
         'usuEdit.id',
         'usuEdit.nombre',
         'usuEdit.apellido',
@@ -181,7 +197,10 @@ export class PublicacionesService {
       query.andWhere('pub.categoria = :categoria', { categoria: dto.categoria })
     }
     if (!isEmptyUndefined(dto.tienda)) {
-      query.andWhere('pub.tienda = :tienda', { tienda: dto.tienda })
+      query.andWhere('pub.tiendaCC = :tienda', { tienda: dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.cine)) {
+      query.andWhere('pub.cineCC = :cine', { cine: dto.cine })
     }
     query.orderBy("pub.createdAt", "DESC")
     query.getMany();
@@ -197,10 +216,14 @@ export class PublicacionesService {
       .leftJoinAndSelect("cc.image", "ccGal")
       .leftJoinAndSelect("pub.usuarioEditor", "usuEdit")
       .leftJoinAndSelect("pub.image", "pubGal")
-      .leftJoinAndSelect("pub.tienda", "tieCC")
+      .leftJoinAndSelect("pub.tiendaCC", "tieCC")
       .leftJoinAndSelect("tieCC.tienda", "tie")
       .leftJoinAndSelect("tie.image", "tieImgGal")
       .leftJoinAndSelect("tie.imageBack", "tieImgBackGal")
+      .leftJoinAndSelect("pub.cineCC", "cinCC")
+      .leftJoinAndSelect("cinCC.cine", "cine")
+      .leftJoinAndSelect("cine.image", "cineImgGal")
+      .leftJoinAndSelect("cine.imageBack", "cineImgBackGal")
       .leftJoinAndSelect("pub.files", "file")
       .leftJoinAndSelect("file.galeria", "gal")
       .select([
@@ -231,6 +254,13 @@ export class PublicacionesService {
         'tieImgGal.file',
         'tieImgBackGal.id',
         'tieImgBackGal.file',
+        'cinCC.id',
+        'cine.id',
+        'cine.nombre',
+        'cineImgGal.id',
+        'cineImgGal.file',
+        'cineImgBackGal.id',
+        'cineImgBackGal.file',
         'usuEdit.id',
         'usuEdit.nombre',
         'usuEdit.apellido',
@@ -257,6 +287,8 @@ export class PublicacionesService {
     }, HttpStatus.ACCEPTED)
     const assing = Object.assign(getOne, {
       ...dto,
+      tiendaCC: dto.tienda,
+      cineCC: dto.cine,
       updatedBy: userLogin.id,
       updatedAt: new Date(),
     })
