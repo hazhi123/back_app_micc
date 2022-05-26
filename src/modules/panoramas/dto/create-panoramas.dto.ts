@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -17,13 +18,18 @@ export class CreatePanoramasDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   ccomercial: number;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  imageUrl: string;
+  tienda: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  cine: number;
 
   @ApiProperty()
   @IsString()
@@ -35,4 +41,10 @@ export class CreatePanoramasDto {
   @IsBoolean()
   status: boolean;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  parametros: [];
+
 }
+

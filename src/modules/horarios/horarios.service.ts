@@ -13,7 +13,10 @@ export class HorariosService {
 
   relations = [
     'ccomercial',
-    'tienda',
+    'tiendaCC',
+    'tiendaCC.tienda',
+    'cineCC',
+    'cineCC.cine',
   ]
 
   constructor(
@@ -32,7 +35,13 @@ export class HorariosService {
     }
     if (!isEmptyUndefined(dto.tienda)) {
       getOne = await this.horariosRP.findOne({
-        where: { entidad: 'tienda', tienda: dto.tienda },
+        where: { entidad: 'tienda', tiendaCC: dto.tienda },
+        relations: this.relations
+      })
+    }
+    if (!isEmptyUndefined(dto.cine)) {
+      getOne = await this.horariosRP.findOne({
+        where: { entidad: 'cine', cineCC: dto.cine },
         relations: this.relations
       })
     }
@@ -40,6 +49,8 @@ export class HorariosService {
     if (isEmptyUndefined(getOne)) {
       const save = await this.horariosRP.save({
         ...dto,
+        tiendaCC: dto.tienda,
+        cineCC: dto.cine,
         createdBy: userLogin.id,
         createdAt: new Date(),
         updatedBy: userLogin.id,
@@ -47,7 +58,15 @@ export class HorariosService {
       });
       return await this.getOne(save.id);
     } else {
-      await this.horariosRP.update(getOne.id, dto);
+      delete dto.ccomercial
+      delete dto.tienda
+      delete dto.cine
+      const assing = Object.assign(getOne, {
+        ...dto,
+        updatedBy: userLogin.id,
+        updatedAt: new Date(),
+      })
+      await this.horariosRP.update(getOne.id, assing);
       return await this.getOne(getOne.id);
     }
   }

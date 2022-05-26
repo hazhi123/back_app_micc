@@ -45,6 +45,9 @@ export class PanoramasEntity {
   @Column({ type: 'bool', default: true })
   status: boolean;
 
+  @Column({ type: 'json', nullable: true })
+  parametros: object[];
+
   // Relaciones
   @ManyToOne(() => CComercialesEntity)
   @JoinColumn({ name: 'id_ccomercial' })

@@ -1,6 +1,12 @@
+import { Repository } from 'typeorm';
+
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { GaleriaService } from '../galeria/galeria.service';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { CreatePanoramasDto } from './dto';
+import { PanoramasEntity } from './entities/panoramas.entity';
 
 // import { PanoramasEntity } from './entities/panoramas.entity';
 
@@ -8,24 +14,23 @@ import { GaleriaService } from '../galeria/galeria.service';
 export class PanoramasService {
 
   constructor(
-    // @InjectRepository(PanoramasEntity)
-    // private readonly panoramasRP: Repository<PanoramasEntity>,
+    @InjectRepository(PanoramasEntity)
+    private readonly panoramasRP: Repository<PanoramasEntity>,
 
     private galeriaService: GaleriaService
 
   ) { }
 
-  // async create(dto: CreatePanoramasDto, userLogin: UsuariosEntity) {
-  //   await this.findNombre(dto.ccomercial, dto.nombre, false)
-  //   const save = await this.panoramasRP.save({
-  //     ...dto,
-  //     createdBy: userLogin.id,
-  //     createdAt: new Date(),
-  //     updatedBy: userLogin.id,
-  //     updatedAt: new Date(),
-  //   });
-  //   return await this.getOne(save.id);
-  // }
+  async create(dto: CreatePanoramasDto, userLogin: UsuariosEntity) {
+    const save = await this.panoramasRP.save({
+      ...dto,
+      createdBy: userLogin.id,
+      createdAt: new Date(),
+      updatedBy: userLogin.id,
+      updatedAt: new Date(),
+    });
+    return await this.getOne(save.id);
+  }
 
   // async getAll(dto: GetAllDto): Promise<PanoramasEntity[]> {
   //   const query = await this.panoramasRP
@@ -56,12 +61,12 @@ export class PanoramasService {
   //   return find;
   // }
 
-  // async getOne(id: number): Promise<PanoramasEntity> {
-  //   return await this.panoramasRP.findOne({
-  //     relations: ['image'],
-  //     where: { id },
-  //   });
-  // }
+  async getOne(id: number): Promise<PanoramasEntity> {
+    return await this.panoramasRP.findOne({
+      relations: ['image'],
+      where: { id },
+    });
+  }
 
   // async update(dto: UpdatePanoramasDto, userLogin: UsuariosEntity) {
   //   const findNombre = await this.findNombre(dto.ccomercial, dto.nombre, true)

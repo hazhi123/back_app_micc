@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -19,6 +18,11 @@ export class CreateHorariosDto {
   @IsNumber()
   @IsOptional()
   tienda: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  cine: number;
 
   @ApiProperty()
   @IsString()

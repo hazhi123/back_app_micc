@@ -1,6 +1,20 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import * as CONST from '../../common/constants';
+import {
+  Auth,
+  UserLogin,
+} from '../../common/decorators';
+import { isEmptyUndefined } from '../../common/helpers';
+import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
+import { CreatePanoramasDto } from './dto';
 import { PanoramasService } from './panoramas.service';
 
 @ApiTags('Panoramas')
@@ -10,19 +24,19 @@ export class PanoramasController {
     private readonly categoriaService: PanoramasService
   ) { }
 
-  // @Auth()
-  // @Post()
-  // async create(
-  //   @Body() dto: CreatePanoramasDto,
-  //   @UserLogin() userLogin: UsuariosEntity
-  // ) {
-  //   let data = await this.categoriaService.create(dto, userLogin);
-  //   return {
-  //     statusCode: 200,
-  //     data,
-  //     message: CONST.MESSAGES.COMMON.CREATE_DATA
-  //   };
-  // }
+  @Auth()
+  @Post()
+  async create(
+    @Body() dto: CreatePanoramasDto,
+    @UserLogin() userLogin: UsuariosEntity
+  ) {
+    let data = await this.categoriaService.create(dto, userLogin);
+    return {
+      statusCode: 200,
+      data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
 
   // @Auth()
   // @Post('/all')
@@ -38,16 +52,16 @@ export class PanoramasController {
   //   return res
   // }
 
-  // @Auth()
-  // @Get(':id')
-  // async getOne(@Param('id') id: number) {
-  //   const data = await this.categoriaService.getOne(id);
-  //   return {
-  //     statusCode: 200,
-  //     data,
-  //     message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
-  //   }
-  // }
+  @Auth()
+  @Get(':id')
+  async getOne(@Param('id') id: number) {
+    const data = await this.categoriaService.getOne(id);
+    return {
+      statusCode: 200,
+      data,
+      message: isEmptyUndefined(data) ? CONST.MESSAGES.COMMON.WARNING.NO_DATA_FOUND : CONST.MESSAGES.COMMON.FOUND_DATA
+    }
+  }
 
   // @Auth()
   // @Patch()

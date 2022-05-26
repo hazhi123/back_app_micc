@@ -59,15 +59,15 @@ export class LikesService {
     const query = await this.likesRP
       .createQueryBuilder("like")
     query
-      .leftJoinAndSelect("like.user", "user")
-      .leftJoinAndSelect("user.image", "userGal")
+      .leftJoinAndSelect("like.usuario", "usu")
+      .leftJoinAndSelect("usu.image", "usuGal")
       .leftJoinAndSelect("like.publicacion", "pub")
       .select([
         'like.id',
-        'user.nombre',
-        'user.apellido',
-        'userGal.id',
-        'userGal.file',
+        'usu.nombre',
+        'usu.apellido',
+        'usuGal.id',
+        'usuGal.file',
       ])
     query.where('pub.id = :pubId', { pubId: dto.publicacion })
     query.orderBy("like.id", "DESC")
@@ -78,7 +78,6 @@ export class LikesService {
   async getOne(id: number): Promise<LikesEntity> {
     const getOne = await this.likesRP
       .createQueryBuilder("like")
-      .leftJoinAndSelect("like.user", "user")
       .leftJoinAndSelect("like.publicacion", "pub")
       .select([
         'like.id',

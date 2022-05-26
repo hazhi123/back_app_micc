@@ -29,7 +29,7 @@ import {
 } from './dto';
 
 @ApiTags('Categorias de Centros Comerciales y Tiendas')
-@Controller('categorias')
+@Controller('ccomerciales/categorias')
 export class CategoriasController {
   constructor(
     private readonly categoriaService: CategoriasService

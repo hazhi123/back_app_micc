@@ -60,6 +60,8 @@ import { AppGateway } from './websocket/app.gateway';
     MOD.PeliculasModule,
     MOD.PeliculasCategoriasModule,
 
+    MOD.PanoramasModule,
+
     //Dashboard
     MOD.DashboardModule,
 
