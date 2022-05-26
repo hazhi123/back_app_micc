@@ -5,6 +5,9 @@ import {
 } from 'typeorm-seeding';
 
 import {
+  PeliculasCategoriasEntity,
+} from '../../modules/cines/peliculas-categorias/entities/peliculas-categorias.entity';
+import {
   PeliculasCinesEntity,
 } from '../../modules/cines/peliculas/entities/peliculas-cines.entity';
 import {
@@ -13,6 +16,12 @@ import {
 
 export default class PeliculasSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
+    await factory(PeliculasCategoriasEntity)()
+      .map(async (ent) => {
+        return ent;
+      })
+      .createMany(100);
+
     await factory(PeliculasEntity)()
       .map(async (ent) => {
         ent.image = Math.floor((Math.random() * 900) + 1);
@@ -26,7 +35,7 @@ export default class PeliculasSeeder implements Seeder {
       var data = []
       for (let index = 0; index < 20; index++) {
         data.push({
-          cine: x,
+          cineCC: x,
           pelicula: Math.floor((Math.random() * 30) + 1)
         });
       }

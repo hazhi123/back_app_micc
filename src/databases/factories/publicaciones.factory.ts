@@ -12,6 +12,6 @@ define(PublicacionesEntity, (faker: typeof Faker) => {
   pub.isPermanente = true;
   pub.createdBy = 1;
   pub.updatedBy = 1;
-  pub.userEditor = Math.floor((Math.random() * 20) + 1);
+  pub.usuarioEditor = Math.floor((Math.random() * 100) + 1);
   return pub;
 });

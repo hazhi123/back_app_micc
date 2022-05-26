@@ -23,4 +23,6 @@ export default class PerfilesSeeder implements Seeder {
       ])
       .execute()
   }
+
+  //npm run seed:run
 }

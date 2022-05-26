@@ -64,7 +64,6 @@ export class PeliculasService {
       .select([
         'peli.id',
         'peli.nombre',
-        'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
         'peli.status',
@@ -94,7 +93,6 @@ export class PeliculasService {
       .select([
         'peli.id',
         'peli.nombre',
-        'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
         'cat.id',
@@ -121,7 +119,6 @@ export class PeliculasService {
       .select([
         'peli.id',
         'peli.nombre',
-        'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
         'peli.status',

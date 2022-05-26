@@ -5,6 +5,9 @@ import {
 } from 'typeorm-seeding';
 
 import {
+  ProductosCategoriasEntity,
+} from '../../modules/productos-categorias/entities/productos-categorias.entity';
+import {
   ProductosGaleriaEntity,
 } from '../../modules/productos/entities/productos-galeria.entity';
 import {
@@ -13,6 +16,12 @@ import {
 
 export default class ProductosSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
+    await factory(ProductosCategoriasEntity)()
+      .map(async (ent) => {
+        return ent;
+      })
+      .createMany(100);
+
     await factory(ProductosEntity)()
       .map(async (ent) => {
         ent.tiendaCC = Math.floor((Math.random() * 620) + 1);

@@ -23,17 +23,6 @@ export default class PublicacionesSeeder implements Seeder {
       })
       .createMany(269);
 
-    await factory(PublicacionesEntity)()
-      .map(async (ent) => {
-        ent.ccomercial = 1;
-        ent.tienda = Math.floor((Math.random() * 60) + 1);
-        ent.categoria = Math.floor((Math.random() * 30) + 1);
-        ent.tipoPub = Math.floor((Math.random() * 4) + 1);
-        ent.image = Math.floor((Math.random() * 900) + 1);
-        return ent;
-      })
-      .createMany(1203);
-
     for (let x = 1; x <= 1472; x++) {
       var data = []
       for (let index = 0; index < 9; index++) {

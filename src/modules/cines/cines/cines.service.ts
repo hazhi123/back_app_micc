@@ -252,11 +252,11 @@ export class CinesService {
       .leftJoinAndSelect("peli.image", "imgGal")
       .leftJoinAndSelect("peli.imageBack", "imgBackGal")
       .leftJoinAndSelect("peli.trailer", "trai")
+      .leftJoinAndSelect("peli.categoria", "cat")
       .select([
         'pelCine.id',
         'peli.id',
         'peli.nombre',
-        'peli.genero',
         'peli.duracion',
         'peli.sinopsis',
         'imgGal.id',
@@ -265,6 +265,8 @@ export class CinesService {
         'imgBackGal.file',
         'trai.id',
         'trai.file',
+        'cat.id',
+        'cat.nombre',
       ])
       .where('pelCine.cineCC = :id', { id })
       .orderBy("peli.nombre", "ASC")
