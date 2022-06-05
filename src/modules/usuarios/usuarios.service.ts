@@ -143,6 +143,9 @@ export class UsuariosService {
         'inf.celular',
         'inf.dni',
       ])
+    if (!isEmptyUndefined(dto.perfil)) {
+      query.andWhere('usu.perfil = :perfil', { perfil: dto.perfil })
+    }
     if (!isEmptyUndefined(dto.ccomercial)) {
       query.andWhere('usu.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
     }

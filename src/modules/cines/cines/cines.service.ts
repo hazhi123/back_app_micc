@@ -20,7 +20,8 @@ import {
   PeliculasCinesEntity,
 } from '../peliculas/entities/peliculas-cines.entity';
 import {
-  AsignarCComercialesDto,
+  AsignarCComercialDto,
+  BorrarCComercialDto,
   CreateCinesDto,
   CreateImageDto,
   GetAllDto,
@@ -204,18 +205,47 @@ export class CinesService {
     return getOneGaleria;
   }
 
-  async asignarCComerciales(dto: AsignarCComercialesDto) {
+  async asignarCComercial(dto: AsignarCComercialDto, userLogin: UsuariosEntity) {
+    const data = {
+      cine: dto.cine,
+      ccomercial: dto.ccomercial,
+    };
+    const getOne = await this.cinesCComercialesRP.findOne({
+      where: data,
+    })
+    if (isEmptyUndefined(getOne)) {
+      await this.cinesCComercialesRP.save({
+        ...dto,
+        createdBy: userLogin.id,
+        createdAt: new Date(),
+        updatedBy: userLogin.id,
+        updatedAt: new Date(),
+        status: true
+      });
+    } else {
+      const assing = Object.assign(getOne, {
+        ...dto,
+        updatedBy: userLogin.id,
+        updatedAt: new Date(),
+      })
+      await this.cinesCComercialesRP.save(assing);
+    }
+    const findOne = await this.cinesCComercialesRP.findOne({
+      where: data,
+    })
+    return findOne;
+  }
+
+  async borrarCComercial(dto: BorrarCComercialDto) {
     for (let i = 0; i < dto.ccomerciales.length; i++) {
       const data = {
         cine: dto.cine,
         ccomercial: dto.ccomerciales[i]
       };
-      const findOne = await this.cinesCComercialesRP.findOne({ where: data })
-      if (isEmptyUndefined(findOne)) {
-        await this.cinesCComercialesRP.save(data);
-      } else {
-        await this.cinesCComercialesRP.delete(findOne.id);
-      }
+      const findOne = await this.cinesCComercialesRP.findOne({
+        where: data,
+      })
+      await this.cinesCComercialesRP.delete(findOne.id);
     }
     return 1;
   }
@@ -223,12 +253,20 @@ export class CinesService {
   async getCComerciales(id: Number, options: IPaginationOptions): Promise<Pagination<CinesCComercialesEntity>> {
     const query = await this.cinesCComercialesRP
       .createQueryBuilder("ciCC")
+      .leftJoinAndSelect("ciCC.horarios", "hor")
+      .leftJoinAndSelect("ciCC.files", "file")
+      .leftJoinAndSelect("file.galeria", "gal")
       .leftJoinAndSelect("ciCC.ccomercial", "cc")
       .leftJoinAndSelect("cc.image", "imgGal")
       .leftJoinAndSelect("cc.imageBack", "imgBackGal")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .select([
         'ciCC.id',
+        'ciCC.correo',
+        'ciCC.ubicacion',
+        'ciCC.telefonos',
+        'ciCC.abierto',
+        'ciCC.status',
         'cc.id',
         'cc.nombre',
         'cc.direccion',
@@ -238,6 +276,19 @@ export class CinesService {
         'imgBackGal.file',
         'ciu.id',
         'ciu.ciudad',
+        'hor.id',
+        'hor.lunes',
+        'hor.martes',
+        'hor.miercoles',
+        'hor.jueves',
+        'hor.viernes',
+        'hor.sabado',
+        'hor.domingo',
+        'hor.feriados',
+        'file.id',
+        'file.index',
+        'gal.id',
+        'gal.file',
       ])
       .where('ciCC.cine = :id', { id })
       .orderBy("cc.nombre", "ASC")

@@ -363,10 +363,10 @@ export class CComercialesService {
       .select([
         'tieCC.id',
         'tieCC.correo',
-        'tieCC.telPrimero',
-        'tieCC.telSegundo',
+        'tieCC.telefonos',
         'tieCC.ubicacion',
         'tieCC.abierto',
+        'tieCC.status',
         'tie.id',
         'tie.nombre',
         'tie.desc',
@@ -405,8 +405,7 @@ export class CComercialesService {
       .select([
         'tieCC.id',
         'tieCC.correo',
-        'tieCC.telPrimero',
-        'tieCC.telSegundo',
+        'tieCC.telefonos',
         'tieCC.ubicacion',
         'tieCC.abierto',
         'tie.id',

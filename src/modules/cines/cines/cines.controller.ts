@@ -26,7 +26,8 @@ import { URLPAGE } from '../../../config';
 import { UsuariosEntity } from '../../usuarios/entities/usuarios.entity';
 import { CinesService } from './cines.service';
 import {
-  AsignarCComercialesDto,
+  AsignarCComercialDto,
+  BorrarCComercialDto,
   CreateCinesDto,
   CreateImageDto,
   GetAllDto,
@@ -173,15 +174,29 @@ export class CinesController {
   }
 
   @Auth()
-  @Post('/asignar/ccomerciales')
-  async asignarCComerciales(
-    @Body() dto: AsignarCComercialesDto,
+  @Post('/asignarCComercial')
+  async asignarCComercial(
+    @Body() dto: AsignarCComercialDto,
+    @UserLogin() userLogin: UsuariosEntity
   ) {
-    let data = await this.cinesService.asignarCComerciales(dto);
+    let data = await this.cinesService.asignarCComercial(dto, userLogin);
     return {
       statusCode: HttpStatus.OK,
       data: data,
       message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/borrarCComercial')
+  async borrarCComercial(
+    @Body() dto: BorrarCComercialDto,
+  ) {
+    let data = await this.cinesService.borrarCComercial(dto);
+    return {
+      statusCode: HttpStatus.OK,
+      data: data,
+      message: 'Registros eliminados'
     };
   }
 

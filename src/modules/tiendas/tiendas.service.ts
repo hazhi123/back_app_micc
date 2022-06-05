@@ -18,7 +18,8 @@ import { GaleriaService } from '../galeria/galeria.service';
 import { ProductosEntity } from '../productos/entities/productos.entity';
 import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
-  AsignarCComercialesDto,
+  AsignarCComercialDto,
+  BorrarCComercialDto,
   CreateImageDto,
   CreateTiendasDto,
   GetAllDto,
@@ -280,7 +281,7 @@ export class TiendasService {
 
       const findOne = await this.tiendasGaleriaRP.findOne({
         where: {
-          tienda: dto.tienda,
+          tiendaCC: dto.tienda,
           index: dto.index,
         }
       })
@@ -290,13 +291,18 @@ export class TiendasService {
         });
       } else {
         await this.tiendasGaleriaRP.save({
-          tienda: parseInt(dto.tienda),
+          tiendaCC: parseInt(dto.tienda),
           index: parseInt(dto.index),
           galeria: res.id
         });
       }
 
-      return await this.getOne(parseInt(dto.tienda));
+      return await this.tiendasGaleriaRP.find({
+        where: {
+          tiendaCC: parseInt(dto.tienda),
+        },
+        relations: ['galeria'],
+      });
 
     } catch (error) {
       throw new HttpException({
@@ -316,13 +322,18 @@ export class TiendasService {
 
   async deleteGaleria(dto: CreateImageDto) {
     await this.tiendasGaleriaRP.delete(parseInt(dto.file));
-    return await this.getOne(parseInt(dto.tienda));
+    return await this.tiendasGaleriaRP.find({
+      where: {
+        tiendaCC: parseInt(dto.tienda),
+      },
+      relations: ['galeria'],
+    });
   }
 
   async updateGaleria(dto: UpdateImageDto) {
     const findOne = await this.tiendasGaleriaRP.findOne({
       where: {
-        tienda: dto.tienda,
+        tiendaCC: dto.tienda,
         index: dto.index,
       }
     })
@@ -332,12 +343,17 @@ export class TiendasService {
       });
     } else {
       await this.tiendasGaleriaRP.save({
-        tienda: dto.tienda,
+        tiendaCC: dto.tienda,
         index: dto.index,
         galeria: dto.galeria
       });
     }
-    return await this.getOne(dto.tienda);
+    return await this.tiendasGaleriaRP.find({
+      where: {
+        tiendaCC: dto.tienda,
+      },
+      relations: ['galeria'],
+    });
   }
 
   async actualizarApertura(dto: GetAllDto): Promise<TiendasCComercialesEntity> {
@@ -347,7 +363,38 @@ export class TiendasService {
     return await this.tiendasCComercialesRP.findOne({ where: { id: dto.id } });
   }
 
-  async asignarCComerciales(dto: AsignarCComercialesDto) {
+  async asignarCComercial(dto: AsignarCComercialDto, userLogin: UsuariosEntity) {
+    const data = {
+      tienda: dto.tienda,
+      ccomercial: dto.ccomercial,
+    };
+    const getOne = await this.tiendasCComercialesRP.findOne({
+      where: data,
+    })
+    if (isEmptyUndefined(getOne)) {
+      await this.tiendasCComercialesRP.save({
+        ...dto,
+        createdBy: userLogin.id,
+        createdAt: new Date(),
+        updatedBy: userLogin.id,
+        updatedAt: new Date(),
+        status: true
+      });
+    } else {
+      const assing = Object.assign(getOne, {
+        ...dto,
+        updatedBy: userLogin.id,
+        updatedAt: new Date(),
+      })
+      await this.tiendasCComercialesRP.save(assing);
+    }
+    const findOne = await this.tiendasCComercialesRP.findOne({
+      where: data,
+    })
+    return findOne;
+  }
+
+  async borrarCComercial(dto: BorrarCComercialDto) {
     for (let i = 0; i < dto.ccomerciales.length; i++) {
       const data = {
         tienda: dto.tienda,
@@ -366,21 +413,8 @@ export class TiendasService {
           }, HttpStatus.ACCEPTED)
         }
       }
-    }
-    for (let i = 0; i < dto.ccomerciales.length; i++) {
-      const data = {
-        tienda: dto.tienda,
-        ccomercial: dto.ccomerciales[i]
-      };
-      const findOne = await this.tiendasCComercialesRP.findOne({
-        where: data,
-        relations: ['tienda'],
-      })
-      if (isEmptyUndefined(findOne)) {
-        await this.tiendasCComercialesRP.save(data);
-      } else {
-        await this.tiendasCComercialesRP.delete(findOne.id);
-      }
+
+      await this.tiendasCComercialesRP.delete(findOne.id);
     }
     return 1;
   }
@@ -389,11 +423,22 @@ export class TiendasService {
     const query = await this.tiendasCComercialesRP
       .createQueryBuilder("tieCC")
       .leftJoinAndSelect("tieCC.ccomercial", "cc")
+      .leftJoinAndSelect("tieCC.categoria", "cat")
+      .leftJoinAndSelect("tieCC.horarios", "hor")
+      .leftJoinAndSelect("tieCC.files", "file")
+      .leftJoinAndSelect("file.galeria", "gal")
       .leftJoinAndSelect("cc.image", "imgGal")
       .leftJoinAndSelect("cc.imageBack", "imgBackGal")
       .leftJoinAndSelect("cc.ciudad", "ciu")
       .select([
         'tieCC.id',
+        'tieCC.correo',
+        'tieCC.ubicacion',
+        'tieCC.telefonos',
+        'tieCC.abierto',
+        'tieCC.status',
+        'cat.id',
+        'cat.nombre',
         'cc.id',
         'cc.nombre',
         'cc.direccion',
@@ -403,6 +448,19 @@ export class TiendasService {
         'imgBackGal.file',
         'ciu.id',
         'ciu.ciudad',
+        'hor.id',
+        'hor.lunes',
+        'hor.martes',
+        'hor.miercoles',
+        'hor.jueves',
+        'hor.viernes',
+        'hor.sabado',
+        'hor.domingo',
+        'hor.feriados',
+        'file.id',
+        'file.index',
+        'gal.id',
+        'gal.file',
       ])
       .where('tieCC.tienda = :id', { id })
       .orderBy("cc.nombre", "ASC")

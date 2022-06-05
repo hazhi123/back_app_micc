@@ -25,7 +25,8 @@ import { isEmptyUndefined } from '../../common/helpers';
 import { URLPAGE } from '../../config';
 import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
 import {
-  AsignarCComercialesDto,
+  AsignarCComercialDto,
+  BorrarCComercialDto,
   CreateImageDto,
   CreateTiendasDto,
   GetAllDto,
@@ -228,11 +229,25 @@ export class TiendasController {
   }
 
   @Auth()
-  @Post('/asignarCComerciales')
-  async asignarCComerciales(
-    @Body() dto: AsignarCComercialesDto,
+  @Post('/asignarCComercial')
+  async asignarCComercial(
+    @Body() dto: AsignarCComercialDto,
+    @UserLogin() userLogin: UsuariosEntity
   ) {
-    let data = await this.tiendasService.asignarCComerciales(dto);
+    let data = await this.tiendasService.asignarCComercial(dto, userLogin);
+    return {
+      statusCode: HttpStatus.OK,
+      data: data,
+      message: CONST.MESSAGES.COMMON.CREATE_DATA
+    };
+  }
+
+  @Auth()
+  @Post('/borrarCComercial')
+  async borrarCComercial(
+    @Body() dto: BorrarCComercialDto,
+  ) {
+    let data = await this.tiendasService.borrarCComercial(dto);
     return {
       statusCode: HttpStatus.OK,
       data: data,

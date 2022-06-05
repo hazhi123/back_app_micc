@@ -37,9 +37,12 @@ export default class TiendasSeeder implements Seeder {
           tienda: index,
           ccomercial: x,
           correo: faker.internet.email(),
-          telPrimero: faker.phone.phoneNumber(),
+          telefonos: [`${faker.phone.phoneNumber()}`, `${faker.phone.phoneNumber()}`],
           abierto: faker.random.boolean(),
           ubicacion: faker.address.city(),
+          createdBy: 1,
+          updatedAt: 1,
+          categoria: Math.floor((Math.random() * 200) + 1),
         });
       }
 

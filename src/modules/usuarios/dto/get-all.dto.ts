@@ -29,6 +29,11 @@ export class GetAllDto {
   ciudad: number;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  perfil: number;
+
+  @ApiProperty()
   @IsBoolean()
   @IsOptional()
   status: boolean;

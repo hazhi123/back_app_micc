@@ -64,7 +64,13 @@ export class DashboardService {
 
     const totalCines = await this.cinesRP.count();
     const totalPeliculas = await this.peliculasRP.count();
+
     const totalPublicaciones = await this.publicacionesRP.count();
+    const totalTipoNoticia = await this.publicacionesRP.count({ tipoPub: 1 });
+    const totalTipoPromocion = await this.publicacionesRP.count({ tipoPub: 2 });
+    const totalTipoEvento = await this.publicacionesRP.count({ tipoPub: 3 });
+    const totalTipoServicio = await this.publicacionesRP.count({ tipoPub: 4 });
+    const totalTipoBorrador = await this.publicacionesRP.count({ tipoPub: 5 });
 
     const data = {
       'usuarios': {
@@ -93,6 +99,11 @@ export class DashboardService {
       },
       'publicaciones': {
         "total": totalPublicaciones,
+        "noticia": totalTipoNoticia,
+        "promocion": totalTipoPromocion,
+        "evento": totalTipoEvento,
+        "servicio": totalTipoServicio,
+        "borrador": totalTipoBorrador,
       }
     }
 

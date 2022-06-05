@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -31,6 +32,30 @@ export class CinesCComercialesEntity {
 
   @Column({ type: 'varchar', default: '' })
   ubicacion: string;
+
+  @Column({ type: 'varchar', default: '' })
+  correo: string;
+
+  @Column('text', { array: true, nullable: true })
+  telefonos: string[];
+
+  @Column({ type: 'bool', default: true })
+  abierto: boolean;
+
+  @Column({ name: 'created_by' })
+  createdBy: number;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @Column({ name: 'updated_by' })
+  updatedBy: number;
+
+  @CreateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  @Column({ type: 'bool', default: true })
+  status: boolean;
 
   //relaciones
   @ManyToOne(() => CinesEntity)
