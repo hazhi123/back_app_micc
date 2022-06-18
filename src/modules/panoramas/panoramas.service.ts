@@ -1,11 +1,30 @@
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import * as CONST from '../../common/constants';
+import { isEmptyUndefined } from '../../common/helpers';
+import { GaleriaEntity } from '../galeria/entities/galeria.entity';
 import { GaleriaService } from '../galeria/galeria.service';
 import { UsuariosEntity } from '../usuarios/entities/usuarios.entity';
-import { CreatePanoramasDto } from './dto';
+import {
+  CreateImageDto,
+  CreatePanoramasDto,
+  CreateParametrosDto,
+  GetAllDto,
+  UpdateImageDto,
+  UpdatePanoramasDto,
+} from './dto';
 import { PanoramasEntity } from './entities/panoramas.entity';
 
 // import { PanoramasEntity } from './entities/panoramas.entity';
@@ -32,35 +51,6 @@ export class PanoramasService {
     return await this.getOne(save.id);
   }
 
-  // async getAll(dto: GetAllDto): Promise<PanoramasEntity[]> {
-  //   const query = await this.panoramasRP
-  //     .createQueryBuilder("cat")
-  //   query
-  //     .leftJoinAndSelect("cat.ccomercial", "cc")
-  //     .leftJoinAndSelect("cat.image", "gal")
-  //     .select([
-  //       'cat.id',
-  //       'cat.nombre',
-  //       'cat.desc',
-  //       'cat.status',
-  //       'gal.id',
-  //       'gal.file',
-  //     ])
-
-  //   if (!isEmptyUndefined(dto.status)) {
-  //     query.andWhere('cat.status = :status', { status: dto.status })
-  //   }
-  //   if (!isEmptyUndefined(dto.ccomercial)) {
-  //     query.andWhere('cc.id = :ccomercial', { ccomercial: dto.ccomercial })
-  //   }
-
-  //   query.orderBy("cat.nombre", "ASC")
-
-  //   const find = query.getMany();
-  //   if (isEmptyUndefined(find)) return null
-  //   return find;
-  // }
-
   async getOne(id: number): Promise<PanoramasEntity> {
     return await this.panoramasRP.findOne({
       relations: ['image'],
@@ -68,73 +58,121 @@ export class PanoramasService {
     });
   }
 
-  // async update(dto: UpdatePanoramasDto, userLogin: UsuariosEntity) {
-  //   const findNombre = await this.findNombre(dto.ccomercial, dto.nombre, true)
-  //   if (!isEmptyUndefined(findNombre)) delete dto.nombre
+  async update(dto: UpdatePanoramasDto, userLogin: UsuariosEntity) {
+    const getOne = await this.getOne(dto.id);
+    if (isEmptyUndefined(getOne)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
+    }, HttpStatus.ACCEPTED)
 
-  //   const getOne = await this.getOne(dto.id);
-  //   if (isEmptyUndefined(getOne)) throw new HttpException({
-  //     statusCode: HttpStatus.ACCEPTED,
-  //     message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
-  //   }, HttpStatus.ACCEPTED)
+    const assingUsers = Object.assign(getOne, {
+      ...dto,
+      updatedBy: userLogin.id,
+      updatedAt: Date(),
+    })
+    await this.panoramasRP.update(getOne.id, assingUsers);
+    return await this.getOne(dto.id);
+  }
 
-  //   const assingUsers = Object.assign(getOne, {
-  //     ...dto,
-  //     updatedBy: userLogin.id,
-  //     updatedAt: Date(),
-  //   })
-  //   await this.panoramasRP.update(getOne.id, assingUsers);
-  //   return await this.getOne(dto.id);
-  // }
+  async createImage(file: any, dto: CreateImageDto, userLogin: UsuariosEntity) {
+    let galeriaId;
+    let res: GaleriaEntity
+    try {
+      const data = {
+        entidad: dto.entidad,
+        entId: parseInt(dto.entId),
+        referencia: 'panorama',
+        refId: parseInt(dto.panorama),
+      }
+      res = await this.galeriaService.create(file, data, userLogin)
+      galeriaId = res.id
+    } catch (error) {
+      galeriaId = null
+      res = null
+    }
 
-  // async delete(id: number) {
-  //   const getOne = await this.getOne(id);
-  //   if (isEmptyUndefined(getOne)) throw new HttpException({
-  //     statusCode: HttpStatus.ACCEPTED,
-  //     message: CONST.MESSAGES.COMMON.ERROR.DELETE,
-  //   }, HttpStatus.ACCEPTED)
-  //   await this.panoramasRP.delete(id);
-  //   return getOne;
-  // }
+    await this.panoramasRP.update(parseInt(dto.panorama),
+      { image: galeriaId }
+    );
+    return await this.getOne(parseInt(dto.panorama));
+  }
 
-  // async findNombre(ccomercial: number, nombre: string, data: boolean) {
-  //   const findOne = await this.panoramasRP.findOne({ where: { nombre, ccomercial } })
-  //   if (data) return findOne
-  //   if (!isEmptyUndefined(findOne)) throw new HttpException({
-  //     statusCode: HttpStatus.ACCEPTED,
-  //     message: CONST.MESSAGES.COMMON.WARNING.NAME_DATA,
-  //   }, HttpStatus.ACCEPTED)
-  // }
+  async updateImage(dto: UpdateImageDto) {
+    await this.panoramasRP.update(dto.panorama,
+      { image: dto.galeria }
+    );
+    return await this.getOne(dto.panorama);
+  }
 
-  // async createImage(file: any, dto: CreateImageDto, userLogin: UsuariosEntity) {
+  async getAll(dto: GetAllDto, options: IPaginationOptions): Promise<Pagination<PanoramasEntity>> {
+    const query = await this.panoramasRP
+      .createQueryBuilder("pan")
+      .leftJoinAndSelect("pan.image", "img")
+      .select([
+        'pan.id',
+        'pan.nombre',
+        'pan.desc',
+        'pan.createdBy',
+        'pan.createdAt',
+        'pan.updatedBy',
+        'pan.updatedAt',
+        'pan.status',
+        'pan.parametros',
+        'img.id',
+        'img.file',
+      ])
 
-  //   let galeriaId;
-  //   let res: GaleriaEntity
-  //   try {
-  //     const data = {
-  //       entidad: 'ccomercial',
-  //       entId: parseInt(dto.entId),
-  //       referencia: 'categoria',
-  //       refId: parseInt(dto.categoria),
-  //     }
-  //     res = await this.galeriaService.create(file, data, userLogin)
-  //     galeriaId = res.id
-  //   } catch (error) {
-  //     galeriaId = null
-  //     res = null
-  //   }
+    if (!isEmptyUndefined(dto.ccomercial)) {
+      query.andWhere('pan.ccomercial = :ccomercial', { ccomercial: dto.ccomercial })
+    }
+    if (!isEmptyUndefined(dto.tienda)) {
+      query.andWhere('ciu.tiendaCC = :tienda', { tienda: dto.tienda })
+    }
+    if (!isEmptyUndefined(dto.cine)) {
+      query.andWhere('pan.cineCC = :cine', { cine: dto.cine })
+    }
+    query.orderBy("pan.id", "DESC")
+    query.getMany();
+    return paginate<PanoramasEntity>(query, options);
+  }
 
-  //   await this.panoramasRP.update(parseInt(dto.categoria),
-  //     { image: galeriaId }
-  //   );
-  //   return res;
-  // }
+  async parametros(dto: CreateParametrosDto, userLogin: UsuariosEntity) {
+    const getOne = await this.getOne(dto.panorama);
+    if (isEmptyUndefined(getOne)) throw new HttpException({
+      statusCode: HttpStatus.ACCEPTED,
+      message: CONST.MESSAGES.COMMON.ERROR.UPDATE,
+    }, HttpStatus.ACCEPTED)
 
-  // async updateImage(dto: UpdateImageDto) {
-  //   await this.panoramasRP.update(dto.categoria,
-  //     { image: dto.galeria }
-  //   );
-  //   return await this.getOne(dto.categoria);
-  // }
+    if (dto.texto !== 'delete') {
+      delete dto.panorama
+
+      if (getOne.parametros === null) {
+        getOne.parametros = [dto]
+      } else {
+        for (let index = 0; index < getOne.parametros.length; index++) {
+          const element: any = getOne.parametros[index];
+          if (element.latitud.toFixed(2) === dto.latitud.toFixed(2) && element.longitud.toFixed(2) === dto.longitud.toFixed(2)) {
+            getOne.parametros.splice(index, 1)
+          }
+        }
+        getOne.parametros.push(dto)
+      }
+      const assingUsers = Object.assign(getOne, {
+        updatedBy: userLogin.id,
+        updatedAt: Date(),
+      })
+      await this.panoramasRP.update(getOne.id, assingUsers);
+    } else {
+      for (let index = 0; index < getOne.parametros.length; index++) {
+        const element: any = getOne.parametros[index];
+        if (element.latitud.toFixed(2) === dto.latitud.toFixed(2) && element.longitud.toFixed(2) === dto.longitud.toFixed(2)) {
+          getOne.parametros.splice(index, 1)
+          await this.panoramasRP.update(dto.panorama, getOne)
+        }
+      }
+    }
+
+    return await this.getOne(getOne.id);
+  }
 
 }

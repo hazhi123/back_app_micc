@@ -62,6 +62,6 @@ export class PanoramasEntity {
   cineCC: number;
 
   @ManyToOne(() => GaleriaEntity)
-  @JoinColumn()
+  @JoinColumn({ name: 'id_galeria_image' })
   image: number;
 }

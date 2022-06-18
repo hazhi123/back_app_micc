@@ -19,6 +19,8 @@ import {
   CinesCComercialesEntity,
 } from '../cines/cines/entities/cines-ccomerciales.entity';
 import { GaleriaService } from '../galeria/galeria.service';
+import { PanoramasEntity } from '../panoramas/entities/panoramas.entity';
+import { PanoramasService } from '../panoramas/panoramas.service';
 import {
   TiendasCComercialesEntity,
 } from '../tiendas/entities/tiendas-ccomerciales.entity';
@@ -52,6 +54,11 @@ export class CComercialesService {
     private readonly tiendasCComercialesRP: Repository<TiendasCComercialesEntity>,
 
     private galeriaService: GaleriaService,
+
+    private panoramasService: PanoramasService,
+
+    @InjectRepository(PanoramasEntity)
+    private readonly panoramasRP: Repository<PanoramasEntity>,
 
   ) { }
 
@@ -223,6 +230,7 @@ export class CComercialesService {
           refId: parseInt(dto.ccomercial),
         }
         const res = await this.galeriaService.create(file, data, userLogin)
+
         if (parseInt(dto.isBack) == 0) {
           await this.ccomercialesRP.update(parseInt(dto.ccomercial), {
             image: res.id
@@ -424,6 +432,16 @@ export class CComercialesService {
       .orderBy("tie.nombre", "ASC")
     query.getMany();
     return paginate<TiendasCComercialesEntity>(query, options);
+  }
+
+  async getPanoramas(id: number, options: IPaginationOptions) {
+    const data = {
+      ccomercial: id,
+      tienda: null,
+      cine: null,
+    }
+    const getAll = await this.panoramasService.getAll(data, options);
+    return getAll;
   }
 
 }

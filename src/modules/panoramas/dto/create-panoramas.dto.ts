@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -40,11 +39,6 @@ export class CreatePanoramasDto {
   @IsOptional()
   @IsBoolean()
   status: boolean;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsArray()
-  parametros: [];
 
 }
 

@@ -10,11 +10,16 @@ export class CreateImageDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  entidad: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   entId: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  categoria: string;
+  panorama: string;
 
 }

@@ -26,11 +26,13 @@ async function bootstrap() {
   app.useWebSocketAdapter(new SocketAdapter(app));
   const logger = new Logger('Bootstrap')
   const options = new DocumentBuilder()
-    .setTitle('MIS CENTROS COMERCIALES')
+    .setTitle('MI CENTRO COMERCIALE')
     .setDescription('Sistema para centros comerciales')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('swagger', app, document);
+
   const config = app.get(ConfigService);
   const port = parseInt(config.get<string>(SERVER_PORT), 10) || 3000;
 
@@ -38,10 +40,17 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '10mb' }));
   app.enableCors();
 
-  SwaggerModule.setup('swagger', app, document);
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     transformOptions: {
+  //       enableImplicitConversion: true, // allow conversion underneath
+  //     },
+  //   }),
+  // );
+
 
   app.useGlobalPipes(new ValidationPipe());
-  app.setGlobalPrefix('v1/api');
+  app.setGlobalPrefix('api/v1');
   await app.listen(port, URL);
   logger.log(`Server is running at ${await app.getUrl()}`);
 }

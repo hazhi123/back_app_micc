@@ -15,7 +15,7 @@ export class DashboardController {
   ) { }
 
   @Auth()
-  @Get('/administrador')
+  @Get('/admin')
   async getAdmin() {
     const data = await this.dasboardService.getAdmin();
     return {

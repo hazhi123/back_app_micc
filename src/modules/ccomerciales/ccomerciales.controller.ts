@@ -252,4 +252,27 @@ export class CComercialesController {
     return res
   }
 
+  @Auth()
+  @Get(':id/panoramas')
+  async getPanoramas(
+    @Param('id') id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number = 50,
+  ) {
+    limit = limit > 50 ? 50 : limit;
+    const data = await this.ccomercialesService.getPanoramas(id, {
+      page,
+      limit,
+      route: `${URLPAGE}/${CCOMERCIALES}/${id}/panoramas`,
+    });
+    let res = {
+      statusCode: HttpStatus.OK,
+      data: data.items,
+      meta: data.meta,
+      links: data.links,
+      message: ''
+    }
+    return res
+  }
+
 }

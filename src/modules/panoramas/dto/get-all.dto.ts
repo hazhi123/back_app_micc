@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsNumber,
   IsOptional,
 } from 'class-validator';
@@ -14,9 +13,13 @@ export class GetAllDto {
   ccomercial: number;
 
   @ApiProperty()
-  @IsBoolean()
+  @IsNumber()
   @IsOptional()
-  status: boolean;
+  tienda: number;
 
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  cine: number;
 
 }
